@@ -9,12 +9,20 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class eng1game extends Game {
 	SpriteBatch batch;
 	Texture img;
+	Menu menuScreen;
 	
 	@Override
 	public void create () {
 		/*batch = new SpriteBatch();
 		img = new Texture("badlogic.jpg");*/
-		setScreen(new Splash());
+		Splash splashScreen = new Splash();
+		menuScreen = new Menu();
+		splashScreen.game = this;
+		setScreen(splashScreen);
+	}
+	
+	public void splashOver() {
+		setScreen(menuScreen);
 	}
 
 	@Override
