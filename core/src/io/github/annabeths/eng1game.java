@@ -10,19 +10,29 @@ public class eng1game extends Game {
 	SpriteBatch batch;
 	Texture img;
 	Menu menuScreen;
+	GameController gameScreen;
 	
 	@Override
 	public void create () {
-		/*batch = new SpriteBatch();
-		img = new Texture("badlogic.jpg");*/
-		Splash splashScreen = new Splash();
-		menuScreen = new Menu();
-		splashScreen.game = this;
-		setScreen(splashScreen);
+		menuScreen = new Menu(this);
+		gameScreen = new GameController(this);
+		gotoScreen(Screens.splashScreen);
 	}
 	
-	public void splashOver() {
-		setScreen(menuScreen);
+	public void gotoScreen(Screens s)
+	{
+		switch(s){
+			case splashScreen:
+				Splash splashScreen = new Splash(this);
+				setScreen(splashScreen);
+				break;
+			case menuScreen:
+				setScreen(menuScreen);
+				break;
+			case gameScreen:
+				setScreen(gameScreen);
+				break;
+		}
 	}
 
 	@Override
@@ -41,3 +51,4 @@ public class eng1game extends Game {
 		super.dispose();
 	}
 }
+
