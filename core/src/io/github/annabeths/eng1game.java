@@ -14,22 +14,24 @@ public class eng1game extends Game {
 	
 	@Override
 	public void create () {
+		// create a menu and game screen, then switch to a new splash screen
 		menuScreen = new Menu(this);
 		gameScreen = new GameController(this);
 		gotoScreen(Screens.splashScreen);
 	}
 	
+	// uses the Screens enum to change between any screen
 	public void gotoScreen(Screens s)
 	{
 		switch(s){
-			case splashScreen:
+			case splashScreen: //creates a new splash screen
 				Splash splashScreen = new Splash(this);
 				setScreen(splashScreen);
 				break;
-			case menuScreen:
+			case menuScreen: //switch back to the menu screen
 				setScreen(menuScreen);
 				break;
-			case gameScreen:
+			case gameScreen: //switch back to the game screen
 				setScreen(gameScreen);
 				break;
 		}

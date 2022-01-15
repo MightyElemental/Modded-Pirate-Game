@@ -20,7 +20,7 @@ public class GameController implements Screen {
     private SpriteBatch batch;
     private Sprite mario;
 
-    public GameController(eng1game g){
+    public GameController(eng1game g){ //passes the game class so that we can change scene back later
         game = g;
     }
 
@@ -43,11 +43,11 @@ public class GameController implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        batch.begin();
+        batch.begin(); //begin the sprite batch
 
-        mario.draw(batch);
+        mario.draw(batch); //draw a test sprite
 
-        batch.end();
+        batch.end(); //end the sprite batch
 
     }
 

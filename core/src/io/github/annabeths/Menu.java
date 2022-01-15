@@ -24,7 +24,7 @@ public class Menu implements Screen {
 		// TODO Auto-generated method stub
 		batch = new SpriteBatch();
 		font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
-		menuTextLayout = new GlyphLayout();
+		menuTextLayout = new GlyphLayout(); //layouts can be used to manage text to allow it to be centred
 		menuTextLayout.setText(font, "press ENTER to goto game screen");
 	}
 
@@ -34,6 +34,7 @@ public class Menu implements Screen {
 
 		if(Gdx.input.isKeyPressed(Keys.ENTER))
 		{
+			//if the ENTER key is pressed, switch to the game screen
 			game.gotoScreen(Screens.gameScreen);
 		}
 
@@ -41,10 +42,11 @@ public class Menu implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		batch.begin();
+		batch.begin(); //start batch
 		font.getData().setScale(1);
+		//the below line centres the text on the centre of the screen
 		font.draw(batch, menuTextLayout, Gdx.graphics.getWidth()/2 - menuTextLayout.width/2 ,Gdx.graphics.getHeight()/2 + menuTextLayout.height/2);
-		batch.end();
+		batch.end(); //end batch
 	}
 
 	@Override
