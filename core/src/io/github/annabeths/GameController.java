@@ -7,12 +7,9 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.utils.Timer;
-import com.badlogic.gdx.utils.Timer.Task;
 
 public class GameController implements Screen {
 
@@ -55,7 +52,6 @@ public class GameController implements Screen {
 
         if(Gdx.input.isKeyJustPressed(Keys.SPACE))
         {
-            System.out.println("aaaa");
             physicsObjects.add(new Projectile(playerBoat.x, playerBoat.y, playerBoat.rotation, new Texture(Gdx.files.internal("mario/yanderedev.jpg"))));
         }
 

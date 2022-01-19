@@ -1,7 +1,5 @@
 package io.github.annabeths;
 
-import com.badlogic.gdx.Input;
-
 public class TestBoat extends Boat {
 
 	public TestBoat(GameController controller) {
