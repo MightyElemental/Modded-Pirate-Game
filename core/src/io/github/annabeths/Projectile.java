@@ -43,5 +43,12 @@ public class Projectile extends PhysicsObject{
     }
 
 
+    @Override
+    void OnCollision(PhysicsObject other) {
+        // TODO Auto-generated method stub
+        
+    }
+
+
 
 }
