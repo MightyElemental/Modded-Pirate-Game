@@ -19,6 +19,8 @@ public class GameController implements Screen {
     float testRot = 0;
     private SpriteBatch batch;
     private Sprite mario;
+    
+    private Boat testBoat;
 
     public GameController(eng1game g){ //passes the game class so that we can change scene back later
         game = g;
@@ -27,17 +29,25 @@ public class GameController implements Screen {
     @Override
     public void show() {
         batch = new SpriteBatch();
+        
+        /*
         mario = new Sprite(new Texture(Gdx.files.internal("mario/yanderedev.jpg")));
         mario.setSize(50, 50);
         mario.setOrigin(25, 25);
         mario.setCenter(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+        */
+        
+        testBoat = new TestBoat();
+        testBoat.SetPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()/2);
     }
 
     @Override
     public void render(float delta) {
         // do updates here
-        testRot += 10;
-        mario.setRotation(testRot);
+    	
+    	testBoat.Update(delta);
+        //testRot += 10;
+        //mario.setRotation(testRot);
 
         // do draws here
 		Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -45,7 +55,8 @@ public class GameController implements Screen {
 
         batch.begin(); //begin the sprite batch
 
-        mario.draw(batch); //draw a test sprite
+        //mario.draw(batch); //draw a test sprite
+        testBoat.sprite.draw(batch);
 
         batch.end(); //end the sprite batch
 
