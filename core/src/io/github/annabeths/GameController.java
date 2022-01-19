@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
@@ -22,6 +23,8 @@ public class GameController implements Screen {
 
     public GameController(eng1game g){ //passes the game class so that we can change scene back later
         game = g;
+        gameObjects = new ArrayList<GameObject>();
+        physicsObjects = new ArrayList<PhysicsObject>();
     }
 
     @Override
@@ -36,8 +39,22 @@ public class GameController implements Screen {
     @Override
     public void render(float delta) {
         // do updates here
-        testRot += 10;
+        testRot += 1;
         mario.setRotation(testRot);
+
+        if(Gdx.input.isKeyJustPressed(Keys.SPACE))
+        {
+            System.out.println("aaaa");
+            physicsObjects.add(new Projectile(mario.getX(), mario.getY(), mario.getRotation(), new Texture(Gdx.files.internal("mario/yanderedev.jpg"))));
+        }
+
+        if (physicsObjects.size() > 0)
+        {
+            for (PhysicsObject physicsObject : physicsObjects) {
+                physicsObject.Update(delta);
+            }
+        }
+        
 
         // do draws here
 		Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -46,6 +63,13 @@ public class GameController implements Screen {
         batch.begin(); //begin the sprite batch
 
         mario.draw(batch); //draw a test sprite
+        if (physicsObjects.size() > 0)
+        {
+            for (PhysicsObject physicsObject : physicsObjects) {
+                physicsObject.Draw(batch);
+            }
+        }
+
 
         batch.end(); //end the sprite batch
 

@@ -1,6 +1,7 @@
 package io.github.annabeths;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public interface GameObject {
     //every GameObject needs to have these values, and define these methods
@@ -12,5 +13,5 @@ public interface GameObject {
 
     void Update(float delta);
 
-    void Draw();
+    void Draw(SpriteBatch batch);
 }
