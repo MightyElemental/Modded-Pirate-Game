@@ -14,8 +14,5 @@ public abstract class PhysicsObject implements GameObject {
         return Intersector.intersectPolygons(new FloatArray(collisionPolygon.getTransformedVertices()),
                                              new FloatArray(other.collisionPolygon.getTransformedVertices()));
     }
-    void OnCollision(PhysicsObject other)
-    {
-
-    }
+    abstract void OnCollision(PhysicsObject other);
 }
