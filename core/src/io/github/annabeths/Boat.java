@@ -20,9 +20,9 @@ public abstract class Boat extends PhysicsObject {
 	protected float turnSpeed;
 	
     public Boat() {
-        sprite = new Sprite(new Texture(Gdx.files.internal("mario/yanderedev.jpg")));
-        sprite.setSize(50, 50);
-        sprite.setOrigin(25, 25);
+        sprite = new Sprite(new Texture(Gdx.files.internal("img/boat1.png")));
+        sprite.setSize(100, 50);
+        sprite.setOrigin(50, 25);
         
         sprite.setCenter(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
     }
@@ -63,5 +63,15 @@ public abstract class Boat extends PhysicsObject {
 	public void Draw(SpriteBatch batch)
 	{
 		sprite.draw(batch);
+	}
+
+	public float GetCenterX()
+	{
+		return sprite.getOriginX();
+	}
+
+	public float GetCenterY()
+	{
+		return sprite.getOriginY();
 	}
 }

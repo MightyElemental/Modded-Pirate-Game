@@ -10,7 +10,7 @@ public class PlayerBoat extends Boat{
 
 		this.HP = 100;
 		this.speed = 125;
-		this.turnSpeed = 75;
+		this.turnSpeed = 150;
 	}
 	
 	@Override

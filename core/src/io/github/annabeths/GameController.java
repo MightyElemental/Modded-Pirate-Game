@@ -21,6 +21,7 @@ public class GameController implements Screen {
     
     BitmapFont font;
     GlyphLayout hpTextLayout;
+    Texture projectileTexture;
 
     private Boat playerBoat;
 
@@ -28,6 +29,7 @@ public class GameController implements Screen {
         game = g;
         gameObjects = new ArrayList<GameObject>();
         physicsObjects = new ArrayList<PhysicsObject>();
+        projectileTexture = new Texture("img/cannonball.png");
     }
 
     @Override
@@ -52,7 +54,7 @@ public class GameController implements Screen {
 
         if(Gdx.input.isKeyJustPressed(Keys.SPACE))
         {
-            physicsObjects.add(new Projectile(playerBoat.x, playerBoat.y, playerBoat.rotation, new Texture(Gdx.files.internal("mario/yanderedev.jpg"))));
+            physicsObjects.add(new Projectile(playerBoat.GetCenterX() + playerBoat.x, playerBoat.GetCenterY() + playerBoat.y, playerBoat.rotation, projectileTexture));
         }
 
         if (physicsObjects.size() > 0)

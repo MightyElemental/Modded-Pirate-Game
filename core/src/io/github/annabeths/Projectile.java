@@ -16,7 +16,7 @@ public class Projectile extends PhysicsObject{
 
     public Projectile(float originPosX, float originPosY, float originRot, Texture bullet) {
         position = new Vector2(originPosX, originPosY);
-        velocity = 15f;
+        velocity = 200f;
         movePerFrame = new Vector2((float) Math.cos(Math.toRadians(originRot)) * velocity, (float) Math.sin(Math.toRadians(originRot)) * velocity);
         sprite = new Sprite(bullet);
         sprite.setSize(20, 20);
@@ -33,7 +33,7 @@ public class Projectile extends PhysicsObject{
 
     @Override
     public void Draw(SpriteBatch batch) {
-        sprite.setPosition(position.x, position.y);
+        sprite.setCenter(position.x, position.y);
         sprite.draw(batch);
     }
 
