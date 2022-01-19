@@ -6,7 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class Boat implements PhysicsObject {
-	int id;
+	GameController controller;
     
 	// GameObject stats
 	float x;
@@ -29,31 +29,30 @@ public abstract class Boat implements PhysicsObject {
 	
 	public abstract void Update(float delta);
 	
-	void Move(float delta) {
-		x += Math.sin(Math.toRadians(rotation)) * speed * delta;
-		y += Math.cos(Math.toRadians(rotation)) * speed * delta;
+	void Move(float delta, int multiplier) {
+		// Convention: 0 degrees means the object is pointing right, positive angles are counter clockwise
+		x += Math.cos(Math.toRadians(rotation)) * speed * delta * multiplier;
+		y += Math.sin(Math.toRadians(rotation)) * speed * delta * multiplier;
 		
 		sprite.setPosition(x, y);
 	}
 	
-	// Turn the boat, a multiplier of 1 will turn it clockwise, -1 anti-clockwise
+	// Turn the boat, a positive multiplier will turn it anti-clockwise, negative clockwise
 	void Turn(float delta, float multiplier) {
 		rotation += turnSpeed * delta * multiplier;
-		sprite.setRotation(-rotation);
+		sprite.setRotation(rotation);
 	}
 	
-	void Shoot() {
-		
-	}
+	abstract void Shoot();
 	
+	// TODO
 	boolean isColliding(PhysicsObject object) {
 		return false;
 	}
 	
-	void Destroy() {
-		
-	}
+	abstract void Destroy();
 	
+	// Place the boat somewhere in global space, use this when spawning boats
 	void SetPosition(float x, float y) {
 		this.x = x;
 		this.y = y;
