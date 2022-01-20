@@ -28,11 +28,8 @@ public class GameController implements Screen {
     BitmapFont font;
     GlyphLayout hpTextLayout;
     Texture projectileTexture;
-    TextureRegion[] waterTextureRegion;
-    TextureRegionDrawable waterTextureRegionDrawable;
-    int waterTextureNumber = 0;
-    float lastWaterTextureChange;
-    final float waterChangeDelay = 1f;
+    WaterBackground bg;
+
 
     private Boat playerBoat;
 
@@ -41,17 +38,8 @@ public class GameController implements Screen {
         gameObjects = new ArrayList<GameObject>();
         physicsObjects = new ArrayList<PhysicsObject>();
         projectileTexture = new Texture("img/cannonball.png");
-        waterTextureRegion = new TextureRegion[3];
-        for (int i=0; i < 3; i++)
-        {
-            Texture x = new Texture("img/water" + (i + 1) + ".png");
-            x.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
-            waterTextureRegion[i] = new TextureRegion(x);
-            waterTextureRegion[i].setRegionWidth(Gdx.graphics.getWidth());
-            waterTextureRegion[i].setRegionHeight(Gdx.graphics.getHeight());
-        }
-        waterTextureRegionDrawable = new TextureRegionDrawable(waterTextureRegion[0]);
-        lastWaterTextureChange = 0;
+        bg = new WaterBackground(Gdx.graphics.getWidth(),
+                                 Gdx.graphics.getHeight());
     }
 
     @Override
@@ -71,14 +59,8 @@ public class GameController implements Screen {
     @Override
     public void render(float delta) {
         // do updates here
-        lastWaterTextureChange += delta;
-        if(lastWaterTextureChange >= waterChangeDelay)
-        {
-            waterTextureNumber = (waterTextureNumber + 1) % 3;
-            waterTextureRegionDrawable.setRegion(waterTextureRegion[waterTextureNumber]);
-            lastWaterTextureChange = 0;
-        }
     	
+        bg.Update(delta);
     	playerBoat.Update(delta);
 
         if(Gdx.input.isKeyJustPressed(Keys.SPACE))
@@ -100,7 +82,7 @@ public class GameController implements Screen {
 
         batch.begin(); //begin the sprite batch
         
-        waterTextureRegionDrawable.draw(batch, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
+        bg.Draw(batch);
         playerBoat.sprite.draw(batch); // draw the player boat
 
         if (physicsObjects.size() > 0)
