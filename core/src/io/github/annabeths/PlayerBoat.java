@@ -67,7 +67,10 @@ public class PlayerBoat extends Boat{
 
     public void Upgrade(Upgrades upgrade, float amount){
     	if(upgrade == Upgrades.health) {
+    		HP = (int) Math.max(0, Math.min(maxHP, HP + amount)); // I don't like this formula. Keeps HP from exceeding max
+    	} else if(upgrade == Upgrades.maxhealth) {
     		maxHP += amount;
+    		HP += amount; // Also heal the player, we're feeling generous.
     	} else if(upgrade == Upgrades.speed) {
     		speed += amount;
     	} else if(upgrade == Upgrades.turnspeed) {
