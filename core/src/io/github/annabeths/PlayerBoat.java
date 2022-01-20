@@ -14,6 +14,7 @@ public class PlayerBoat extends Boat{
         this.controller = controller;
 
 		this.HP = 100;
+		this.maxHP = 100;
 		this.speed = 125;
 		this.turnSpeed = 150;
 	}
@@ -22,19 +23,19 @@ public class PlayerBoat extends Boat{
 	public void Update(float delta) {
 		// TODO Auto-generated method stub
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
-			super.Move(delta, 1);
+			Move(delta, 1);
 		}
         if(Gdx.input.isKeyPressed(Input.Keys.S)){
-			super.Move(delta, -1);
+			Move(delta, -1);
 		}
         if(Gdx.input.isKeyPressed(Input.Keys.D)){
-			super.Turn(delta, -1);
+			Turn(delta, -1);
 		}
         if(Gdx.input.isKeyPressed(Input.Keys.A)){
-			super.Turn(delta, 1);
+			Turn(delta, 1);
 		}
 
-        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)){
+        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
             Shoot();
         }
 	}
@@ -53,8 +54,8 @@ public class PlayerBoat extends Boat{
 
 	@Override
 	void Shoot(){
-        Projectile proj = new Projectile(new Vector2(super.GetCenterX() + super.x, super.GetCenterY() + super.y),
-        		super.rotation, 
+        Projectile proj = new Projectile(new Vector2(GetCenterX() + x, GetCenterY() + y),
+        		rotation, 
         		controller.projectileHolder.stock);
         controller.NewPhysicsObject(proj); // Add the projectile to the GameController's physics objects list so it receives updates
 	}
@@ -65,7 +66,13 @@ public class PlayerBoat extends Boat{
 	}
 
     public void Upgrade(Upgrades upgrade, float amount){
-
+    	if(upgrade == Upgrades.health) {
+    		maxHP += amount;
+    	} else if(upgrade == Upgrades.speed) {
+    		speed += amount;
+    	} else if(upgrade == Upgrades.turnspeed) {
+    		turnSpeed += amount;
+    	}
     }
 
 	@Override
