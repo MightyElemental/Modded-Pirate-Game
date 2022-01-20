@@ -7,7 +7,13 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+
+import org.w3c.dom.Text;
+
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
@@ -22,14 +28,30 @@ public class GameController implements Screen {
     BitmapFont font;
     GlyphLayout hpTextLayout;
     Texture projectileTexture;
+    TextureRegion[] waterTextureRegion;
+    TextureRegionDrawable waterTextureRegionDrawable;
+    int waterTextureNumber = 0;
+    float lastWaterTextureChange;
+    final float waterChangeDelay = 1f;
 
     private Boat playerBoat;
 
-    public GameController(eng1game g){ //passes the game class so that we can change scene back lateraaaaaa
+    public GameController(eng1game g){ //passes the game class so that we can change scene back later
         game = g;
         gameObjects = new ArrayList<GameObject>();
         physicsObjects = new ArrayList<PhysicsObject>();
         projectileTexture = new Texture("img/cannonball.png");
+        waterTextureRegion = new TextureRegion[3];
+        for (int i=0; i < 3; i++)
+        {
+            Texture x = new Texture("img/water" + (i + 1) + ".png");
+            x.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+            waterTextureRegion[i] = new TextureRegion(x);
+            waterTextureRegion[i].setRegionWidth(Gdx.graphics.getWidth());
+            waterTextureRegion[i].setRegionHeight(Gdx.graphics.getHeight());
+        }
+        waterTextureRegionDrawable = new TextureRegionDrawable(waterTextureRegion[0]);
+        lastWaterTextureChange = 0;
     }
 
     @Override
@@ -49,6 +71,13 @@ public class GameController implements Screen {
     @Override
     public void render(float delta) {
         // do updates here
+        lastWaterTextureChange += delta;
+        if(lastWaterTextureChange >= waterChangeDelay)
+        {
+            waterTextureNumber = (waterTextureNumber + 1) % 3;
+            waterTextureRegionDrawable.setRegion(waterTextureRegion[waterTextureNumber]);
+            lastWaterTextureChange = 0;
+        }
     	
     	playerBoat.Update(delta);
 
@@ -71,6 +100,7 @@ public class GameController implements Screen {
 
         batch.begin(); //begin the sprite batch
         
+        waterTextureRegionDrawable.draw(batch, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getWidth());
         playerBoat.sprite.draw(batch); // draw the player boat
 
         if (physicsObjects.size() > 0)
