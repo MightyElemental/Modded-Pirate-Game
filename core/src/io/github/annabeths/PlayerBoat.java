@@ -2,7 +2,12 @@ package io.github.annabeths;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
+
+import io.github.annabeths.Projectiles.DefaultProjectile;
 
 public class PlayerBoat extends Boat{
     public PlayerBoat(GameController controller) {
@@ -48,7 +53,10 @@ public class PlayerBoat extends Boat{
 
 	@Override
 	void Shoot(){
-        sprite.setSize(sprite.getWidth() + 25, sprite.getHeight() + 25);
+        Projectile proj = new Projectile(new Vector2(super.GetCenterX() + super.x, super.GetCenterY() + super.y),
+        		super.rotation, 
+        		controller.projectileHolder.stock);
+        controller.NewPhysicsObject(proj); // Add the projectile to the GameController's physics objects list so it receives updates
 	}
 
 	@Override

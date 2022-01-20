@@ -12,6 +12,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+import io.github.annabeths.Projectiles.ProjectileDataHolder;
+
 import org.w3c.dom.Text;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -27,9 +29,9 @@ public class GameController implements Screen {
     
     BitmapFont font;
     GlyphLayout hpTextLayout;
-    Texture projectileTexture;
     WaterBackground bg;
 
+    ProjectileDataHolder projectileHolder;
 
     private Boat playerBoat;
 
@@ -37,9 +39,10 @@ public class GameController implements Screen {
         game = g;
         gameObjects = new ArrayList<GameObject>();
         physicsObjects = new ArrayList<PhysicsObject>();
-        projectileTexture = new Texture("img/cannonball.png");
         bg = new WaterBackground(Gdx.graphics.getWidth(),
                                  Gdx.graphics.getHeight());
+        
+        projectileHolder = new ProjectileDataHolder();
     }
 
     @Override
@@ -62,11 +65,6 @@ public class GameController implements Screen {
     	
         bg.Update(delta);
     	playerBoat.Update(delta);
-
-        if(Gdx.input.isKeyJustPressed(Keys.SPACE))
-        {
-            physicsObjects.add(new Projectile(playerBoat.GetCenterX() + playerBoat.x, playerBoat.GetCenterY() + playerBoat.y, playerBoat.rotation, projectileTexture));
-        }
 
         if (physicsObjects.size() > 0)
         {
@@ -127,5 +125,10 @@ public class GameController implements Screen {
 
     public void gameOver(){
 
+    }
+    
+    public void NewPhysicsObject(PhysicsObject obj) {
+    	// A new PhysicsObject has been created, add it to the list so it receives updates
+    	physicsObjects.add(obj);
     }
 }
