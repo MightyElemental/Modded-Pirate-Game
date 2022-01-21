@@ -28,7 +28,7 @@ public class GameController implements Screen {
 
     ProjectileDataHolder projectileHolder;
 
-    PlayerCollege testCollege;
+    EnemyCollege testCollege;
 
     private Boat playerBoat;
 
@@ -40,7 +40,7 @@ public class GameController implements Screen {
                                  Gdx.graphics.getHeight());
         
         projectileHolder = new ProjectileDataHolder();
-        testCollege = new PlayerCollege(new Vector2(50,50), new Texture("img/castle1.png"));
+        testCollege = new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), this, projectileHolder.stock);
     }
 
     @Override
