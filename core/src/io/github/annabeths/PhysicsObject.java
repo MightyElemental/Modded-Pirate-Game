@@ -4,7 +4,7 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.math.Intersector;
 
-public abstract class PhysicsObject implements GameObject {
+public abstract class PhysicsObject extends GameObject {
     //in addition to the GameObject, PhysicsObjects must also implement the following
 
     Polygon collisionPolygon = null;
