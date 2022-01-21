@@ -7,6 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 
 public class PlayerCollege extends College{
 
+    //TODO
+    // check range from centre of sprite, not corner
+    // change check of boat to the centre of the boat not its corner
+
     int healAmount;
 
     public PlayerCollege(Vector2 position, Texture texture) {
