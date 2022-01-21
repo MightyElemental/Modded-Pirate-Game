@@ -45,7 +45,7 @@ public class Projectile extends PhysicsObject{
 
 
     @Override
-    void OnCollision(PhysicsObject other) {
+    public void OnCollision(PhysicsObject other) {
         // TODO handle collisions
     }
 

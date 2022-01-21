@@ -17,6 +17,11 @@ public abstract class GameObject {
 
     }
 
+    void Update(float delta, PhysicsObject other)
+    {
+
+    }
+
     void Draw(SpriteBatch batch)
     {
 

@@ -82,4 +82,13 @@ public class PlayerBoat extends Boat{
 	public void Draw(SpriteBatch batch) {
 		sprite.draw(batch);
 	}
+
+	public void Heal(int amount)
+	{
+		HP += amount;
+		if(HP > maxHP)
+		{
+			HP = maxHP;
+		}
+	}
 }

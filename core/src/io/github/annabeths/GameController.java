@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Projectiles.ProjectileDataHolder;
 
@@ -26,6 +28,8 @@ public class GameController implements Screen {
 
     ProjectileDataHolder projectileHolder;
 
+    PlayerCollege testCollege;
+
     private Boat playerBoat;
 
     public GameController(eng1game g){ //passes the game class so that we can change scene back later
@@ -36,6 +40,7 @@ public class GameController implements Screen {
                                  Gdx.graphics.getHeight());
         
         projectileHolder = new ProjectileDataHolder();
+        testCollege = new PlayerCollege(new Vector2(50,50), new Texture("mario/yanderedev.jpg"));
     }
 
     @Override
@@ -58,6 +63,7 @@ public class GameController implements Screen {
     	
         bg.Update(delta);
     	playerBoat.Update(delta);
+        testCollege.Update(delta, playerBoat);
 
         if (physicsObjects.size() > 0)
         {
@@ -74,6 +80,7 @@ public class GameController implements Screen {
         batch.begin(); //begin the sprite batch
         
         bg.Draw(batch);
+        testCollege.Draw(batch);
         playerBoat.Draw(batch);
 
         if (physicsObjects.size() > 0)
