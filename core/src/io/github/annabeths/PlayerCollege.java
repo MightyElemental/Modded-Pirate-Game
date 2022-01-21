@@ -1,5 +1,8 @@
 package io.github.annabeths;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -16,9 +19,10 @@ public class PlayerCollege extends College{
     public PlayerCollege(Vector2 position, Texture texture) {
         //TODO set a collision polygon
         healAmount = 15;
-        range = 500;
-        sprite = new Sprite(texture);
-        sprite.setPosition(position.x, position.y);
+        range = 50;
+        aliveSprite = new Sprite(texture);
+        aliveSprite.setPosition(position.x, position.y);
+        aliveSprite.setSize(100,100);
         this.position = position;
     }
 
@@ -42,7 +46,7 @@ public class PlayerCollege extends College{
     @Override
     void Draw(SpriteBatch batch)
     {
-        sprite.draw(batch);    
+        aliveSprite.draw(batch);    
     }
 
 }

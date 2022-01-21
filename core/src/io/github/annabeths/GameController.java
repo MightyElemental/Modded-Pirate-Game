@@ -40,7 +40,7 @@ public class GameController implements Screen {
                                  Gdx.graphics.getHeight());
         
         projectileHolder = new ProjectileDataHolder();
-        testCollege = new PlayerCollege(new Vector2(50,50), new Texture("mario/yanderedev.jpg"));
+        testCollege = new PlayerCollege(new Vector2(50,50), new Texture("img/castle1.png"));
     }
 
     @Override
