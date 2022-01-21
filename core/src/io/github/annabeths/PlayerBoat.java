@@ -80,7 +80,6 @@ public class PlayerBoat extends Boat{
 
 	@Override
 	public void Draw(SpriteBatch batch) {
-		// TODO Auto-generated method stub
-		
+		sprite.draw(batch);
 	}
 }

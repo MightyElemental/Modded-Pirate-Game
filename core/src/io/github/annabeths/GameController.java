@@ -74,7 +74,7 @@ public class GameController implements Screen {
         batch.begin(); //begin the sprite batch
         
         bg.Draw(batch);
-        playerBoat.sprite.draw(batch); // draw the player boat
+        playerBoat.Draw(batch);
 
         if (physicsObjects.size() > 0)
         {
