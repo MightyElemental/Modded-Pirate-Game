@@ -12,7 +12,7 @@ import io.github.annabeths.Projectiles.ProjectileData;
 public class EnemyCollege extends College{
    
     int damage;
-    float shootingInaccuracy = 15f; // in degrees (each side)
+    float shootingInaccuracy = 0f; // in degrees (each side)
     float fireRate = 1.5f;
     float timeSinceLastShot = 0;
     Random rd = new Random();
@@ -61,9 +61,9 @@ public class EnemyCollege extends College{
 
     void ShootAt(Vector2 target)
     {
-        float shotAngle = (float) Math.atan2(position.x - target.x, position.y - target.y);
+        float shotAngle = (float) Math.toDegrees(Math.atan2(target.y - (position.y + aliveSprite.getHeight()/2), target.x - (position.x + aliveSprite.getWidth()/2)));
         shotAngle += (rd.nextFloat() * shootingInaccuracy * 2) - (shootingInaccuracy);
-        gc.NewPhysicsObject(new Projectile(position, shotAngle, projectileType));
+        gc.NewPhysicsObject(new Projectile(new Vector2(position.x + aliveSprite.getWidth()/2, position.y + aliveSprite.getHeight()/2), shotAngle, projectileType));
         System.out.println("bang! towards " + target.toString());
     }
 
