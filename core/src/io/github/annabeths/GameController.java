@@ -1,6 +1,7 @@
 package io.github.annabeths;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -24,6 +25,7 @@ public class GameController implements Screen {
     ArrayList<PhysicsObject> physicsObjects;
     float testRot = 0;
     private SpriteBatch batch;
+    GameMap map;
     
     BitmapFont font;
     GlyphLayout hpTextLayout;
@@ -54,14 +56,18 @@ public class GameController implements Screen {
         // Create the player boat and place it in the centre of the screen
         playerBoat = new PlayerBoat(this);
         playerBoat.SetPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()/2); // place the player 
+
+        //create the moving camera/map borders
+        map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), (PlayerBoat) playerBoat, batch);
     }
 
     @Override
     public void render(float delta) {
         // do updates here
-    	
+    	map.Update(delta);
         bg.Update(delta);
     	playerBoat.Update(delta);
+        
 
         if(Gdx.input.isKeyJustPressed(Keys.SPACE))
         {
@@ -80,8 +86,11 @@ public class GameController implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        batch.setProjectionMatrix(map.camera.combined);
+
         batch.begin(); //begin the sprite batch
         
+        map.Draw(batch);
         bg.Draw(batch);
         playerBoat.sprite.draw(batch); // draw the player boat
 
@@ -91,6 +100,7 @@ public class GameController implements Screen {
                 physicsObject.Draw(batch);
             }
         }
+        //map.CameraUpdate();
 
 
         // Draw the text showing the player's HP
