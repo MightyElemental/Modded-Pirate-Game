@@ -23,9 +23,9 @@ public class PlayerCollege extends College{
     }
 
     @Override
-    public void OnCollision(PhysicsObject other) {
+    public boolean OnCollision(PhysicsObject other) {
         // TODO Auto-generated method stub
-
+        return false;
     }
 
     @Override

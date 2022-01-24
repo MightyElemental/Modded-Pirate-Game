@@ -39,16 +39,20 @@ public class PlayerBoat extends Boat{
 	}
 	
 	@Override
-	public void OnCollision(PhysicsObject other) {
+	public boolean OnCollision(PhysicsObject other) {
 		if(other.getClass() == Projectile.class)
 		{
 			Projectile p = (Projectile) other;
+			if(p.isPlayerProjectile)
+				return false;
+			else
+				return true;
 		}
 		else if(other.getClass() == EnemyCollege.class)
 		{
 			System.out.println("enemy college hit");
 		}
-		
+		return false;
 	}
 
 	@Override

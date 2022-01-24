@@ -14,5 +14,6 @@ public abstract class PhysicsObject extends GameObject {
         return Intersector.intersectPolygons(new FloatArray(collisionPolygon.getTransformedVertices()),
                                              new FloatArray(other.collisionPolygon.getTransformedVertices()));
     }
-    public abstract void OnCollision(PhysicsObject other);
+    public abstract boolean OnCollision(PhysicsObject other);
+    // this method returns true if the 'other' object needs deletion after the collision check
 }

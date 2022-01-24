@@ -70,24 +70,20 @@ public class GameController implements Screen {
 
         if (physicsObjects.size() > 0)
         {
-            Iterator<PhysicsObject> i = physicsObjects.iterator();
+            Iterator<PhysicsObject> i = physicsObjects.iterator(); // use an iterator to safely remove objects from 
+            // the list whilst traversing it
             while(i.hasNext())
             {
                 PhysicsObject p = i.next();
-                p.Update(delta);
+                p.Update(delta); // update the current physicsobject
                 if(playerBoat.CheckCollisionWith(p))
                 {
-                    playerBoat.OnCollision(p);
-                    if(p.getClass() == Projectile.class)
-                    {
+                    if(playerBoat.OnCollision(p)) //if it returns true, then remove other
                         i.remove();
-                        System.out.println("bang");
-                    }
                 }
             }
         }
         
-
         // do draws here
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);

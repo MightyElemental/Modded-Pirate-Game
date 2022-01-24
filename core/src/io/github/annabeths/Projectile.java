@@ -53,7 +53,8 @@ public class Projectile extends PhysicsObject{
 
 
     @Override
-    public void OnCollision(PhysicsObject other) {
+    public boolean OnCollision(PhysicsObject other) {
         // projectile should not do anything on collision itself, the other object should handle it
+        return false;
     }
 }
