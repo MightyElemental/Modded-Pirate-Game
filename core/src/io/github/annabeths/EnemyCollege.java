@@ -12,7 +12,7 @@ import io.github.annabeths.Projectiles.ProjectileData;
 public class EnemyCollege extends College{
    
     int damage;
-    float shootingInaccuracy = 15f; // in degrees (each side)
+    float shootingInaccuracy = 0f; // in degrees (each side)
     float fireRate = 1.5f;
     float timeSinceLastShot = 0;
     Random rd = new Random();
@@ -49,7 +49,7 @@ public class EnemyCollege extends College{
         {
             if(timeSinceLastShot >= fireRate)
             {
-                ShootAt(new Vector2(boat.x, boat.y));
+                ShootAt(new Vector2(boat.position.x, boat.position.y));
                 timeSinceLastShot = 0;
             }
         }
@@ -72,7 +72,7 @@ public class EnemyCollege extends College{
         // then - the shooting inaccuracy to centre the distribution on 0
         gc.NewPhysicsObject(new Projectile(new Vector2(position.x + aliveSprite.getWidth()/2,
                                                        position.y + aliveSprite.getHeight()/2),
-                            shotAngle, projectileType));
+                            shotAngle, projectileType, false));
         //instantiate a new bullet and pass a reference to the gamecontroller so it can be updated and drawn
     }
 

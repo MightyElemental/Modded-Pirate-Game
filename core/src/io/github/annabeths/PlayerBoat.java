@@ -39,22 +39,22 @@ public class PlayerBoat extends Boat{
 	}
 	
 	@Override
-	public boolean CollidesWith(PhysicsObject other) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void OnCollision(PhysicsObject other) {
-		// TODO Auto-generated method stub
+		if(other.getClass() == Projectile.class)
+		{
+			Projectile p = (Projectile) other;
+		}
+		else if(other.getClass() == EnemyCollege.class)
+		{
+			System.out.println("enemy college hit");
+		}
 		
 	}
 
 	@Override
 	void Shoot(){
-        Projectile proj = new Projectile(new Vector2(GetCenterX() + x, GetCenterY() + y),
-        		rotation, 
-        		controller.projectileHolder.stock);
+        Projectile proj = new Projectile(new Vector2(GetCenterX() + position.x, GetCenterY() + position.y),
+        								 rotation, controller.projectileHolder.stock, true);
         controller.NewPhysicsObject(proj); // Add the projectile to the GameController's physics objects list so it receives updates
 	}
 

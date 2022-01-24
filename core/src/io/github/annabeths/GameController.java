@@ -1,12 +1,15 @@
 package io.github.annabeths;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Projectiles.ProjectileDataHolder;
@@ -67,8 +70,20 @@ public class GameController implements Screen {
 
         if (physicsObjects.size() > 0)
         {
-            for (PhysicsObject physicsObject : physicsObjects) {
-                physicsObject.Update(delta);
+            Iterator<PhysicsObject> i = physicsObjects.iterator();
+            while(i.hasNext())
+            {
+                PhysicsObject p = i.next();
+                p.Update(delta);
+                if(playerBoat.CheckCollisionWith(p))
+                {
+                    playerBoat.OnCollision(p);
+                    if(p.getClass() == Projectile.class)
+                    {
+                        i.remove();
+                        System.out.println("bang");
+                    }
+                }
             }
         }
         
@@ -96,6 +111,14 @@ public class GameController implements Screen {
         font.getData().setScale(1);
         font.draw(batch, hpTextLayout, 5, Gdx.graphics.getHeight() - 10);
         batch.end(); //end the sprite batch
+
+        //begin debug sprite batch
+        ShapeRenderer sr = new ShapeRenderer();
+        sr.begin(ShapeType.Line);
+        sr.polygon(playerBoat.collisionPolygon.getTransformedVertices());
+        sr.circle(playerBoat.collisionPolygon.getX()+playerBoat.collisionPolygon.getOriginX(),
+        playerBoat.collisionPolygon.getY()+playerBoat.collisionPolygon.getOriginY(), 5);
+        sr.end();
     }
 
     @Override
@@ -130,5 +153,9 @@ public class GameController implements Screen {
     public void NewPhysicsObject(PhysicsObject obj) {
     	// A new PhysicsObject has been created, add it to the list so it receives updates
     	physicsObjects.add(obj);
+    }
+
+    public void RemovePhysicsObject(PhysicsObject obj){
+        physicsObjects.remove(obj);
     }
 }
