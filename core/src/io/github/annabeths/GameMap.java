@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 
-public class GameMap implements GameObject{
+public class GameMap extends GameObject{
 
     OrthographicCamera camera;
     PlayerBoat boat;
@@ -27,7 +27,7 @@ public class GameMap implements GameObject{
     public void Update(float delta) {
         Vector2 boatPos = boat.GetPosition();
         System.out.println(boatPos.x + "," + boatPos.y);
-        camera.position.set(boatPos.x + boat.GetCenterX(), boatPos.y + boat.GetCenterY(), 0);
+        camera.position.set(boat.sprite.getX() + boat.GetCenterX(), boat.sprite.getY() + boat.GetCenterY(), 0);
         camera.update();
     }
 

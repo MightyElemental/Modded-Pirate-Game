@@ -27,10 +27,7 @@ public class GameController implements Screen {
     BitmapFont font;
     GlyphLayout hpTextLayout;
     WaterBackground bg;
-
-    ProjectileDataHolder projectileHolder;
-
-    EnemyCollege testCollege;
+    public ProjectileDataHolder projectileDataHolder;
 
     private Boat playerBoat;
 
@@ -38,11 +35,8 @@ public class GameController implements Screen {
         game = g;
         gameObjects = new ArrayList<GameObject>();
         physicsObjects = new ArrayList<PhysicsObject>();
-        bg = new WaterBackground(Gdx.graphics.getWidth(),
-                                 Gdx.graphics.getHeight());
-        
-        projectileHolder = new ProjectileDataHolder();
-        testCollege = new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), this, projectileHolder.stock);
+        bg = new WaterBackground(2000,2000);
+        projectileDataHolder = new ProjectileDataHolder();
     }
 
     @Override
@@ -56,7 +50,7 @@ public class GameController implements Screen {
         
         // Create the player boat and place it in the centre of the screen
         playerBoat = new PlayerBoat(this);
-        playerBoat.SetPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()/2); // place the player 
+        playerBoat.SetPosition(1900,1900); // place the player 
 
         //create the moving camera/map borders
         map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), (PlayerBoat) playerBoat, batch);
@@ -68,7 +62,6 @@ public class GameController implements Screen {
     	map.Update(delta);
         bg.Update(delta);
     	playerBoat.Update(delta);
-        testCollege.Update(delta, playerBoat);
 
         if (physicsObjects.size() > 0)
         {
@@ -88,7 +81,6 @@ public class GameController implements Screen {
         
         map.Draw(batch);
         bg.Draw(batch);
-        testCollege.Draw(batch);
         playerBoat.Draw(batch);
 
         if (physicsObjects.size() > 0)

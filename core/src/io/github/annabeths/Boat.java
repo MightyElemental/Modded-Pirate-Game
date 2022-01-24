@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.MathUtils;
 
 public abstract class Boat extends PhysicsObject {
 	GameController controller;
@@ -37,7 +38,10 @@ public abstract class Boat extends PhysicsObject {
 		x += Math.cos(Math.toRadians(rotation)) * speed * delta * multiplier;
 		y += Math.sin(Math.toRadians(rotation)) * speed * delta * multiplier;
 		
-		sprite.setPosition(x, y);
+		
+		
+		
+		sprite.setPosition(MathUtils.clamp(x, 0, 2000), MathUtils.clamp(y, 0, 2000));
 	}
 	
 	// Turn the boat, a positive multiplier will turn it anti-clockwise, negative clockwise

@@ -36,6 +36,7 @@ public class PlayerBoat extends Boat{
         if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
             Shoot();
         }
+
 	}
 	
 	@Override
@@ -54,7 +55,7 @@ public class PlayerBoat extends Boat{
 	void Shoot(){
         Projectile proj = new Projectile(new Vector2(GetCenterX() + x, GetCenterY() + y),
         		rotation, 
-        		controller.projectileHolder.stock);
+        		controller.projectileDataHolder.stock);
         controller.NewPhysicsObject(proj); // Add the projectile to the GameController's physics objects list so it receives updates
 	}
 
