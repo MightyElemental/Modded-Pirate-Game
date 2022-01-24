@@ -7,6 +7,7 @@ public class ProjectileData {
 	// This abstract class is used to define each type of projectile found in the game
 	public float velocity;
 	public float damage;
+	public float shotDelay;
 	public Vector2 size;
 	public Texture texture;
 
