@@ -8,6 +8,8 @@ public  class ProjectileDataHolder {
 	// spamming instances of the same projectile data when one will suffice.
 	
 	public ProjectileData stock;
+	public ProjectileData enemy;
+
 	public ProjectileDataHolder() {
 		stock = new ProjectileData(200, 100, new Vector2(20,20),
 		new Texture("img/cannonball.png"));

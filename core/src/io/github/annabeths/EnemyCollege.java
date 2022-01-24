@@ -12,14 +12,15 @@ import io.github.annabeths.Projectiles.ProjectileData;
 public class EnemyCollege extends College{
    
     int damage;
-    float shootingInaccuracy = 0f; // in degrees (each side)
+    float shootingInaccuracy = 15f; // in degrees (each side)
     float fireRate = 1.5f;
     float timeSinceLastShot = 0;
     Random rd = new Random();
     GameController gc;
     ProjectileData projectileType;
    
-    public EnemyCollege(Vector2 position, Texture aliveTexture, GameController controller, ProjectileData projectileData)
+    public EnemyCollege(Vector2 position, Texture aliveTexture,
+                        GameController controller, ProjectileData projectileData)
     {
         aliveSprite = new Sprite(aliveTexture);
         aliveSprite.setPosition(position.x, position.y);
@@ -41,10 +42,10 @@ public class EnemyCollege extends College{
         if(timeSinceLastShot < fireRate)
         {
             timeSinceLastShot += delta;
-        }
+        } // increase the time on the timer to allow for fire rate calculation
 
-        PlayerBoat boat = (PlayerBoat) playerBoat;
-        if(isInRange(boat))
+        PlayerBoat boat = (PlayerBoat) playerBoat; //cast to playerboat
+        if(isInRange(boat)) // is the player boat in range
         {
             if(timeSinceLastShot >= fireRate)
             {
@@ -61,10 +62,18 @@ public class EnemyCollege extends College{
 
     void ShootAt(Vector2 target)
     {
-        float shotAngle = (float) Math.toDegrees(Math.atan2(target.y - (position.y + aliveSprite.getHeight()/2), target.x - (position.x + aliveSprite.getWidth()/2)));
+        float shotAngle = (float) Math.toDegrees(Math.atan2(target.y - (position.y + aliveSprite.getHeight()/2),
+                                                            target.x - (position.x + aliveSprite.getWidth()/2)));
+        //calculate the shot angle by getting a vector from the centre of the college to the target
+        //convert to degrees for the inaccuracy calculation
         shotAngle += (rd.nextFloat() * shootingInaccuracy * 2) - (shootingInaccuracy);
-        gc.NewPhysicsObject(new Projectile(new Vector2(position.x + aliveSprite.getWidth()/2, position.y + aliveSprite.getHeight()/2), shotAngle, projectileType));
-        System.out.println("bang! towards " + target.toString());
+        //inaccuracy calculation works by rd.nextfloat() gets a pseudorandom float from 0-1
+        // we multiply it by 2* the shooting inaccuracy to get the right width of distribution
+        // then - the shooting inaccuracy to centre the distribution on 0
+        gc.NewPhysicsObject(new Projectile(new Vector2(position.x + aliveSprite.getWidth()/2,
+                                                       position.y + aliveSprite.getHeight()/2),
+                            shotAngle, projectileType));
+        //instantiate a new bullet and pass a reference to the gamecontroller so it can be updated and drawn
     }
 
 }
