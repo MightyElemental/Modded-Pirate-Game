@@ -5,15 +5,12 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.math.Vector2;
 
-import org.w3c.dom.Text;
+import io.github.annabeths.Projectiles.ProjectileDataHolder;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -29,9 +26,11 @@ public class GameController implements Screen {
     
     BitmapFont font;
     GlyphLayout hpTextLayout;
-    Texture projectileTexture;
     WaterBackground bg;
 
+    ProjectileDataHolder projectileHolder;
+
+    EnemyCollege testCollege;
 
     private Boat playerBoat;
 
@@ -39,9 +38,11 @@ public class GameController implements Screen {
         game = g;
         gameObjects = new ArrayList<GameObject>();
         physicsObjects = new ArrayList<PhysicsObject>();
-        projectileTexture = new Texture("img/cannonball.png");
         bg = new WaterBackground(Gdx.graphics.getWidth(),
                                  Gdx.graphics.getHeight());
+        
+        projectileHolder = new ProjectileDataHolder();
+        testCollege = new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), this, projectileHolder.stock);
     }
 
     @Override
@@ -67,12 +68,7 @@ public class GameController implements Screen {
     	map.Update(delta);
         bg.Update(delta);
     	playerBoat.Update(delta);
-        
-
-        if(Gdx.input.isKeyJustPressed(Keys.SPACE))
-        {
-            physicsObjects.add(new Projectile(playerBoat.GetCenterX() + playerBoat.x, playerBoat.GetCenterY() + playerBoat.y, playerBoat.rotation, projectileTexture));
-        }
+        testCollege.Update(delta, playerBoat);
 
         if (physicsObjects.size() > 0)
         {
@@ -92,7 +88,8 @@ public class GameController implements Screen {
         
         map.Draw(batch);
         bg.Draw(batch);
-        playerBoat.sprite.draw(batch); // draw the player boat
+        testCollege.Draw(batch);
+        playerBoat.Draw(batch);
 
         if (physicsObjects.size() > 0)
         {
@@ -137,5 +134,10 @@ public class GameController implements Screen {
 
     public void gameOver(){
 
+    }
+    
+    public void NewPhysicsObject(PhysicsObject obj) {
+    	// A new PhysicsObject has been created, add it to the list so it receives updates
+    	physicsObjects.add(obj);
     }
 }

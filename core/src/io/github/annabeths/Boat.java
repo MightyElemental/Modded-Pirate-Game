@@ -18,6 +18,7 @@ public abstract class Boat extends PhysicsObject {
 	
 	// Boat stats
 	protected int HP;
+	protected int maxHP;
 	protected float speed;
 	protected float turnSpeed;
 	
