@@ -19,6 +19,8 @@ public abstract class Boat extends PhysicsObject {
 	protected int maxHP;
 	protected float speed;
 	protected float turnSpeed;
+
+	protected float shotDelay = 0f;
 	
     public Boat() {
         sprite = new Sprite(new Texture(Gdx.files.internal("img/boat1.png")));

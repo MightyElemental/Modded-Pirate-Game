@@ -5,9 +5,10 @@ import com.badlogic.gdx.math.Vector2;
 
 public class DefaultProjectile extends ProjectileData {
 	public DefaultProjectile() {
-		super.velocity = 200;
-		super.damage = 100;
-		super.size = new Vector2(20, 20);
-		this.texture = new Texture("img/cannonball.png");
+		velocity = 200;
+		damage = 100;
+		shotDelay = 0.5f;
+		size = new Vector2(20, 20);
+		texture = new Texture("img/cannonball.png");
 	}
 }

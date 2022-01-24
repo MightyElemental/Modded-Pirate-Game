@@ -21,6 +21,8 @@ public class PlayerBoat extends Boat{
 	
 	@Override
 	public void Update(float delta) {
+		shotDelay -= delta;
+
 		// TODO Auto-generated method stub
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
 			Move(delta, 1);
@@ -35,7 +37,9 @@ public class PlayerBoat extends Boat{
 			Turn(delta, 1);
 		}
 
-        if(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) || Gdx.input.isKeyJustPressed(Input.Keys.SPACE)){
+        if(((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && !controller.hoveringOverButton) // make sure we don't fire when hovering over a button and clicking
+		|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) // doesn't matter if we're over a button or not when pressing space
+		&& shotDelay <= 0){
             Shoot();
         }
 	}
@@ -58,6 +62,7 @@ public class PlayerBoat extends Boat{
         		rotation, 
         		controller.projectileHolder.stock);
         controller.NewPhysicsObject(proj); // Add the projectile to the GameController's physics objects list so it receives updates
+		shotDelay = controller.projectileHolder.stock.shotDelay;
 	}
 
 	@Override
@@ -67,7 +72,7 @@ public class PlayerBoat extends Boat{
 
     public void Upgrade(Upgrades upgrade, float amount){
     	if(upgrade == Upgrades.health) {
-    		HP = (int) Math.max(0, Math.min(maxHP, HP + amount)); // I don't like this formula. Keeps HP from exceeding max
+    		HP = (int) Math.min(maxHP, HP + amount); // Keeps HP from exceeding max
     	} else if(upgrade == Upgrades.maxhealth) {
     		maxHP += amount;
     		HP += amount; // Also heal the player, we're feeling generous.
