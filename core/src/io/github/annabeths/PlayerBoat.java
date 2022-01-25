@@ -4,9 +4,10 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 public class PlayerBoat extends Boat{
-    public PlayerBoat(GameController controller, Vector2 initialPosition) {
+    public PlayerBoat(GameController controller, Vector2 initialPosition, Vector2 mapSize) {
         this.controller = controller;
 
 		this.HP = 100;
@@ -16,6 +17,11 @@ public class PlayerBoat extends Boat{
 		position = initialPosition;
 		collisionPolygon.setPosition(initialPosition.x, initialPosition.y);
 		sprite.setPosition(initialPosition.x, initialPosition.y);
+		mapBounds = new Array<Vector2>(true, 4);
+		mapBounds.add(new Vector2(0,0));
+		mapBounds.add(new Vector2(mapSize.x, 0));
+		mapBounds.add(new Vector2(mapSize.x, mapSize.y));
+		mapBounds.add(new Vector2(0, mapSize.y));
 	}
 	
 	@Override

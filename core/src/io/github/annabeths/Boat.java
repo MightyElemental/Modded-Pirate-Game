@@ -5,6 +5,8 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 
 public abstract class Boat extends PhysicsObject {
@@ -17,6 +19,8 @@ public abstract class Boat extends PhysicsObject {
 	protected float turnSpeed;
 
 	protected float shotDelay = 0f;
+
+	protected Array<Vector2> mapBounds;
 	
     public Boat() {
         sprite = new Sprite(new Texture(Gdx.files.internal("img/boat1.png")));
@@ -32,12 +36,18 @@ public abstract class Boat extends PhysicsObject {
 	
 	void Move(float delta, int multiplier) {
 		// Convention: 0 degrees means the object is pointing right, positive angles are counter clockwise
+		Vector2 oldPos = position.cpy();
 		position.x += Math.cos(Math.toRadians(rotation)) * speed * delta * multiplier;
 		position.y += Math.sin(Math.toRadians(rotation)) * speed * delta * multiplier;
 		
 		sprite.setPosition(position.x, position.y);
 		collisionPolygon.setPosition(position.x + GetCenterX()/2, position.y - GetCenterY()/2 - 10);
 		collisionPolygon.setOrigin(25,50);
+
+		if(!Intersector.isPointInPolygon(mapBounds, new Vector2(position.x + GetCenterX(), position.y+GetCenterY())))
+		{
+			position = oldPos.cpy();
+		}
 	}
 	
 	// Turn the boat, a positive multiplier will turn it anti-clockwise, negative clockwise

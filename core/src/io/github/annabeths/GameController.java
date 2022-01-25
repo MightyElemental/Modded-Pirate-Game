@@ -96,13 +96,13 @@ public class GameController implements Screen {
         DrawUpgradeButton(); // put this in its own function to make this function look a bit cleaner
 
         // Create the player boat and place it in the centre of the screen
-        playerBoat = new PlayerBoat(this, new Vector2(200,200));
+        playerBoat = new PlayerBoat(this, new Vector2(200,200), new Vector2(2000,2000));
         physicsObjects.add(playerBoat);
 
         physicsObjects.add(new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), this, projectileHolder.stock));
 
         //create the moving camera/map borders
-        map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), (PlayerBoat) playerBoat, batch);
+        map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), (PlayerBoat) playerBoat, batch,2000,2000);
     }
 
     @Override
@@ -119,7 +119,6 @@ public class GameController implements Screen {
         }
     	
     	map.Update(delta);
-        bg.Update(delta);
 
         for(int i=0; i < physicsObjects.size(); i++)
         {
@@ -165,7 +164,6 @@ public class GameController implements Screen {
         batch.begin(); //begin the sprite batch
         
         map.Draw(batch);
-        bg.Draw(batch);
 
         if (physicsObjects.size() > 0)
         {
