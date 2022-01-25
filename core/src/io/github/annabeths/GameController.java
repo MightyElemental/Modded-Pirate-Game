@@ -8,6 +8,8 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -66,7 +68,6 @@ public class GameController implements Screen {
 
     ProjectileDataHolder projectileHolder;
 
-    EnemyCollege testCollege;
     public ProjectileDataHolder projectileDataHolder;
 
     private PlayerBoat playerBoat;
@@ -76,7 +77,6 @@ public class GameController implements Screen {
         gameObjects = new ArrayList<GameObject>();
         physicsObjects = new ArrayList<PhysicsObject>();
         projectileHolder = new ProjectileDataHolder();
-        testCollege = new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), this, projectileHolder.stock);
         bg = new WaterBackground(2000,2000);
     }
 
@@ -96,8 +96,10 @@ public class GameController implements Screen {
         DrawUpgradeButton(); // put this in its own function to make this function look a bit cleaner
 
         // Create the player boat and place it in the centre of the screen
-        playerBoat = new PlayerBoat(this);
-        playerBoat.SetPosition(200,200); // place the player 
+        playerBoat = new PlayerBoat(this, new Vector2(200,200));
+        physicsObjects.add(playerBoat);
+
+        physicsObjects.add(new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), this, projectileHolder.stock));
 
         //create the moving camera/map borders
         map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), (PlayerBoat) playerBoat, batch);
@@ -118,22 +120,41 @@ public class GameController implements Screen {
     	
     	map.Update(delta);
         bg.Update(delta);
-    	playerBoat.Update(delta);
-        testCollege.Update(delta,playerBoat);
 
         if (physicsObjects.size() > 0)
         {
-            Iterator<PhysicsObject> i = physicsObjects.iterator(); // use an iterator to safely remove objects from 
-            // the list whilst traversing it
-            while(i.hasNext())
+            for(int i=0; i < physicsObjects.size(); i++)
             {
-                PhysicsObject p = i.next();
-                p.Update(delta); // update the current physicsobject
-                if(playerBoat.CheckCollisionWith(p))
-                {
-                    if(playerBoat.OnCollision(p)) //if it returns true, then remove other
-                        i.remove();
+                PhysicsObject current = physicsObjects.get(i);
+                if(physicsObjects.get(i).getClass() == EnemyCollege.class || physicsObjects.get(i).getClass()==PlayerCollege.class)
+                { //colleges need a slightly different update method signature, so use that specifically for them
+                    physicsObjects.get(i).Update(delta, playerBoat);
                 }
+                else
+                { //other physics objects update
+                    physicsObjects.get(i).Update(delta);
+                }
+
+                for(int j=0; j < physicsObjects.size(); j++)
+                {
+                    if(i==j)
+                        continue;
+                    
+                    if(current.CheckCollisionWith(physicsObjects.get(j)))
+                    {
+                        current.OnCollision(physicsObjects.get(j));
+                    }
+                }
+            }
+        }
+
+        Iterator<PhysicsObject> p = physicsObjects.iterator();
+        while(p.hasNext())
+        {
+            PhysicsObject current = p.next();
+            if(current.killOnNextTick)
+            {
+                p.remove();
             }
         }
         
@@ -147,8 +168,6 @@ public class GameController implements Screen {
         
         map.Draw(batch);
         bg.Draw(batch);
-        playerBoat.Draw(batch);
-        testCollege.Draw(batch);
 
         if (physicsObjects.size() > 0)
         {
@@ -171,6 +190,18 @@ public class GameController implements Screen {
         stage.draw();
 
         batch.end(); //end the sprite batch
+        //begin debug sprite batch
+        ShapeRenderer sr = new ShapeRenderer();
+        sr.setProjectionMatrix(map.camera.combined);
+        sr.begin(ShapeType.Line);
+        for(int i=0; i < physicsObjects.size(); i++)
+        {
+            sr.polygon(physicsObjects.get(i).collisionPolygon.getTransformedVertices());
+        }
+        // sr.polygon(playerBoat.collisionPolygon.getTransformedVertices());
+        // sr.circle(playerBoat.collisionPolygon.getX()+playerBoat.collisionPolygon.getOriginX(),
+        // playerBoat.collisionPolygon.getY()+playerBoat.collisionPolygon.getOriginY(), 5);
+        sr.end();
     }
 
     @Override

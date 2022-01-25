@@ -5,6 +5,7 @@ import java.util.Random;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Projectiles.ProjectileData;
@@ -29,12 +30,13 @@ public class EnemyCollege extends College{
         range = 500;
         gc = controller;
         projectileType = projectileData;
+        collisionPolygon = new Polygon(new float[]{0,0,100,0,100,100,0,100});
+        collisionPolygon.setPosition(position.x, position.y);
     }
 
     @Override
-    public boolean OnCollision(PhysicsObject other) {
+    public void OnCollision(PhysicsObject other) {
         // TODO Auto-generated method stub
-        return false;
     }    
 
     void Update(float delta, PhysicsObject playerBoat)

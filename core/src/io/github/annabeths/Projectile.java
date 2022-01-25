@@ -33,6 +33,7 @@ public class Projectile extends PhysicsObject{
             data.size.x,data.size.y/2,
             data.size.x/2,data.size.y,
             0,data.size.y/2});
+        collisionPolygon.setOrigin(data.size.x/2, data.size.y/2);
     }
 
 
@@ -40,7 +41,7 @@ public class Projectile extends PhysicsObject{
     public void Update(float delta) {
         position.x += movePerFrame.x * delta;
         position.y += movePerFrame.y * delta;
-        collisionPolygon.setPosition(position.x, position.y);
+        collisionPolygon.setPosition(position.x - sprite.getWidth()/2, position.y - sprite.getHeight()/2);
     }
 
     @Override
@@ -51,8 +52,11 @@ public class Projectile extends PhysicsObject{
 
 
     @Override
-    public boolean OnCollision(PhysicsObject other) {
-        // projectile should not do anything on collision itself, the other object should handle it
-        return false;
+    public void OnCollision(PhysicsObject other) {
+        if(other.getClass() == Projectile.class)
+        {
+            other.killOnNextTick = true;
+            killOnNextTick = true;
+        }
     }
 }

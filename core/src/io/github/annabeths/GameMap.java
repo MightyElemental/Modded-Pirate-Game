@@ -23,7 +23,6 @@ public class GameMap extends GameObject{
     @Override
     public void Update(float delta) {
         Vector2 boatPos = boat.position;
-        System.out.println(boatPos.x + "," + boatPos.y);
         camera.position.set(boat.sprite.getX() + boat.GetCenterX(), boat.sprite.getY() + boat.GetCenterY(), 0);
         camera.update();
     }

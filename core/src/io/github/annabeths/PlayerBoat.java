@@ -6,13 +6,16 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 public class PlayerBoat extends Boat{
-    public PlayerBoat(GameController controller) {
+    public PlayerBoat(GameController controller, Vector2 initialPosition) {
         this.controller = controller;
 
 		this.HP = 100;
 		this.maxHP = 100;
 		this.speed = 125;
 		this.turnSpeed = 150;
+		position = initialPosition;
+		collisionPolygon.setPosition(initialPosition.x, initialPosition.y);
+		sprite.setPosition(initialPosition.x, initialPosition.y);
 	}
 	
 	@Override
@@ -42,20 +45,23 @@ public class PlayerBoat extends Boat{
 	}
 	
 	@Override
-	public boolean OnCollision(PhysicsObject other) {
+	public void OnCollision(PhysicsObject other) {
 		if(other.getClass() == Projectile.class)
 		{
 			Projectile p = (Projectile) other;
-			if(p.isPlayerProjectile)
-				return false;
-			else
-				return true;
+			if(! p.isPlayerProjectile)
+			{
+				p.killOnNextTick = true;
+			}
 		}
 		else if(other.getClass() == EnemyCollege.class)
 		{
-			System.out.println("enemy college hit");
+			System.out.println("enemy college hit (UNIMPLEMENTED)");
 		}
-		return false;
+		else
+		{
+			System.out.println("playerboat hit something else!");
+		}
 	}
 
 	@Override

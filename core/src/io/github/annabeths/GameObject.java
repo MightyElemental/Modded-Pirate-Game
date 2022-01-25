@@ -11,6 +11,7 @@ public abstract class GameObject {
 
     float rotation = 0;
     Sprite sprite = null;    
+    boolean killOnNextTick = false;
 
     void Update(float delta)
     {
