@@ -8,8 +8,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -99,7 +97,7 @@ public class GameController implements Screen {
 
         // Create the player boat and place it in the centre of the screen
         playerBoat = new PlayerBoat(this);
-        playerBoat.SetPosition(1900,1900); // place the player 
+        playerBoat.SetPosition(200,200); // place the player 
 
         //create the moving camera/map borders
         map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), (PlayerBoat) playerBoat, batch);
@@ -121,6 +119,7 @@ public class GameController implements Screen {
     	map.Update(delta);
         bg.Update(delta);
     	playerBoat.Update(delta);
+        testCollege.Update(delta,playerBoat);
 
         if (physicsObjects.size() > 0)
         {
@@ -149,6 +148,7 @@ public class GameController implements Screen {
         map.Draw(batch);
         bg.Draw(batch);
         playerBoat.Draw(batch);
+        testCollege.Draw(batch);
 
         if (physicsObjects.size() > 0)
         {
@@ -171,14 +171,6 @@ public class GameController implements Screen {
         stage.draw();
 
         batch.end(); //end the sprite batch
-
-        //begin debug sprite batch
-        ShapeRenderer sr = new ShapeRenderer();
-        sr.begin(ShapeType.Line);
-        sr.polygon(playerBoat.collisionPolygon.getTransformedVertices());
-        sr.circle(playerBoat.collisionPolygon.getX()+playerBoat.collisionPolygon.getOriginX(),
-        playerBoat.collisionPolygon.getY()+playerBoat.collisionPolygon.getOriginY(), 5);
-        sr.end();
     }
 
     @Override
