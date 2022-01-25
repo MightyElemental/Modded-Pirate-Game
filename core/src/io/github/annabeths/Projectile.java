@@ -55,8 +55,12 @@ public class Projectile extends PhysicsObject{
     public void OnCollision(PhysicsObject other) {
         if(other.getClass() == Projectile.class)
         {
-            other.killOnNextTick = true;
-            killOnNextTick = true;
+            Projectile p = (Projectile) other;
+            if(p.isPlayerProjectile != isPlayerProjectile)
+            {
+                other.killOnNextTick = true;
+                killOnNextTick = true;
+            }
         }
     }
 }
