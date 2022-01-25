@@ -1,12 +1,16 @@
 package io.github.annabeths;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.*;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
@@ -26,6 +30,7 @@ public class GameController implements Screen {
     boolean upgradeMenuOpen = false;
     boolean upgradeMenuInitialised = false; // Set to true once initialised
     private SpriteBatch batch;
+    GameMap map;
     
     BitmapFont font;
     GlyphLayout hpTextLayout;
@@ -64,6 +69,7 @@ public class GameController implements Screen {
     ProjectileDataHolder projectileHolder;
 
     EnemyCollege testCollege;
+    public ProjectileDataHolder projectileDataHolder;
 
     private PlayerBoat playerBoat;
 
@@ -71,10 +77,9 @@ public class GameController implements Screen {
         this.game = game;
         gameObjects = new ArrayList<GameObject>();
         physicsObjects = new ArrayList<PhysicsObject>();
-        bg = new WaterBackground(Gdx.graphics.getWidth(),
-                                 Gdx.graphics.getHeight());
         projectileHolder = new ProjectileDataHolder();
         testCollege = new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), this, projectileHolder.stock);
+        bg = new WaterBackground(2000,2000);
     }
 
     @Override
@@ -94,7 +99,10 @@ public class GameController implements Screen {
 
         // Create the player boat and place it in the centre of the screen
         playerBoat = new PlayerBoat(this);
-        playerBoat.SetPosition(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight()/2); // place the player 
+        playerBoat.SetPosition(1900,1900); // place the player 
+
+        //create the moving camera/map borders
+        map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), (PlayerBoat) playerBoat, batch);
     }
 
     @Override
@@ -110,9 +118,9 @@ public class GameController implements Screen {
             xpTick = 1;
         }
     	
+    	map.Update(delta);
         bg.Update(delta);
     	playerBoat.Update(delta);
-        testCollege.Update(delta, playerBoat);
 
         if (physicsObjects.size() > 0)
         {
@@ -134,10 +142,12 @@ public class GameController implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        batch.setProjectionMatrix(map.camera.combined);
+
         batch.begin(); //begin the sprite batch
         
+        map.Draw(batch);
         bg.Draw(batch);
-        testCollege.Draw(batch);
         playerBoat.Draw(batch);
 
         if (physicsObjects.size() > 0)
@@ -146,6 +156,7 @@ public class GameController implements Screen {
                 physicsObject.Draw(batch);
             }
         }
+        //map.CameraUpdate();
 
         // Draw the text showing the player's stats
         hpTextLayout.setText(font, "HP: " + playerBoat.HP + "/" + playerBoat.maxHP);

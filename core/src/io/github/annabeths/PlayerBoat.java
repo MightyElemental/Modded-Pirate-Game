@@ -40,6 +40,7 @@ public class PlayerBoat extends Boat{
 		&& shotDelay <= 0){
             Shoot();
         }
+
 	}
 	
 	@Override
