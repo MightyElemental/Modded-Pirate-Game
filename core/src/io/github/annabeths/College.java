@@ -12,6 +12,7 @@ public abstract class College extends PhysicsObject{
     int fireRate;
     Sprite aliveSprite;
     Sprite deadSprite;
+    Sprite islandSprite;
 
     boolean isInRange(Boat other)
     {

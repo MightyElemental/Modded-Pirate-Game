@@ -99,7 +99,7 @@ public class GameController implements Screen {
         playerBoat = new PlayerBoat(this, new Vector2(200,200), new Vector2(2000,2000));
         physicsObjects.add(playerBoat);
 
-        physicsObjects.add(new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), this, projectileHolder.stock));
+        physicsObjects.add(new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), new Texture("img/island.png"), this, projectileHolder.stock));
 
         //create the moving camera/map borders
         map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), (PlayerBoat) playerBoat, batch,2000,2000);

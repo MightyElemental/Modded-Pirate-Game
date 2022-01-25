@@ -20,12 +20,15 @@ public class EnemyCollege extends College{
     GameController gc;
     ProjectileData projectileType;
    
-    public EnemyCollege(Vector2 position, Texture aliveTexture,
+    public EnemyCollege(Vector2 position, Texture aliveTexture, Texture islandTexture,
                         GameController controller, ProjectileData projectileData)
     {
         aliveSprite = new Sprite(aliveTexture);
         aliveSprite.setPosition(position.x, position.y);
         aliveSprite.setSize(100, 100);
+        islandSprite = new Sprite(islandTexture);
+        islandSprite.setCenter(aliveSprite.getX()+5, aliveSprite.getY()+5);
+        islandSprite.setSize(120, 120);
         this.position = position;
         range = 500;
         gc = controller;
@@ -68,6 +71,7 @@ public class EnemyCollege extends College{
 
     void Draw(SpriteBatch batch)
     {
+        islandSprite.draw(batch);
         aliveSprite.draw(batch);
     }
 
