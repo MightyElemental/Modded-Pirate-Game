@@ -37,6 +37,15 @@ public class EnemyCollege extends College{
     @Override
     public void OnCollision(PhysicsObject other) {
         // TODO Auto-generated method stub
+        if(other.getClass() == Projectile.class)
+        {
+            Projectile p = (Projectile) other;
+            if(p.isPlayerProjectile)
+            {
+                System.out.println("player projectile hit enemy college");
+                p.killOnNextTick = true;
+            }
+        }
     }    
 
     void Update(float delta, PhysicsObject playerBoat)

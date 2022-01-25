@@ -121,29 +121,27 @@ public class GameController implements Screen {
     	map.Update(delta);
         bg.Update(delta);
 
-        if (physicsObjects.size() > 0)
+        for(int i=0; i < physicsObjects.size(); i++)
         {
-            for(int i=0; i < physicsObjects.size(); i++)
-            {
-                PhysicsObject current = physicsObjects.get(i);
-                if(physicsObjects.get(i).getClass() == EnemyCollege.class || physicsObjects.get(i).getClass()==PlayerCollege.class)
-                { //colleges need a slightly different update method signature, so use that specifically for them
-                    physicsObjects.get(i).Update(delta, playerBoat);
-                }
-                else
-                { //other physics objects update
-                    physicsObjects.get(i).Update(delta);
-                }
+            PhysicsObject current = physicsObjects.get(i);
+            if(current.getClass() == EnemyCollege.class || current.getClass()==PlayerCollege.class)
+            { //colleges need a slightly different update method signature, so use that specifically for them
+                current.Update(delta, playerBoat);
+            }
+            else
+            { //other physics objects update
+                current.Update(delta);
+            }
 
-                for(int j=0; j < physicsObjects.size(); j++)
+            for(int j=0; j < physicsObjects.size(); j++)
+            {
+                PhysicsObject other = physicsObjects.get(j);
+                if(i==j)
+                    continue;
+
+                if(current.CheckCollisionWith(other))
                 {
-                    if(i==j)
-                        continue;
-                    
-                    if(current.CheckCollisionWith(physicsObjects.get(j)))
-                    {
-                        current.OnCollision(physicsObjects.get(j));
-                    }
+                    current.OnCollision(other);
                 }
             }
         }
