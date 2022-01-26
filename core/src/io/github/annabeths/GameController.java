@@ -150,8 +150,10 @@ public class GameController implements Screen {
         //create the moving camera/map borders
 
         //create a test AI boat
-        NeutralBoat testBoat = new NeutralBoat(this, new Vector2(400, 400), new Vector2(2000, 2000));
-        physicsObjects.add(testBoat);
+        physicsObjects.add(new NeutralBoat(this, new Vector2(400, 400), new Vector2(2000, 2000)));
+        physicsObjects.add(new NeutralBoat(this, new Vector2(800, 400), new Vector2(2000, 2000)));
+        physicsObjects.add(new NeutralBoat(this, new Vector2(400, 800), new Vector2(2000, 2000)));
+        physicsObjects.add(new NeutralBoat(this, new Vector2(800, 800), new Vector2(2000, 2000)));
 
         map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),
         (PlayerBoat) playerBoat, batch, 1500, 1500);
