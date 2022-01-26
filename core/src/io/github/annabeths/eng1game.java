@@ -42,8 +42,8 @@ public class eng1game extends Game {
 				setScreen(gameOverScreen);
 				break;
 			case gameWinScreen:
-				System.out.println("GAME WON, going back to menu...");
-				setScreen(menuScreen);
+				GameWinScreen gameWinScreen = new GameWinScreen(this);
+				setScreen(gameWinScreen);
 		}
 	}
 

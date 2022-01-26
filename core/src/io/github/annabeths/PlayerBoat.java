@@ -40,7 +40,7 @@ public class PlayerBoat extends Boat{
 	
 	@Override
 	public void Update(float delta) {
-		shotDelay -= delta;
+		timeSinceLastShot += delta;
 
 		// TODO Auto-generated method stub
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
@@ -58,8 +58,9 @@ public class PlayerBoat extends Boat{
 
         if(((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && !controller.hoveringOverButton) // make sure we don't fire when hovering over a button and clicking
 		|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) // doesn't matter if we're over a button or not when pressing space
-		&& shotDelay <= 0){
+		&& shotDelay <= timeSinceLastShot){
             Shoot();
+			timeSinceLastShot = 0;
         }
 
 		if(HP <= 0)

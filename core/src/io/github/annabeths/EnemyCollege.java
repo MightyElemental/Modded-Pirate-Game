@@ -19,7 +19,7 @@ import io.github.annabeths.Projectiles.ProjectileData;
 public class EnemyCollege extends College{
    
     int damage;
-    float shootingInaccuracy = 0f; // in degrees (each side)
+    float shootingInaccuracy = 10f; // in degrees (each side)
     float fireRate = 1.5f;
     float timeSinceLastShot = 0;
     Random rd = new Random();
@@ -128,7 +128,6 @@ public class EnemyCollege extends College{
 
     public void becomeVulnerable()
     {
-        System.out.println("other colleges destroyed");
         invulnerable = false;
         hpText.setText(font, HP + "/" + maxHP);
     }

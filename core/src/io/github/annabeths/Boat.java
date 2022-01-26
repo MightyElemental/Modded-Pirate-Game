@@ -18,7 +18,8 @@ public abstract class Boat extends PhysicsObject {
 	protected float speed;
 	protected float turnSpeed;
 
-	protected float shotDelay = 0f;
+	protected float shotDelay = 0.5f;
+	protected float timeSinceLastShot = 0f;
 
 	protected Array<Vector2> mapBounds;
 	protected Vector2 mapSize;

@@ -102,7 +102,7 @@ public class GameController implements Screen {
         DrawUpgradeButton(); // put this in its own function to make this function look a bit cleaner
 
         // Create the player boat and place it in the centre of the screen
-        playerBoat = new PlayerBoat(this, new Vector2(200,200), new Vector2(2000,2000));
+        playerBoat = new PlayerBoat(this, new Vector2(200,200), new Vector2(1500,1500));
         physicsObjects.add(playerBoat);
 
         Texture[] collegeTextures = new Texture[10];
@@ -173,6 +173,11 @@ public class GameController implements Screen {
 
         UpdateObjects(delta);
         ClearKilledObjects();
+
+        if(bossCollege.HP <= 0)
+        {
+            game.gotoScreen(Screens.gameWinScreen);
+        }
 
         // do draws here
 		Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -254,7 +259,6 @@ public class GameController implements Screen {
             PhysicsObject current = physicsObjects.get(i);
             if(current.getClass() == EnemyCollege.class)
             {
-                System.out.println("found!");
                 EnemyCollege e = (EnemyCollege) current;
                 if(e.HP > 0 && !e.invulnerable) // there is still a normal college alive
                 {
@@ -329,7 +333,6 @@ public class GameController implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 // TODO Auto-generated method stub
                 // do some actions
-                System.out.println("Button Pressed");
                 upgradeMenuOpen = !upgradeMenuOpen;
                 ToggleMenu();
             }
@@ -337,7 +340,6 @@ public class GameController implements Screen {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
                 if(pointer == -1){
-                    System.out.println("Button hovering over");
                     hoveringOverButton = true;
                 }
             }
@@ -345,7 +347,6 @@ public class GameController implements Screen {
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor){
                 if(pointer == -1){
-                    System.out.println("Button left");
                     hoveringOverButton = false;
                 }
             }
@@ -385,7 +386,6 @@ public class GameController implements Screen {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
                 if(pointer == -1){
-                    System.out.println("Menu hovering over");
                     hoveringOverButton = true;
                 }
             }
@@ -393,7 +393,6 @@ public class GameController implements Screen {
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor){
                 if(pointer == -1){
-                    System.out.println("Menu left");
                     hoveringOverButton = false;
                 }
             }
@@ -431,7 +430,6 @@ public class GameController implements Screen {
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
                 if(pointer == -1){
-                    System.out.println("Button hovering over");
                     hoveringOverButton = true;
                 }
             }
@@ -439,7 +437,6 @@ public class GameController implements Screen {
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor){
                 if(pointer == -1){
-                    System.out.println("Button left");
                     hoveringOverButton = false;
                 }
             }
@@ -455,14 +452,12 @@ public class GameController implements Screen {
                     BuyUpgrade(2);
                     RandomiseUpgrades();
                 }
-                System.out.println("Button Pressed");
                 return true;
             }
 
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
                 if(pointer == -1){
-                    System.out.println("Button hovering over");
                     hoveringOverButton = true;
                 }
             }
@@ -470,7 +465,6 @@ public class GameController implements Screen {
             @Override
             public void exit(InputEvent event, float x, float y, int pointer, Actor fromActor){
                 if(pointer == -1){
-                    System.out.println("Button left");
                     hoveringOverButton = false;
                 }
             }
@@ -506,7 +500,6 @@ public class GameController implements Screen {
     }
 
     void BuyUpgrade(int upgrade){
-        System.out.println("upgrading");
         switch(upgrade){
             case 1:
                 playerBoat.Upgrade(upgrade1, upgrade1amount);

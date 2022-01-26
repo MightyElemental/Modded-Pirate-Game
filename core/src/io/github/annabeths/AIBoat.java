@@ -32,7 +32,6 @@ public abstract class AIBoat extends Boat {
             while(newDestinationSet == false){ // Keep going until we find a valid destination
                 Random r = new Random();
                 newDestinationSet = SetDestination(new Vector2(r.nextInt((int)mapSize.x + 1), r.nextInt((int)mapSize.y + 1)));
-                System.out.print(newDestinationSet);
             }
         }
     }
