@@ -36,7 +36,6 @@ public class PlayerCollege extends College{
         PlayerBoat boat = (PlayerBoat) playerBoat;
         if(isInRange(boat))
         { // if the player boat is in range, heal it
-            System.out.println("heal");
             boat.Heal(healAmount, delta);
         }
     }
