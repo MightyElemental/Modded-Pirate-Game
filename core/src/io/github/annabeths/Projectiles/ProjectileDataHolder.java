@@ -11,7 +11,7 @@ public  class ProjectileDataHolder {
 	public ProjectileData enemy;
 
 	public ProjectileDataHolder() {
-		stock = new ProjectileData(200, 100, new Vector2(20,20),
+		stock = new ProjectileData(200, 20, new Vector2(20,20),
 		new Texture("img/cannonball.png"));
 	}
 }

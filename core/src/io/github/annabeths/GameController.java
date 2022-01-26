@@ -77,7 +77,6 @@ public class GameController implements Screen {
         gameObjects = new ArrayList<GameObject>();
         physicsObjects = new ArrayList<PhysicsObject>();
         projectileHolder = new ProjectileDataHolder();
-        bg = new WaterBackground(2000,2000);
     }
 
     @Override
@@ -99,10 +98,21 @@ public class GameController implements Screen {
         playerBoat = new PlayerBoat(this, new Vector2(200,200), new Vector2(2000,2000));
         physicsObjects.add(playerBoat);
 
-        physicsObjects.add(new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), new Texture("img/island.png"), this, projectileHolder.stock));
+        physicsObjects.add(new EnemyCollege(new Vector2(50,1350),
+                           new Texture("img/castle1.png"), new Texture("img/island.png"),
+                           this, projectileHolder.stock, 200));
 
+        
+        physicsObjects.add(new EnemyCollege(new Vector2(1350,50),
+                           new Texture("img/castle2.png"), new Texture("img/island.png"),
+                           this, projectileHolder.stock, 200));
+
+        physicsObjects.add(new EnemyCollege(new Vector2(1350,1350),
+                           new Texture("img/castle3.png"), new Texture("img/island.png"),
+                           this, projectileHolder.stock, 200));
         //create the moving camera/map borders
-        map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), (PlayerBoat) playerBoat, batch,2000,2000);
+        map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),
+        (PlayerBoat) playerBoat, batch, 1500, 1500);
     }
 
     @Override
@@ -283,7 +293,7 @@ public class GameController implements Screen {
         });
 
         menuButton.setScale(1f, 1f);
-        menuButton.setPosition(Gdx.graphics.getWidth() - 5 - menuButton.getWidth(), Gdx.graphics.getHeight() - 90 - menuButton.getHeight());
+        menuButton.setPosition(Gdx.graphics.getWidth()/2 - menuButton.getWidth()/2, Gdx.graphics.getHeight() - menuButton.getHeight());
 
         stage.addActor(menuButton);
     }

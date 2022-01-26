@@ -67,9 +67,9 @@ public class PlayerBoat extends Boat{
 				HP -= p.damage;
 			}
 		}
-		else if(other.getClass() == EnemyCollege.class)
+		else if(other.getClass() == EnemyCollege.class || other.getClass() == PlayerCollege.class)
 		{
-			System.out.println("enemy college hit (UNIMPLEMENTED)");
+			controller.gameOver();
 		}
 		else
 		{
