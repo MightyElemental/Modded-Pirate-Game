@@ -21,14 +21,16 @@ public abstract class Boat extends PhysicsObject {
 	protected float shotDelay = 0f;
 
 	protected Array<Vector2> mapBounds;
+	protected Vector2 mapSize;
 	
     public Boat() {
         sprite = new Sprite(new Texture(Gdx.files.internal("img/boat1.png")));
         sprite.setSize(100, 50);
         sprite.setOrigin(50, 25);
-        
         sprite.setCenter(Gdx.graphics.getWidth()/2, Gdx.graphics.getHeight()/2);
+
 		collisionPolygon = new Polygon(new float[]{0,0,0,68,25,100,50,68,50,0});
+		
 		position = new Vector2();
     }
 	
@@ -52,7 +54,7 @@ public abstract class Boat extends PhysicsObject {
 	
 	// Turn the boat, a positive multiplier will turn it anti-clockwise, negative clockwise
 	void Turn(float delta, float multiplier) {
-		rotation += turnSpeed * delta * multiplier;
+		rotation = (rotation + turnSpeed * delta * multiplier) % 360;
 		sprite.setRotation(rotation);
 		collisionPolygon.setRotation(rotation - 90);
 	}

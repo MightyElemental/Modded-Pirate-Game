@@ -10,19 +10,20 @@ import java.lang.Math;
 
 public class Projectile extends PhysicsObject{
     
-    private Vector2 movePerFrame;
-    private float velocity; 
+    private Vector2 velocity;
+    private float speed; 
+    private float damage;
     private Sprite sprite;
     public boolean isPlayerProjectile;
 
     public Projectile(Vector2 origin, float originRot, ProjectileData data, boolean isPlayerProjectile) {
         position = origin;
-        velocity = data.velocity;
+        speed = data.speed;
         this.isPlayerProjectile = isPlayerProjectile;
         
-        // Calculate how far the projectile will move per frame
-        movePerFrame = new Vector2((float) Math.cos(Math.toRadians(originRot)) * velocity, 
-        		(float) Math.sin(Math.toRadians(originRot)) * velocity);
+        // Calculate the projectile's velocity in the game space
+        velocity = new Vector2((float) Math.cos(Math.toRadians(originRot)) * speed, 
+        		(float) Math.sin(Math.toRadians(originRot)) * speed);
         
         sprite = new Sprite(data.texture);
         sprite.setSize(data.size.x, data.size.y);
@@ -36,11 +37,32 @@ public class Projectile extends PhysicsObject{
         collisionPolygon.setOrigin(data.size.x/2, data.size.y/2);
     }
 
+    public Projectile(Vector2 origin, float originRot, ProjectileData data, boolean isPlayerProjectile, float damageMultiplier, float speedMultiplier) {
+        position = origin;
+        speed = data.speed * speedMultiplier;
+        damage = data.damage * damageMultiplier;
+        this.isPlayerProjectile = isPlayerProjectile;
+        
+        // Calculate the projectile's velocity in the game space
+        velocity = new Vector2((float) Math.cos(Math.toRadians(originRot)) * speed, 
+        		(float) Math.sin(Math.toRadians(originRot)) * speed);
+        
+        sprite = new Sprite(data.texture);
+        sprite.setSize(data.size.x, data.size.y);
+        sprite.setOrigin(data.size.x / 2, data.size.y / 2);
+        sprite.setRotation(originRot);
+
+        collisionPolygon = new Polygon(new float[]{data.size.x/2,0,
+            data.size.x,data.size.y/2,
+            data.size.x/2,data.size.y,
+            0,data.size.y/2});
+        collisionPolygon.setOrigin(data.size.x/2, data.size.y/2);
+    }
 
     @Override
     public void Update(float delta) {
-        position.x += movePerFrame.x * delta;
-        position.y += movePerFrame.y * delta;
+        position.x += velocity.x * delta;
+        position.y += velocity.y * delta;
         collisionPolygon.setPosition(position.x - sprite.getWidth()/2, position.y - sprite.getHeight()/2);
     }
 
@@ -49,7 +71,6 @@ public class Projectile extends PhysicsObject{
         sprite.setCenter(position.x, position.y);
         sprite.draw(batch);
     }
-
 
     @Override
     public void OnCollision(PhysicsObject other) {

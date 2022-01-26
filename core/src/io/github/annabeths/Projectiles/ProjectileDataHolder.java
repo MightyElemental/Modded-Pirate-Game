@@ -12,6 +12,6 @@ public  class ProjectileDataHolder {
 
 	public ProjectileDataHolder() {
 		stock = new ProjectileData(200, 100, new Vector2(20,20),
-		new Texture("img/cannonball.png"));
+		new Texture("img/cannonball.png"), 0.5f);
 	}
 }

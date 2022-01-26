@@ -23,6 +23,7 @@ public class GameController implements Screen {
     eng1game game;
     ArrayList<GameObject> gameObjects;
     ArrayList<PhysicsObject> physicsObjects;
+    public ArrayList<College> colleges;
     float testRot = 0;
 
     // UI Related Variables
@@ -76,6 +77,7 @@ public class GameController implements Screen {
         this.game = game;
         gameObjects = new ArrayList<GameObject>();
         physicsObjects = new ArrayList<PhysicsObject>();
+        colleges = new ArrayList<College>();
         projectileHolder = new ProjectileDataHolder();
         bg = new WaterBackground(2000,2000);
     }
@@ -99,16 +101,21 @@ public class GameController implements Screen {
         playerBoat = new PlayerBoat(this, new Vector2(200,200), new Vector2(2000,2000));
         physicsObjects.add(playerBoat);
 
-        physicsObjects.add(new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), new Texture("img/island.png"), this, projectileHolder.stock));
+        EnemyCollege college1 = new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), new Texture("img/island.png"), this, projectileHolder.stock);
+        physicsObjects.add(college1);
+        colleges.add(college1);
 
         //create the moving camera/map borders
         map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), (PlayerBoat) playerBoat, batch,2000,2000);
+
+        //create a test AI boat
+        NeutralBoat testBoat = new NeutralBoat(this, new Vector2(400, 400), new Vector2(2000, 2000));
+        physicsObjects.add(testBoat);
     }
 
     @Override
     public void render(float delta) {
         // do updates here
-
         stage.act();
 
         xpTick -= delta * xpTickMultiplier;
@@ -120,41 +127,9 @@ public class GameController implements Screen {
     	
     	map.Update(delta);
 
-        for(int i=0; i < physicsObjects.size(); i++)
-        {
-            PhysicsObject current = physicsObjects.get(i);
-            if(current.getClass() == EnemyCollege.class || current.getClass()==PlayerCollege.class)
-            { //colleges need a slightly different update method signature, so use that specifically for them
-                current.Update(delta, playerBoat);
-            }
-            else
-            { //other physics objects update
-                current.Update(delta);
-            }
+        UpdateObjects(delta);
+        ClearKilledObjects();
 
-            for(int j=0; j < physicsObjects.size(); j++)
-            {
-                PhysicsObject other = physicsObjects.get(j);
-                if(i==j)
-                    continue;
-
-                if(current.CheckCollisionWith(other))
-                {
-                    current.OnCollision(other);
-                }
-            }
-        }
-
-        Iterator<PhysicsObject> p = physicsObjects.iterator();
-        while(p.hasNext())
-        {
-            PhysicsObject current = p.next();
-            if(current.killOnNextTick)
-            {
-                p.remove();
-            }
-        }
-        
         // do draws here
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
@@ -186,6 +161,7 @@ public class GameController implements Screen {
         stage.draw();
 
         batch.end(); //end the sprite batch
+
         //begin debug sprite batch
         boolean debugCollisions = false;
         if(debugCollisions)
@@ -204,30 +180,59 @@ public class GameController implements Screen {
         }
     }
 
-    @Override
-    public void resize(int width, int height) {
+    public void UpdateObjects(float delta){
+        for(int i=0; i < physicsObjects.size(); i++)
+        {
+            PhysicsObject current = physicsObjects.get(i);
+            if(current instanceof EnemyCollege || current instanceof PlayerCollege)
+            { //colleges need a slightly different update method signature, so use that specifically for them
+                current.Update(delta, playerBoat);
+            }
+            else
+            { //other physics objects update
+                current.Update(delta);
+            }
 
+            for(int j=0; j < physicsObjects.size(); j++)
+            {
+                PhysicsObject other = physicsObjects.get(j);
+                if(i==j)
+                    continue;
+
+                if(current.CheckCollisionWith(other))
+                {
+                    current.OnCollision(other);
+                }
+            }
+        }
+    }
+
+    public void ClearKilledObjects(){
+        Iterator<PhysicsObject> p = physicsObjects.iterator();
+        while(p.hasNext())
+        {
+            PhysicsObject current = p.next();
+            if(current.killOnNextTick)
+            {
+                p.remove();
+            }
+        }
     }
 
     @Override
-    public void pause() {
-
-    }
+    public void resize(int width, int height) {}
 
     @Override
-    public void resume() {
-
-    }
+    public void pause() {}
 
     @Override
-    public void hide() {
-
-    }
+    public void resume() {}
 
     @Override
-    public void dispose() {
+    public void hide() {}
 
-    }
+    @Override
+    public void dispose() {}
 
     public void gameOver(){
 
@@ -246,6 +251,8 @@ public class GameController implements Screen {
         xp += amount;
         plunder += amount;
     }
+
+    // UI & Upgrade Functions
 
     public void DrawUpgradeButton(){
         // Create the upgrade button and add it to the UI stage
@@ -331,12 +338,12 @@ public class GameController implements Screen {
         });
 
         // Create the upgrade buttons and add it to the UI stage
-        upgradeButton1Style = new TextButtonStyle();
-        upgradeButton2Style = new TextButtonStyle();
+        upgradeButton1Style = new TextButtonStyle();   
         upgradeButton1Style.font = font;
         upgradeButton1Style.fontColor = Color.BLACK;
         upgradeButton1Style.up = new TextureRegionDrawable(new Texture("ui/upgradebutton.png"));
 
+        upgradeButton2Style = new TextButtonStyle();
         upgradeButton2Style.font = font;
         upgradeButton2Style.fontColor = Color.BLACK;
         upgradeButton2Style.up = new TextureRegionDrawable(new Texture("ui/upgradebutton.png"));
@@ -345,30 +352,19 @@ public class GameController implements Screen {
         upgradeButton2 = new TextButton("", upgradeButton2Style);
 
         upgradeButton1.addListener(new ClickListener() {
-            boolean clicked = false;
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 // TODO Auto-generated method stub
                 // do some actions
-                if(clicked == false){
-                    clicked = true;
-                    if(xp >= upgrade1cost){
-                        xp -= upgrade1cost;
-                        BuyUpgrade(1);
-                        RandomiseUpgrades();
-                    }
-                    
+                if(xp >= upgrade1cost){
+                    xp -= upgrade1cost;
+                    BuyUpgrade(1);
+                    RandomiseUpgrades();
                 }
-                System.out.println("Button Pressed, clicked is " + clicked);
                 return true;
             }
             
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                // TODO Auto-generated method stub
-                // do some actions
-                clicked = false;
-            }
+            
 
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
@@ -388,28 +384,17 @@ public class GameController implements Screen {
         });
 
         upgradeButton2.addListener(new ClickListener() {
-            boolean clicked = false;
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 // TODO Auto-generated method stub
                 // do some actions
-                if(clicked == false){
-                    clicked = true;
-                    if(xp >= upgrade2cost){
-                        xp -= upgrade2cost;
-                        BuyUpgrade(2);
-                        RandomiseUpgrades();
-                    }
-                    System.out.println("Button Pressed");
+                if(xp >= upgrade2cost){
+                    xp -= upgrade2cost;
+                    BuyUpgrade(2);
+                    RandomiseUpgrades();
                 }
+                System.out.println("Button Pressed");
                 return true;
-            }
-            
-            @Override
-            public void touchUp(InputEvent event, float x, float y, int pointer, int button) {
-                // TODO Auto-generated method stub
-                // do some actions
-                clicked = false;
             }
 
             @Override
@@ -441,19 +426,21 @@ public class GameController implements Screen {
     public void UpdateMenu(){
         // Update the upgrade buttons
         
-        upgradeButton1.setText("Upgrade:\n" + upgrade1.label + " + " + upgrade1amount + "\nCost:\n" + upgrade1cost + " XP");
+        upgradeButton1.setText(!(upgrade1 == Upgrades.projectiledamage || upgrade1 == Upgrades.projectilespeed) ?
+        "Upgrade:\n" + upgrade1.label + " + " + upgrade1amount + "\nCost:\n" + upgrade1cost + " XP" : 
+        "Upgrade:\n" + upgrade1.label + " + " + upgrade1amount * 100 + "%\nCost:\n" + upgrade1cost + " XP");
         
 
         upgradeButton1.setScale(1f, 1f);
         upgradeButton1.setPosition(Gdx.graphics.getWidth()/2 - upgradeMenuBackground.getWidth()/2 + 15, Gdx.graphics.getHeight()/2 + upgradeMenuBackground.getHeight()/2 - upgradeButton1.getHeight() - 15);
 
-        upgradeButton2.setText("Upgrade:\n" + upgrade2.label + " + " + upgrade2amount + "\nCost:\n" + upgrade2cost + " XP");
+        upgradeButton2.setText(!(upgrade2 == Upgrades.projectiledamage || upgrade2 == Upgrades.projectilespeed) ?
+            "Upgrade:\n" + upgrade2.label + " + " + upgrade2amount + "\nCost:\n" + upgrade2cost + " XP" : 
+            "Upgrade:\n" + upgrade2.label + " + " + upgrade2amount * 100 + "%\nCost:\n" + upgrade2cost + " XP");
 
 
         upgradeButton2.setScale(1f, 1f);
         upgradeButton2.setPosition(Gdx.graphics.getWidth()/2 + 35, Gdx.graphics.getHeight()/2 + upgradeMenuBackground.getHeight()/2 - upgradeButton2.getHeight() - 15);
-
-        
     }
 
     void BuyUpgrade(int upgrade){
@@ -470,7 +457,7 @@ public class GameController implements Screen {
 
     void RandomiseUpgrades(){
         Random r = new Random();
-        switch(r.nextInt(3)){
+        switch(r.nextInt(6)){
             case 0: // Max Health
                 upgrade1 = Upgrades.maxhealth;
                 upgrade1amount = 10;
@@ -486,9 +473,24 @@ public class GameController implements Screen {
                 upgrade1amount = 7.5f;
                 upgrade1cost = 25;
                 break;
+            case 3: // Damage
+                upgrade1 = Upgrades.projectiledamage;
+                upgrade1amount = 0.1f;
+                upgrade1cost = 25;
+                break;
+            case 4: // Speed
+                upgrade1 = Upgrades.projectilespeed;
+                upgrade1amount = 0.05f;
+                upgrade1cost = 25;
+                break;
+            case 5: // Defense
+                upgrade1 = Upgrades.defense;
+                upgrade1amount = 1f;
+                upgrade1cost = 35;
+                break;
         }
 
-        switch(r.nextInt(3)){
+        switch(r.nextInt(6)){
             case 0: // Max Health
                 upgrade2 = Upgrades.maxhealth;
                 upgrade2amount = 10;
@@ -503,6 +505,21 @@ public class GameController implements Screen {
                 upgrade2 = Upgrades.turnspeed;
                 upgrade2amount = 7.5f;
                 upgrade2cost = 25;
+                break;
+            case 3: // Damage
+                upgrade2 = Upgrades.projectiledamage;
+                upgrade2amount = 0.1f;
+                upgrade2cost = 25;
+                break;
+            case 4: // Speed
+                upgrade2 = Upgrades.projectilespeed;
+                upgrade2amount = 0.05f;
+                upgrade2cost = 25;
+                break;
+            case 5: // Defense
+                upgrade2 = Upgrades.defense;
+                upgrade2amount = 1f;
+                upgrade2cost = 35;
                 break;
         }
 

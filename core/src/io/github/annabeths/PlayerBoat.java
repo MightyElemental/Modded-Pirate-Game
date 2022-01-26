@@ -7,6 +7,12 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class PlayerBoat extends Boat{
+	float projectileDamageMultiplier = 1;
+	float projectileSpeedMultiplier = 1;
+
+	// The higher the defense, the stronger the player, this is subtracted from the damage
+	int defense = 1;
+
     public PlayerBoat(GameController controller, Vector2 initialPosition, Vector2 mapSize) {
         this.controller = controller;
 
@@ -15,8 +21,14 @@ public class PlayerBoat extends Boat{
 		this.speed = 125;
 		this.turnSpeed = 150;
 		position = initialPosition;
-		collisionPolygon.setPosition(initialPosition.x, initialPosition.y);
+
+		collisionPolygon.setPosition(initialPosition.x + GetCenterX()/2, initialPosition.y - GetCenterY()/2 - 10);
+		collisionPolygon.setOrigin(25,50);
+		collisionPolygon.setRotation(rotation - 90);
+
 		sprite.setPosition(initialPosition.x, initialPosition.y);
+
+		this.mapSize = mapSize;
 		mapBounds = new Array<Vector2>(true, 4);
 		mapBounds.add(new Vector2(0,0));
 		mapBounds.add(new Vector2(mapSize.x, 0));
@@ -52,15 +64,14 @@ public class PlayerBoat extends Boat{
 	
 	@Override
 	public void OnCollision(PhysicsObject other) {
-		if(other.getClass() == Projectile.class)
-		{
+		if(other instanceof Projectile){
 			Projectile p = (Projectile) other;
 			if(! p.isPlayerProjectile)
 			{
 				p.killOnNextTick = true;
 			}
 		}
-		else if(other.getClass() == EnemyCollege.class)
+		else if(other instanceof EnemyCollege)
 		{
 			System.out.println("enemy college hit (UNIMPLEMENTED)");
 		}
@@ -73,7 +84,8 @@ public class PlayerBoat extends Boat{
 	@Override
 	void Shoot(){
         Projectile proj = new Projectile(new Vector2(GetCenterX() + position.x, GetCenterY() + position.y),
-        								 rotation, controller.projectileHolder.stock, true);
+        								 rotation, controller.projectileHolder.stock, true,
+										 projectileDamageMultiplier, projectileSpeedMultiplier);
         controller.NewPhysicsObject(proj); // Add the projectile to the GameController's physics objects list so it receives updates
 		shotDelay = controller.projectileHolder.stock.shotDelay;
 	}
@@ -93,6 +105,12 @@ public class PlayerBoat extends Boat{
     		speed += amount;
     	} else if(upgrade == Upgrades.turnspeed) {
     		turnSpeed += amount;
+    	} else if(upgrade == Upgrades.projectiledamage) {
+    		projectileDamageMultiplier += amount;
+    	} else if(upgrade == Upgrades.projectilespeed) {
+    		projectileSpeedMultiplier += amount;
+    	} else if(upgrade == Upgrades.defense) {
+    		defense += amount;
     	}
     }
 
