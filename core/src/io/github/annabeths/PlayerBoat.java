@@ -13,12 +13,14 @@ public class PlayerBoat extends Boat{
 	// The higher the defense, the stronger the player, this is subtracted from the damage
 	int defense = 1;
 
+	float timeSinceLastHeal = 0;
+
     public PlayerBoat(GameController controller, Vector2 initialPosition, Vector2 mapSize) {
         this.controller = controller;
 
 		this.HP = 100;
 		this.maxHP = 100;
-		this.speed = 125;
+		this.speed = 200;
 		this.turnSpeed = 150;
 		position = initialPosition;
 
@@ -60,6 +62,12 @@ public class PlayerBoat extends Boat{
             Shoot();
         }
 
+		if(HP <= 0)
+		{
+			//the player is dead
+			controller.gameOver();
+		}
+
 	}
 	
 	@Override
@@ -69,11 +77,12 @@ public class PlayerBoat extends Boat{
 			if(! p.isPlayerProjectile)
 			{
 				p.killOnNextTick = true;
+				HP -= p.damage;
 			}
 		}
-		else if(other instanceof EnemyCollege)
+		else if(other.getClass() == EnemyCollege.class || other.getClass() == PlayerCollege.class)
 		{
-			System.out.println("enemy college hit (UNIMPLEMENTED)");
+			controller.gameOver();
 		}
 		else
 		{
@@ -87,7 +96,6 @@ public class PlayerBoat extends Boat{
         								 rotation, controller.projectileHolder.stock, true,
 										 projectileDamageMultiplier, projectileSpeedMultiplier);
         controller.NewPhysicsObject(proj); // Add the projectile to the GameController's physics objects list so it receives updates
-		shotDelay = controller.projectileHolder.stock.shotDelay;
 	}
 
 	@Override
@@ -119,12 +127,17 @@ public class PlayerBoat extends Boat{
 		sprite.draw(batch);
 	}
 
-	public void Heal(int amount)
+	public void Heal(int amount, float delta)
 	{
-		HP += amount;
-		if(HP > maxHP)
+		timeSinceLastHeal += delta;
+		if(amount * timeSinceLastHeal >= 1)
 		{
-			HP = maxHP;
+			HP += amount * timeSinceLastHeal;
+			timeSinceLastHeal = 0;
+			if(HP > maxHP)
+			{
+				HP = maxHP;
+			}
 		}
 	}
 }

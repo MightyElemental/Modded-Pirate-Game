@@ -12,14 +12,15 @@ public class Projectile extends PhysicsObject{
     
     private Vector2 velocity;
     private float speed; 
-    private float damage;
     private Sprite sprite;
     public boolean isPlayerProjectile;
+    public float damage;
 
     public Projectile(Vector2 origin, float originRot, ProjectileData data, boolean isPlayerProjectile) {
         position = origin;
         speed = data.speed;
         this.isPlayerProjectile = isPlayerProjectile;
+        damage = data.damage;
         
         // Calculate the projectile's velocity in the game space
         velocity = new Vector2((float) Math.cos(Math.toRadians(originRot)) * speed, 

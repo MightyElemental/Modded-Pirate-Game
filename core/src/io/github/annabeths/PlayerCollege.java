@@ -3,20 +3,26 @@ package io.github.annabeths;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
 public class PlayerCollege extends College{
 
     int healAmount;
 
-    public PlayerCollege(Vector2 position, Texture texture) {
+    public PlayerCollege(Vector2 position, Texture aliveTexture, Texture islandTexture) {
         //TODO set a collision polygon
         healAmount = 15;
-        range = 50;
-        aliveSprite = new Sprite(texture);
+        range = 400;
+        aliveSprite = new Sprite(aliveTexture);
         aliveSprite.setPosition(position.x, position.y);
         aliveSprite.setSize(100,100);
+        islandSprite = new Sprite(islandTexture);
+        islandSprite.setCenter(aliveSprite.getX()+5, aliveSprite.getY()+5);
+        islandSprite.setSize(120, 120);
         this.position = position;
+        collisionPolygon = new Polygon(new float[]{0,0,100,0,100,100,0,100});
+        collisionPolygon.setPosition(position.x, position.y);
     }
 
     @Override
@@ -30,14 +36,14 @@ public class PlayerCollege extends College{
         PlayerBoat boat = (PlayerBoat) playerBoat;
         if(isInRange(boat))
         { // if the player boat is in range, heal it
-            System.out.println("healed for " + (healAmount * delta));
-            boat.Heal((int) (healAmount * delta));
+            boat.Heal(healAmount, delta);
         }
     }
 
     @Override
     void Draw(SpriteBatch batch)
     {
+        islandSprite.draw(batch);
         aliveSprite.draw(batch);    
     }
 

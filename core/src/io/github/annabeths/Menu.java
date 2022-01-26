@@ -32,7 +32,7 @@ public class Menu implements Screen {
 	public void render(float delta) {
 		// do updates
 
-		if(Gdx.input.isKeyPressed(Keys.ENTER))
+		if(Gdx.input.isKeyJustPressed(Keys.ENTER))
 		{
 			//if the ENTER key is pressed, switch to the game screen
 			game.gotoScreen(Screens.gameScreen);

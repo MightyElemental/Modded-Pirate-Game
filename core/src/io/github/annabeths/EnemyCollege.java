@@ -2,11 +2,17 @@ package io.github.annabeths;
 
 import java.util.Random;
 
+import javax.swing.plaf.basic.BasicInternalFrameTitlePane.MaximizeAction;
+
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 
 import io.github.annabeths.Projectiles.ProjectileData;
 
@@ -19,13 +25,21 @@ public class EnemyCollege extends College{
     Random rd = new Random();
     GameController gc;
     ProjectileData projectileType;
+    BitmapFont font;
+    GlyphLayout hpText;
+    int maxHP;
+    int HP;
+    public boolean invulnerable;
    
     public EnemyCollege(Vector2 position, Texture aliveTexture, Texture islandTexture,
-                        GameController controller, ProjectileData projectileData)
+                        GameController controller, ProjectileData projectileData, int maxHP)
     {
         aliveSprite = new Sprite(aliveTexture);
         aliveSprite.setPosition(position.x, position.y);
         aliveSprite.setSize(100, 100);
+        deadSprite = new Sprite(new Texture(Gdx.files.internal("img/castle10.png")));
+        deadSprite.setPosition(position.x, position.y);
+        deadSprite.setSize(100, 100);
         islandSprite = new Sprite(islandTexture);
         islandSprite.setCenter(aliveSprite.getX()+5, aliveSprite.getY()+5);
         islandSprite.setSize(120, 120);
@@ -35,36 +49,51 @@ public class EnemyCollege extends College{
         projectileType = projectileData;
         collisionPolygon = new Polygon(new float[]{0,0,100,0,100,100,0,100});
         collisionPolygon.setPosition(position.x, position.y);
+        this.maxHP = maxHP;
+        HP = maxHP;
+        font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
+        hpText = new GlyphLayout();
+        hpText.setText(font, HP + "/" + maxHP);
     }
 
     @Override
     public void OnCollision(PhysicsObject other) {
-        // TODO Auto-generated method stub
-        if(other.getClass() == Projectile.class)
+        if(other.getClass() == Projectile.class && HP>0)
         {
             Projectile p = (Projectile) other;
             if(p.isPlayerProjectile)
             {
-                System.out.println("player projectile hit enemy college");
                 p.killOnNextTick = true;
+                if(!invulnerable)
+                {
+                    HP -= p.damage;
+                    hpText.setText(font, HP + "/" + maxHP);
+                    if(HP <= 0)
+                        gc.CollegeDestroyed();
+                }
+                else
+                    hpText.setText(font, "RESISTED, destroy other colleges first!");
             }
         }
     }    
 
     void Update(float delta, PhysicsObject playerBoat)
     {
-        if(timeSinceLastShot < fireRate)
+        if(HP > 0)
         {
-            timeSinceLastShot += delta;
-        } // increase the time on the timer to allow for fire rate calculation
-
-        PlayerBoat boat = (PlayerBoat) playerBoat; //cast to playerboat
-        if(isInRange(boat)) // is the player boat in range
-        {
-            if(timeSinceLastShot >= fireRate)
+            if(timeSinceLastShot < fireRate)
             {
-                ShootAt(new Vector2(boat.position.x, boat.position.y));
-                timeSinceLastShot = 0;
+                timeSinceLastShot += delta;
+            } // increase the time on the timer to allow for fire rate calculation
+
+            PlayerBoat boat = (PlayerBoat) playerBoat; //cast to playerboat
+            if(isInRange(boat)) // is the player boat in range
+            {
+                if(timeSinceLastShot >= fireRate)
+                {
+                    ShootAt(new Vector2(boat.position.x, boat.position.y));
+                    timeSinceLastShot = 0;
+                }
             }
         }
     }
@@ -72,7 +101,13 @@ public class EnemyCollege extends College{
     void Draw(SpriteBatch batch)
     {
         islandSprite.draw(batch);
-        aliveSprite.draw(batch);
+        if(HP > 0)
+        {
+            aliveSprite.draw(batch);
+            font.draw(batch, hpText, aliveSprite.getWidth()/2 + position.x - hpText.width/2, position.y - hpText.height/2);
+        }
+        else
+            deadSprite.draw(batch);
     }
 
     void ShootAt(Vector2 target)
@@ -89,6 +124,13 @@ public class EnemyCollege extends College{
                                                        position.y + aliveSprite.getHeight()/2),
                             shotAngle, projectileType, false));
         //instantiate a new bullet and pass a reference to the gamecontroller so it can be updated and drawn
+    }
+
+    public void becomeVulnerable()
+    {
+        System.out.println("other colleges destroyed");
+        invulnerable = false;
+        hpText.setText(font, HP + "/" + maxHP);
     }
 
 }

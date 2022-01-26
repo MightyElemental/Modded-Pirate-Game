@@ -1,6 +1,8 @@
 package io.github.annabeths;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -14,6 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
 import io.github.annabeths.Projectiles.ProjectileDataHolder;
@@ -73,13 +76,14 @@ public class GameController implements Screen {
 
     private PlayerBoat playerBoat;
 
+    private EnemyCollege bossCollege;
+
     public GameController(eng1game game){ //passes the game class so that we can change scene back later
         this.game = game;
         gameObjects = new ArrayList<GameObject>();
         physicsObjects = new ArrayList<PhysicsObject>();
         colleges = new ArrayList<College>();
         projectileHolder = new ProjectileDataHolder();
-        bg = new WaterBackground(2000,2000);
     }
 
     @Override
@@ -101,16 +105,56 @@ public class GameController implements Screen {
         playerBoat = new PlayerBoat(this, new Vector2(200,200), new Vector2(2000,2000));
         physicsObjects.add(playerBoat);
 
-        EnemyCollege college1 = new EnemyCollege(new Vector2(50,50), new Texture("img/castle1.png"), new Texture("img/island.png"), this, projectileHolder.stock);
-        physicsObjects.add(college1);
-        colleges.add(college1);
+        Texture[] collegeTextures = new Texture[10];
+        Random rd = new Random();
+        for(int i=0; i < 9; i++)
+        {
+            collegeTextures[i] = new Texture("img/castle" + (i+1) + ".png");
+        }
+        for(int i=0; i < 9; i++)
+        {
+            Texture tmp = collegeTextures[i];
+            int randomInt = rd.nextInt(9);
+            collegeTextures[i] = collegeTextures[randomInt];
+            collegeTextures[randomInt] = tmp;
+        }
 
+        Texture islandTexture = new Texture("img/island.png");
+        PlayerCollege p = new PlayerCollege(new Vector2(50,50), collegeTextures[0], islandTexture);
+        physicsObjects.add(p);
+        colleges.add(p);
+
+        EnemyCollege e = new EnemyCollege(new Vector2(50,1350), collegeTextures[1], islandTexture,
+                           this, projectileHolder.stock, 200);
+        physicsObjects.add(e);
+        colleges.add(e);
+        
+        e = (new EnemyCollege(new Vector2(1350,50), collegeTextures[2], islandTexture,
+                           this, projectileHolder.stock, 200));
+
+        physicsObjects.add(e);
+        colleges.add(e);
+
+        e = (new EnemyCollege(new Vector2(1350,1350), collegeTextures[3], islandTexture,
+                           this, projectileHolder.stock, 200));
+
+        physicsObjects.add(e);
+        colleges.add(e);
+
+        bossCollege = new EnemyCollege(new Vector2(600,600), collegeTextures[4], islandTexture,
+                           this, projectileHolder.boss, 200);
+
+        bossCollege.invulnerable = true;
+        physicsObjects.add(bossCollege);
+        colleges.add(bossCollege);
         //create the moving camera/map borders
-        map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(), (PlayerBoat) playerBoat, batch,2000,2000);
 
         //create a test AI boat
         NeutralBoat testBoat = new NeutralBoat(this, new Vector2(400, 400), new Vector2(2000, 2000));
         physicsObjects.add(testBoat);
+
+        map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),
+        (PlayerBoat) playerBoat, batch, 1500, 1500);
     }
 
     @Override
@@ -146,7 +190,7 @@ public class GameController implements Screen {
                 physicsObject.Draw(batch);
             }
         }
-        //map.CameraUpdate();
+
 
         // Draw the text showing the player's stats
         hpTextLayout.setText(font, "HP: " + playerBoat.HP + "/" + playerBoat.maxHP);
@@ -173,9 +217,6 @@ public class GameController implements Screen {
             {
                 sr.polygon(physicsObjects.get(i).collisionPolygon.getTransformedVertices());
             }
-            // sr.polygon(playerBoat.collisionPolygon.getTransformedVertices());
-            // sr.circle(playerBoat.collisionPolygon.getX()+playerBoat.collisionPolygon.getOriginX(),
-            // playerBoat.collisionPolygon.getY()+playerBoat.collisionPolygon.getOriginY(), 5);
             sr.end();
         }
     }
@@ -192,7 +233,6 @@ public class GameController implements Screen {
             { //other physics objects update
                 current.Update(delta);
             }
-
             for(int j=0; j < physicsObjects.size(); j++)
             {
                 PhysicsObject other = physicsObjects.get(j);
@@ -204,6 +244,28 @@ public class GameController implements Screen {
                     current.OnCollision(other);
                 }
             }
+        }
+    }
+    public void CollegeDestroyed()
+    {
+        boolean foundCollege = false;
+        for(int i=0; i < physicsObjects.size(); i++)
+        {
+            PhysicsObject current = physicsObjects.get(i);
+            if(current.getClass() == EnemyCollege.class)
+            {
+                System.out.println("found!");
+                EnemyCollege e = (EnemyCollege) current;
+                if(e.HP > 0 && !e.invulnerable) // there is still a normal college alive
+                {
+                    foundCollege = true;
+                    break;
+                }
+            }
+        }
+        if (!foundCollege)
+        {
+            bossCollege.becomeVulnerable();
         }
     }
 
@@ -235,7 +297,7 @@ public class GameController implements Screen {
     public void dispose() {}
 
     public void gameOver(){
-
+        game.gotoScreen(Screens.gameOverScreen);
     }
     
     public void NewPhysicsObject(PhysicsObject obj) {
@@ -290,7 +352,7 @@ public class GameController implements Screen {
         });
 
         menuButton.setScale(1f, 1f);
-        menuButton.setPosition(Gdx.graphics.getWidth() - 5 - menuButton.getWidth(), Gdx.graphics.getHeight() - 90 - menuButton.getHeight());
+        menuButton.setPosition(Gdx.graphics.getWidth()/2 - menuButton.getWidth()/2, Gdx.graphics.getHeight() - menuButton.getHeight());
 
         stage.addActor(menuButton);
     }
