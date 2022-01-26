@@ -187,17 +187,21 @@ public class GameController implements Screen {
 
         batch.end(); //end the sprite batch
         //begin debug sprite batch
-        ShapeRenderer sr = new ShapeRenderer();
-        sr.setProjectionMatrix(map.camera.combined);
-        sr.begin(ShapeType.Line);
-        for(int i=0; i < physicsObjects.size(); i++)
+        boolean debugCollisions = false;
+        if(debugCollisions)
         {
-            sr.polygon(physicsObjects.get(i).collisionPolygon.getTransformedVertices());
+            ShapeRenderer sr = new ShapeRenderer();
+            sr.setProjectionMatrix(map.camera.combined);
+            sr.begin(ShapeType.Line);
+            for(int i=0; i < physicsObjects.size(); i++)
+            {
+                sr.polygon(physicsObjects.get(i).collisionPolygon.getTransformedVertices());
+            }
+            // sr.polygon(playerBoat.collisionPolygon.getTransformedVertices());
+            // sr.circle(playerBoat.collisionPolygon.getX()+playerBoat.collisionPolygon.getOriginX(),
+            // playerBoat.collisionPolygon.getY()+playerBoat.collisionPolygon.getOriginY(), 5);
+            sr.end();
         }
-        // sr.polygon(playerBoat.collisionPolygon.getTransformedVertices());
-        // sr.circle(playerBoat.collisionPolygon.getX()+playerBoat.collisionPolygon.getOriginX(),
-        // playerBoat.collisionPolygon.getY()+playerBoat.collisionPolygon.getOriginY(), 5);
-        sr.end();
     }
 
     @Override
