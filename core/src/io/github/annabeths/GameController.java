@@ -72,6 +72,8 @@ public class GameController implements Screen {
 
     private PlayerBoat playerBoat;
 
+    private EnemyCollege bossCollege;
+
     public GameController(eng1game game){ //passes the game class so that we can change scene back later
         this.game = game;
         gameObjects = new ArrayList<GameObject>();
@@ -110,6 +112,12 @@ public class GameController implements Screen {
         physicsObjects.add(new EnemyCollege(new Vector2(1350,1350),
                            new Texture("img/castle3.png"), new Texture("img/island.png"),
                            this, projectileHolder.stock, 200));
+
+        bossCollege = new EnemyCollege(new Vector2(600,600),
+                           new Texture("img/castle4.png"), new Texture("img/island.png"),
+                           this, projectileHolder.stock, 200);
+        bossCollege.invulnerable = true;
+        physicsObjects.add(bossCollege);
         //create the moving camera/map borders
         map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),
         (PlayerBoat) playerBoat, batch, 1500, 1500);
@@ -164,6 +172,11 @@ public class GameController implements Screen {
                 p.remove();
             }
         }
+
+        if(bossCollege.HP <= 0)
+        {// the player has won the game
+            game.gotoScreen(Screens.menuScreen);
+        }
         
         // do draws here
 		Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -181,7 +194,7 @@ public class GameController implements Screen {
                 physicsObject.Draw(batch);
             }
         }
-        //map.CameraUpdate();
+
 
         // Draw the text showing the player's stats
         hpTextLayout.setText(font, "HP: " + playerBoat.HP + "/" + playerBoat.maxHP);
@@ -207,10 +220,30 @@ public class GameController implements Screen {
             {
                 sr.polygon(physicsObjects.get(i).collisionPolygon.getTransformedVertices());
             }
-            // sr.polygon(playerBoat.collisionPolygon.getTransformedVertices());
-            // sr.circle(playerBoat.collisionPolygon.getX()+playerBoat.collisionPolygon.getOriginX(),
-            // playerBoat.collisionPolygon.getY()+playerBoat.collisionPolygon.getOriginY(), 5);
             sr.end();
+        }
+    }
+
+    public void CollegeDestroyed()
+    {
+        boolean foundCollege = false;
+        for(int i=0; i < physicsObjects.size(); i++)
+        {
+            PhysicsObject current = physicsObjects.get(i);
+            if(current.getClass() == EnemyCollege.class)
+            {
+                System.out.println("found!");
+                EnemyCollege e = (EnemyCollege) current;
+                if(e.HP > 0 && !e.invulnerable) // there is still a normal college alive
+                {
+                    foundCollege = true;
+                    break;
+                }
+            }
+        }
+        if (!foundCollege)
+        {
+            bossCollege.becomeVulnerable();
         }
     }
 

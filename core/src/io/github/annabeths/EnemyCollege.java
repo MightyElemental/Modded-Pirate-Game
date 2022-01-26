@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Value;
 
 import io.github.annabeths.Projectiles.ProjectileData;
 
@@ -28,6 +29,7 @@ public class EnemyCollege extends College{
     GlyphLayout hpText;
     int maxHP;
     int HP;
+    public boolean invulnerable;
    
     public EnemyCollege(Vector2 position, Texture aliveTexture, Texture islandTexture,
                         GameController controller, ProjectileData projectileData, int maxHP)
@@ -62,8 +64,15 @@ public class EnemyCollege extends College{
             if(p.isPlayerProjectile)
             {
                 p.killOnNextTick = true;
-                HP -= p.damage;
-                hpText.setText(font, HP + "/" + maxHP);
+                if(!invulnerable)
+                {
+                    HP -= p.damage;
+                    hpText.setText(font, HP + "/" + maxHP);
+                    if(HP <= 0)
+                        gc.CollegeDestroyed();
+                }
+                else
+                    hpText.setText(font, "RESISTED, destroy other colleges first!");
             }
         }
     }    
@@ -115,6 +124,13 @@ public class EnemyCollege extends College{
                                                        position.y + aliveSprite.getHeight()/2),
                             shotAngle, projectileType, false));
         //instantiate a new bullet and pass a reference to the gamecontroller so it can be updated and drawn
+    }
+
+    public void becomeVulnerable()
+    {
+        System.out.println("other colleges destroyed");
+        invulnerable = false;
+        hpText.setText(font, HP + "/" + maxHP);
     }
 
 }
