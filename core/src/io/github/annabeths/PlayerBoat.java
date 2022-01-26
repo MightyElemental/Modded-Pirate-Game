@@ -48,6 +48,12 @@ public class PlayerBoat extends Boat{
             Shoot();
         }
 
+		if(HP <= 0)
+		{
+			//the player is dead
+			controller.gameOver();
+		}
+
 	}
 	
 	@Override
@@ -58,6 +64,7 @@ public class PlayerBoat extends Boat{
 			if(! p.isPlayerProjectile)
 			{
 				p.killOnNextTick = true;
+				HP -= p.damage;
 			}
 		}
 		else if(other.getClass() == EnemyCollege.class)

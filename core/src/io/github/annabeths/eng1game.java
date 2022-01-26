@@ -34,8 +34,16 @@ public class eng1game extends Game {
 				setScreen(menuScreen);
 				break;
 			case gameScreen: //switch back to the game screen
+				gameScreen = new GameController(this);
 				setScreen(gameScreen);
 				break;
+			case gameOverScreen:
+				GameOverScreen gameOverScreen = new GameOverScreen(this);
+				setScreen(gameOverScreen);
+				break;
+			case gameWinScreen:
+				System.out.println("GAME WON, going back to menu...");
+				setScreen(menuScreen);
 		}
 	}
 

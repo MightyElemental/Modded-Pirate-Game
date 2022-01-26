@@ -14,11 +14,13 @@ public class Projectile extends PhysicsObject{
     private float velocity; 
     private Sprite sprite;
     public boolean isPlayerProjectile;
+    public float damage;
 
     public Projectile(Vector2 origin, float originRot, ProjectileData data, boolean isPlayerProjectile) {
         position = origin;
         velocity = data.velocity;
         this.isPlayerProjectile = isPlayerProjectile;
+        damage = data.damage;
         
         // Calculate how far the projectile will move per frame
         movePerFrame = new Vector2((float) Math.cos(Math.toRadians(originRot)) * velocity, 

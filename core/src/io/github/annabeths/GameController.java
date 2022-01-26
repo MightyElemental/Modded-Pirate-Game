@@ -230,7 +230,7 @@ public class GameController implements Screen {
     }
 
     public void gameOver(){
-
+        game.gotoScreen(Screens.gameOverScreen);
     }
     
     public void NewPhysicsObject(PhysicsObject obj) {
