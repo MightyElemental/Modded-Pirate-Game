@@ -9,9 +9,12 @@ public  class ProjectileDataHolder {
 	
 	public ProjectileData stock;
 	public ProjectileData enemy;
+	public ProjectileData boss;
 
 	public ProjectileDataHolder() {
-		stock = new ProjectileData(200, 20, new Vector2(20,20),
+		stock = new ProjectileData(250, 20, new Vector2(20,20),
+		new Texture("img/cannonball.png"));
+		boss = new ProjectileData(300, 20, new Vector2(20,20),
 		new Texture("img/cannonball.png"));
 	}
 }

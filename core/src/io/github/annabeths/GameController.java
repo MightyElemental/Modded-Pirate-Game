@@ -1,6 +1,8 @@
 package io.github.annabeths;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -14,6 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.*;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
 import io.github.annabeths.Projectiles.ProjectileDataHolder;
@@ -100,22 +103,36 @@ public class GameController implements Screen {
         playerBoat = new PlayerBoat(this, new Vector2(200,200), new Vector2(2000,2000));
         physicsObjects.add(playerBoat);
 
-        physicsObjects.add(new EnemyCollege(new Vector2(50,1350),
-                           new Texture("img/castle1.png"), new Texture("img/island.png"),
+        Texture[] collegeTextures = new Texture[10];
+        Random rd = new Random();
+        for(int i=0; i < 9; i++)
+        {
+            collegeTextures[i] = new Texture("img/castle" + (i+1) + ".png");
+        }
+        for(int i=0; i < 9; i++)
+        {
+            Texture tmp = collegeTextures[i];
+            int randomInt = rd.nextInt(9);
+            collegeTextures[i] = collegeTextures[randomInt];
+            collegeTextures[randomInt] = tmp;
+        }
+
+        Texture islandTexture = new Texture("img/island.png");
+        physicsObjects.add(new PlayerCollege(new Vector2(50,50), collegeTextures[0], islandTexture));
+
+        physicsObjects.add(new EnemyCollege(new Vector2(50,1350), collegeTextures[1], islandTexture,
                            this, projectileHolder.stock, 200));
 
         
-        physicsObjects.add(new EnemyCollege(new Vector2(1350,50),
-                           new Texture("img/castle2.png"), new Texture("img/island.png"),
+        physicsObjects.add(new EnemyCollege(new Vector2(1350,50), collegeTextures[2], islandTexture,
                            this, projectileHolder.stock, 200));
 
-        physicsObjects.add(new EnemyCollege(new Vector2(1350,1350),
-                           new Texture("img/castle3.png"), new Texture("img/island.png"),
+        physicsObjects.add(new EnemyCollege(new Vector2(1350,1350), collegeTextures[3], islandTexture,
                            this, projectileHolder.stock, 200));
 
-        bossCollege = new EnemyCollege(new Vector2(600,600),
-                           new Texture("img/castle4.png"), new Texture("img/island.png"),
-                           this, projectileHolder.stock, 200);
+        bossCollege = new EnemyCollege(new Vector2(600,600), collegeTextures[4], islandTexture,
+                           this, projectileHolder.boss, 200);
+
         bossCollege.invulnerable = true;
         physicsObjects.add(bossCollege);
         //create the moving camera/map borders

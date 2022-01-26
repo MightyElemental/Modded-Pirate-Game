@@ -7,12 +7,15 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 public class PlayerBoat extends Boat{
+
+	float timeSinceLastHeal = 0;
+
     public PlayerBoat(GameController controller, Vector2 initialPosition, Vector2 mapSize) {
         this.controller = controller;
 
 		this.HP = 100;
 		this.maxHP = 100;
-		this.speed = 125;
+		this.speed = 200;
 		this.turnSpeed = 150;
 		position = initialPosition;
 		collisionPolygon.setPosition(initialPosition.x, initialPosition.y);
@@ -108,12 +111,17 @@ public class PlayerBoat extends Boat{
 		sprite.draw(batch);
 	}
 
-	public void Heal(int amount)
+	public void Heal(int amount, float delta)
 	{
-		HP += amount;
-		if(HP > maxHP)
+		timeSinceLastHeal += delta;
+		if(amount * timeSinceLastHeal >= 1)
 		{
-			HP = maxHP;
+			HP += amount * timeSinceLastHeal;
+			timeSinceLastHeal = 0;
+			if(HP > maxHP)
+			{
+				HP = maxHP;
+			}
 		}
 	}
 }

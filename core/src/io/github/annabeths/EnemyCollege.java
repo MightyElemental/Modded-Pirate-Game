@@ -104,7 +104,7 @@ public class EnemyCollege extends College{
         if(HP > 0)
         {
             aliveSprite.draw(batch);
-            font.draw(batch, hpText, position.x, position.y);
+            font.draw(batch, hpText, aliveSprite.getWidth()/2 + position.x - hpText.width/2, position.y - hpText.height/2);
         }
         else
             deadSprite.draw(batch);
