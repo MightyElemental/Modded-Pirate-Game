@@ -1,5 +1,8 @@
 package io.github.annabeths;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -20,9 +23,14 @@ public class NeutralBoat extends AIBoat {
         destination = initialPosition.cpy(); // Force the boat to set a new destination on initialisation
         position = initialPosition.cpy();
 
+        sprite = new Sprite(new Texture(Gdx.files.internal("img/boat_neutral.png")));
+        sprite.setSize(100, 50);
+        sprite.setOrigin(50, 25);
+
         collisionPolygon.setPosition(position.x + GetCenterX()/2, position.y - GetCenterY()/2 - 10);
 		collisionPolygon.setOrigin(25,50);
         collisionPolygon.setRotation(rotation - 90);
+
 
 		sprite.setPosition(initialPosition.x, initialPosition.y);
 

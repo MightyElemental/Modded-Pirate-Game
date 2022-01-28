@@ -1,5 +1,6 @@
 package io.github.annabeths;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -26,7 +27,16 @@ public class GameMap extends GameObject{
     @Override
     public void Update(float delta) {
         Vector2 camPos = new Vector2(boat.position.x + boat.GetCenterX(), boat.position.y + boat.GetCenterY());
-        camPos.x = MathUtils.clamp(camPos.x, camera.viewportWidth/2, boundaries.x - camera.viewportWidth/2);
+        if(camera.viewportWidth <= boundaries.x)
+        {
+            camPos.x = MathUtils.clamp(camPos.x, camera.viewportWidth/2, boundaries.x - camera.viewportWidth/2);
+        }
+        else
+        {
+            float mult = boundaries.x / camera.viewportWidth;
+            camera.viewportWidth = boundaries.x;
+            camera.viewportHeight = camera.viewportHeight*mult;
+        }
         camPos.y = MathUtils.clamp(camPos.y, camera.viewportHeight/2, boundaries.y - camera.viewportHeight/2);
         camera.position.set(camPos.x, camPos.y, 0);
         camera.update();
