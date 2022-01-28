@@ -6,8 +6,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import io.github.annabeths.GameController;
 import io.github.annabeths.PhysicsObject;
+import io.github.annabeths.GameScreens.GameController;
 
 public class NeutralBoat extends AIBoat {
 

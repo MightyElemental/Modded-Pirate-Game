@@ -1,4 +1,4 @@
-package io.github.annabeths;
+package io.github.annabeths.GameScreens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -9,6 +9,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
+
+import io.github.annabeths.eng1game;
 
 public class Splash implements Screen{
 	private SpriteBatch batch;

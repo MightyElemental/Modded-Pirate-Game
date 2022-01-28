@@ -4,6 +4,13 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GameScreens.GameOverScreen;
+import io.github.annabeths.GameScreens.GameWinScreen;
+import io.github.annabeths.GameScreens.Menu;
+import io.github.annabeths.GameScreens.Screens;
+import io.github.annabeths.GameScreens.Splash;
+
 public class eng1game extends Game {
 	SpriteBatch batch;
 	Texture img;

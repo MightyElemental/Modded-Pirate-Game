@@ -3,7 +3,7 @@ package io.github.annabeths.Boats;
 import java.util.Random;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.annabeths.College;
+import io.github.annabeths.Colleges.College;
 
 import com.badlogic.gdx.math.Intersector;
 

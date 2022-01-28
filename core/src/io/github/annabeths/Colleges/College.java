@@ -1,7 +1,8 @@
-package io.github.annabeths;
+package io.github.annabeths.Colleges;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+import io.github.annabeths.PhysicsObject;
 import io.github.annabeths.Boats.Boat;
 
 import java.lang.Math;

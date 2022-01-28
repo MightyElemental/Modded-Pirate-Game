@@ -6,12 +6,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import io.github.annabeths.EnemyCollege;
-import io.github.annabeths.GameController;
 import io.github.annabeths.PhysicsObject;
-import io.github.annabeths.PlayerCollege;
 import io.github.annabeths.Upgrades;
-import io.github.annabeths.Boats.Boat;
+import io.github.annabeths.Colleges.EnemyCollege;
+import io.github.annabeths.Colleges.PlayerCollege;
+import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
 
 public class PlayerBoat extends Boat{

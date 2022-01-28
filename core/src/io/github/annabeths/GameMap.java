@@ -1,6 +1,5 @@
 package io.github.annabeths;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -11,7 +10,7 @@ import io.github.annabeths.Boats.PlayerBoat;
 
 public class GameMap extends GameObject{
 
-    OrthographicCamera camera;
+    public OrthographicCamera camera;
     PlayerBoat boat;
     Vector2 boundaries;
     WaterBackground bg;
