@@ -1,7 +1,6 @@
 package io.github.annabeths;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.math.Vector2;
 
 import java.lang.Math;
 
