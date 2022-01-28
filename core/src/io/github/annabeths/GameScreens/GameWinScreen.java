@@ -8,7 +8,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.github.annabeths.eng1game;
+import io.github.annabeths.GeneralControl.eng1game;
 
 public class GameWinScreen implements Screen{
 

@@ -12,16 +12,16 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.annabeths.GameMap;
-import io.github.annabeths.HUD;
-import io.github.annabeths.eng1game;
 import io.github.annabeths.Boats.*;
 import io.github.annabeths.Colleges.College;
 import io.github.annabeths.Colleges.EnemyCollege;
 import io.github.annabeths.Colleges.PlayerCollege;
 import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.PhysicsObject;
+import io.github.annabeths.GeneralControl.eng1game;
+import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.ProjectileDataHolder;
+import io.github.annabeths.UI.HUD;
 
 public class GameController implements Screen {
 

@@ -10,7 +10,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.Timer;
 import com.badlogic.gdx.utils.Timer.Task;
 
-import io.github.annabeths.eng1game;
+import io.github.annabeths.GeneralControl.eng1game;
 
 public class Splash implements Screen{
 	private SpriteBatch batch;
