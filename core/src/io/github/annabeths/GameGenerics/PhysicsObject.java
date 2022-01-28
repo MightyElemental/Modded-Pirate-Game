@@ -1,4 +1,4 @@
-package io.github.annabeths;
+package io.github.annabeths.GameGenerics;
 
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.utils.FloatArray;

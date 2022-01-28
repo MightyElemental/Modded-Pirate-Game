@@ -17,6 +17,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
+import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameScreens.GameController;
 
 public class HUD extends GameObject{

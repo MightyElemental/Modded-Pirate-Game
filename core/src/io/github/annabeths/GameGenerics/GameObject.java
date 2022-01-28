@@ -1,4 +1,4 @@
-package io.github.annabeths;
+package io.github.annabeths.GameGenerics;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

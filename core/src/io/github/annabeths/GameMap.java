@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.PlayerBoat;
+import io.github.annabeths.GameGenerics.GameObject;
 
 
 public class GameMap extends GameObject{
