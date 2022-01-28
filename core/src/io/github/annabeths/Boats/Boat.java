@@ -1,4 +1,4 @@
-package io.github.annabeths;
+package io.github.annabeths.Boats;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
@@ -6,6 +6,10 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
+
+import io.github.annabeths.GameController;
+import io.github.annabeths.PhysicsObject;
+
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 
@@ -13,8 +17,8 @@ public abstract class Boat extends PhysicsObject {
 	GameController controller;
     
 	// Boat stats
-	protected int HP;
-	protected int maxHP;
+	public int HP;
+	public int maxHP;
 	protected float speed;
 	protected float turnSpeed;
 

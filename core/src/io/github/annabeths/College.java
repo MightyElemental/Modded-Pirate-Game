@@ -2,6 +2,8 @@ package io.github.annabeths;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 
+import io.github.annabeths.Boats.Boat;
+
 import java.lang.Math;
 
 public abstract class College extends PhysicsObject{

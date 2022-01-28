@@ -1,7 +1,10 @@
-package io.github.annabeths;
+package io.github.annabeths.Boats;
 
 import java.util.Random;
 import com.badlogic.gdx.math.Vector2;
+
+import io.github.annabeths.College;
+
 import com.badlogic.gdx.math.Intersector;
 
 public abstract class AIBoat extends Boat {

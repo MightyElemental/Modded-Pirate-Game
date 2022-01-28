@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.annabeths.Boats.*;
 import io.github.annabeths.Projectiles.ProjectileDataHolder;
 
 public class GameController implements Screen {
@@ -27,19 +28,19 @@ public class GameController implements Screen {
     GameMap map;
     
     BitmapFont font;
-    HUD hud;
+    public HUD hud;
 
 
     // Player Stats
-    int xp = 0;
-    int plunder = 0;
+    public int xp = 0;
+    public int plunder = 0;
 
     float xpTick = 1f;
     float xpTickMultiplier = 1f;
 
     // Upgrade Variables
 
-    ProjectileDataHolder projectileHolder;
+    public ProjectileDataHolder projectileHolder;
 
     public ProjectileDataHolder projectileDataHolder;
 
