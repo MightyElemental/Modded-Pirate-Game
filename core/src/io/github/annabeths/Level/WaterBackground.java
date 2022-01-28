@@ -1,4 +1,4 @@
-package io.github.annabeths;
+package io.github.annabeths.Level;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;

@@ -1,4 +1,4 @@
-package io.github.annabeths;
+package io.github.annabeths.Level;
 
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

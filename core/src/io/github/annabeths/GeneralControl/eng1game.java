@@ -1,4 +1,4 @@
-package io.github.annabeths;
+package io.github.annabeths.GeneralControl;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Texture;

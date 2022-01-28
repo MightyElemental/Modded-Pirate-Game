@@ -1,4 +1,4 @@
-package io.github.annabeths;
+package io.github.annabeths.GameGenerics;
 
 public enum Upgrades{
 	health("Health"), maxhealth("Max Health"), speed("Speed"), turnspeed("Turn Speed"),projectiledamage("Damage"),projectilespeed("Projectile Speed"), defense("Defense");

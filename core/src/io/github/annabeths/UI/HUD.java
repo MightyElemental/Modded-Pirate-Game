@@ -1,4 +1,4 @@
-package io.github.annabeths;
+package io.github.annabeths.UI;
 
 import java.util.Random;
 
@@ -18,7 +18,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import io.github.annabeths.GameGenerics.GameObject;
+import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.Level.WaterBackground;
 
 public class HUD extends GameObject{
 
