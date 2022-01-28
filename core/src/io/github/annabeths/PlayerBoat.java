@@ -6,6 +6,8 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import io.github.annabeths.Projectiles.Projectile;
+
 public class PlayerBoat extends Boat{
 	float projectileDamageMultiplier = 1;
 	float projectileSpeedMultiplier = 1;

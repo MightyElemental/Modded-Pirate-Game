@@ -31,7 +31,7 @@ public class PlayerCollege extends College{
     }
 
     @Override
-    void Update(float delta, PhysicsObject playerBoat)
+    public void Update(float delta, PhysicsObject playerBoat)
     {
         PlayerBoat boat = (PlayerBoat) playerBoat;
         if(isInRange(boat))
@@ -41,7 +41,7 @@ public class PlayerCollege extends College{
     }
 
     @Override
-    void Draw(SpriteBatch batch)
+    public void Draw(SpriteBatch batch)
     {
         islandSprite.draw(batch);
         aliveSprite.draw(batch);    

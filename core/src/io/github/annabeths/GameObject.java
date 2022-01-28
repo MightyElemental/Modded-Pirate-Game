@@ -7,23 +7,23 @@ import com.badlogic.gdx.math.Vector2;
 public abstract class GameObject {
     //every GameObject needs to have these values, and define these methods
 
-    Vector2 position;
+    public Vector2 position;
 
-    float rotation = 0;
-    Sprite sprite = null;    
-    boolean killOnNextTick = false;
+    public float rotation = 0;
+    public Sprite sprite = null;    
+    public boolean killOnNextTick = false;
 
-    void Update(float delta)
+    public void Update(float delta)
     {
 
     }
 
-    void Update(float delta, PhysicsObject other)
+    public void Update(float delta, PhysicsObject other)
     {
 
     }
 
-    void Draw(SpriteBatch batch)
+    public void Draw(SpriteBatch batch)
     {
 
     }

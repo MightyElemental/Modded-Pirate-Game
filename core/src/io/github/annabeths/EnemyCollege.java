@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
 public class EnemyCollege extends College{
@@ -75,7 +76,7 @@ public class EnemyCollege extends College{
         }
     }    
 
-    void Update(float delta, PhysicsObject playerBoat)
+    public void Update(float delta, PhysicsObject playerBoat)
     {
         if(HP > 0)
         {
@@ -96,7 +97,7 @@ public class EnemyCollege extends College{
         }
     }
 
-    void Draw(SpriteBatch batch)
+    public void Draw(SpriteBatch batch)
     {
         islandSprite.draw(batch);
         if(HP > 0)

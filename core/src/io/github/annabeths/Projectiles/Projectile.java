@@ -1,10 +1,10 @@
-package io.github.annabeths;
+package io.github.annabeths.Projectiles;
 
 import com.badlogic.gdx.graphics.g2d.*;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.annabeths.Projectiles.ProjectileData;
+import io.github.annabeths.PhysicsObject;
 
 import java.lang.Math;
 
