@@ -9,6 +9,12 @@ public abstract class PhysicsObject extends GameObject {
 
     public Polygon collisionPolygon = null;
 
+    /*
+        Returns true if the 2 physicsobjects collide
+
+        @param  other   physicsobject to check collision with
+        @return boolean true if the physicsobjects collide        
+    */
     public boolean CheckCollisionWith(PhysicsObject other)
     {
         return Intersector.intersectPolygons(new FloatArray(collisionPolygon.getTransformedVertices()), new FloatArray(other.collisionPolygon.getTransformedVertices()));
