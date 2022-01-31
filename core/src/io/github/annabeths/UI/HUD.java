@@ -83,8 +83,6 @@ public class HUD extends GameObject{
     public void Draw(SpriteBatch batch)
     {
         // Draw the text showing the player's stats
-        System.out.println(gc.map.camera.viewportWidth + " " + gc.map.camera.viewportHeight);
-
         font.draw(batch, hpTextLayout, 5, gc.map.camera.viewportHeight - 10);
         font.draw(batch, xpTextLayout, gc.map.camera.viewportWidth - xpTextLayout.width - 5, gc.map.camera.viewportHeight - 50);
         font.draw(batch, plunderTextLayout, gc.map.camera.viewportWidth - plunderTextLayout.width - 5, gc.map.camera.viewportHeight - 10);
