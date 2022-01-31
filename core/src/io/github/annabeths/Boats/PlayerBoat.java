@@ -49,7 +49,6 @@ public class PlayerBoat extends Boat{
 	public void Update(float delta) {
 		timeSinceLastShot += delta;
 
-		// TODO Auto-generated method stub
         if(Gdx.input.isKeyPressed(Input.Keys.W)){
 			Move(delta, 1);
 		}
@@ -78,9 +77,14 @@ public class PlayerBoat extends Boat{
 
 	}
 	
+	/*
+		Method that executes when a collision is detected
+
+		@param	other	the other object, as a PhysicsObject to be generic
+	*/
 	@Override
 	public void OnCollision(PhysicsObject other) {
-		if(other instanceof Projectile){
+		if(other instanceof Projectile){ //check the type of object passed
 			Projectile p = (Projectile) other;
 			if(! p.isPlayerProjectile)
 			{
@@ -111,6 +115,12 @@ public class PlayerBoat extends Boat{
 		controller.gameOver();
 	}
 
+	/*
+		Allows the player to upgrade their boat
+
+		@param	upgrade		The requested upgrade
+		@param	amount		the amount to upgrade by
+	*/
     public void Upgrade(Upgrades upgrade, float amount){
     	if(upgrade == Upgrades.health) {
     		HP = (int) Math.min(maxHP, HP + amount); // Keeps HP from exceeding max

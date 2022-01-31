@@ -41,6 +41,14 @@ public abstract class Boat extends PhysicsObject {
 	
 	public abstract void Update(float delta);
 	
+	/*
+		Returns Nothing
+
+		Generic move method for boats to move forward by their set speed, and a multiplier
+
+		@param	delta		time since last frame
+		@param	multiplier	multiplier to set forward or reverse motion (1 or -1)
+	*/
 	void Move(float delta, int multiplier) {
 		// Convention: 0 degrees means the object is pointing right, positive angles are counter clockwise
 		Vector2 oldPos = position.cpy();
@@ -57,6 +65,14 @@ public abstract class Boat extends PhysicsObject {
 		}
 	}
 	
+	/*
+		Returns Nothing
+
+		Turns the boat by its turn speed, in the direction specified by multiplier
+
+		@param	delta		time since last frame
+		@param	multiplier	turn anti-clockwise if +ve, clockwise if -ve
+	*/
 	// Turn the boat, a positive multiplier will turn it anti-clockwise, negative clockwise
 	void Turn(float delta, float multiplier) {
 		rotation = (rotation + turnSpeed * delta * multiplier) % 360;

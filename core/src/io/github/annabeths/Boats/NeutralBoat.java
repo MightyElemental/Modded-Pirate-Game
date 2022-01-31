@@ -37,13 +37,13 @@ public class NeutralBoat extends AIBoat {
 
 		sprite.setPosition(initialPosition.x, initialPosition.y);
 
-        this.mapSize = mapSize.cpy();
-		mapBounds = new Array<Vector2>(true, 4);
+        this.mapSize = mapSize.cpy(); //copy the array so we dont modify the original
+		mapBounds = new Array<Vector2>(true, 4); //use a libgdx array of vectors because
+        // its an easy way to check point x box collision
 		mapBounds.add(new Vector2(0,0));
 		mapBounds.add(new Vector2(mapSize.x, 0));
 		mapBounds.add(new Vector2(mapSize.x, mapSize.y));
 		mapBounds.add(new Vector2(0, mapSize.y));
-
     }
 
     public void Update(float delta){
@@ -55,7 +55,7 @@ public class NeutralBoat extends AIBoat {
     }
 
     public void Shoot(){
-        // Ignore, neutral boats do not shoot
+        // Ignore, neutral boats do not shoot, but this must be defined
     }
 
     public void OnCollision(PhysicsObject object){
