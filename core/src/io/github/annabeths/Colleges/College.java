@@ -16,6 +16,12 @@ public abstract class College extends PhysicsObject{
     Sprite deadSprite;
     Sprite islandSprite;
 
+    /*
+        Returns true if the specified boat object is in range of the college
+
+        @param  other   the boat to check the range of
+        @return boolean true if the boat is in range of the college
+    */
     boolean isInRange(Boat other)
     {
         // work out euclidean distance to the other physics object, and then returns true if the 

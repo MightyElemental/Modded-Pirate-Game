@@ -60,11 +60,11 @@ public class EnemyCollege extends College{
 
     @Override
     public void OnCollision(PhysicsObject other) {
-        if(other.getClass() == Projectile.class && HP>0)
-        {
+        if(other.getClass() == Projectile.class && HP>0) 
+        {//if the enemycollege is hit by a projectile
             Projectile p = (Projectile) other;
             if(p.isPlayerProjectile)
-            {
+            { // if its a player projectile
                 p.killOnNextTick = true;
                 if(!invulnerable)
                 {

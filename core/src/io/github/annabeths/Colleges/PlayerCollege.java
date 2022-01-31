@@ -30,7 +30,9 @@ public class PlayerCollege extends College{
 
     @Override
     public void OnCollision(PhysicsObject other) {
-        // TODO Auto-generated method stub
+        // playercollege doesnt need to handle any collisions itself
+        // the case of the playerboat crashing into it is handled by the 
+        // playerboat
     }
 
     @Override
