@@ -27,7 +27,7 @@ public class Menu implements Screen {
 		batch = new SpriteBatch();
 		font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
 		menuTextLayout = new GlyphLayout(); //layouts can be used to manage text to allow it to be centred
-		menuTextLayout.setText(font, "press ENTER to goto game screen");
+		menuTextLayout.setText(font, "press ENTER to goto game screen\npress ESCAPE to quit");
 	}
 
 	@Override
@@ -38,6 +38,10 @@ public class Menu implements Screen {
 		{
 			//if the ENTER key is pressed, switch to the game screen
 			game.gotoScreen(Screens.gameScreen);
+		}
+		else if(Gdx.input.isKeyJustPressed(Keys.ESCAPE))
+		{
+			Gdx.app.exit();
 		}
 
 		//do draws
