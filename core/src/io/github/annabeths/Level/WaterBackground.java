@@ -1,5 +1,6 @@
 package io.github.annabeths.Level;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.Texture.TextureWrap;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -17,9 +18,12 @@ public class WaterBackground extends GameObject {
     int waterTextureNumber = 0;
     float lastWaterTextureChange;
     final float waterChangeDelay = 1f;
-    Vector2 screenSize;
 
-    public WaterBackground(int screenWidth, int screenHeight)
+    TextureRegion grassTextureRegion;
+    TextureRegionDrawable grassTextureRegionDrawable;
+    Vector2 mapSize;
+
+    public WaterBackground(int mapWidth, int mapHeight)
     {
         waterTextureRegion = new TextureRegion[3];
         for (int i=0; i < 3; i++)
@@ -27,13 +31,19 @@ public class WaterBackground extends GameObject {
             Texture x = new Texture("img/water" + (i + 1) + ".png");
             x.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
             waterTextureRegion[i] = new TextureRegion(x);
-            waterTextureRegion[i].setRegionWidth(screenWidth);
-            waterTextureRegion[i].setRegionHeight(screenHeight);
+            waterTextureRegion[i].setRegionWidth(mapWidth);
+            waterTextureRegion[i].setRegionHeight(mapHeight);
         }
         waterTextureRegionDrawable = new TextureRegionDrawable(waterTextureRegion[0]);
         lastWaterTextureChange = 0;
 
-        screenSize = new Vector2(screenWidth, screenHeight);
+        mapSize = new Vector2(mapWidth, mapHeight);
+        Texture grassTexture = new Texture("img/grass.png");
+        grassTexture.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
+        grassTextureRegion = new TextureRegion(grassTexture);
+        grassTextureRegion.setRegionWidth(mapWidth*4);
+        grassTextureRegion.setRegionHeight(mapWidth*4);
+        grassTextureRegionDrawable = new TextureRegionDrawable(grassTextureRegion);
     }
 
     @Override
@@ -49,7 +59,9 @@ public class WaterBackground extends GameObject {
 
     @Override
     public void Draw(SpriteBatch batch) {
-        waterTextureRegionDrawable.draw(batch, 0, 0, screenSize.x, screenSize.y);
+        grassTextureRegionDrawable.draw(batch, -Gdx.graphics.getWidth(), -Gdx.graphics.getHeight(),
+                                     mapSize.x*4, mapSize.y*4);
+        waterTextureRegionDrawable.draw(batch, 0, 0, mapSize.x, mapSize.y);
     }
     
 }

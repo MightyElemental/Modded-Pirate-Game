@@ -33,7 +33,7 @@ public class GameController implements Screen {
 
     // UI Related Variables
     private SpriteBatch batch;
-    GameMap map;
+    public GameMap map;
     
     BitmapFont font;
     public HUD hud;
