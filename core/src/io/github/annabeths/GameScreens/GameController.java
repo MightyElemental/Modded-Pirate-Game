@@ -29,12 +29,11 @@ public class GameController implements Screen {
     ArrayList<GameObject> gameObjects;
     ArrayList<PhysicsObject> physicsObjects;
     public ArrayList<College> colleges;
-    float testRot = 0;
+    public GameMap map;
+    private Vector2 mapSize;
 
     // UI Related Variables
     private SpriteBatch batch;
-    public GameMap map;
-    
     BitmapFont font;
     public HUD hud;
 
@@ -63,6 +62,7 @@ public class GameController implements Screen {
         colleges = new ArrayList<College>();
         projectileHolder = new ProjectileDataHolder();
         hud = new HUD(this);
+        mapSize = new Vector2(1500, 1500);
     }
 
     @Override
@@ -74,7 +74,7 @@ public class GameController implements Screen {
 
 
         // Create the player boat and place it in the centre of the screen
-        playerBoat = new PlayerBoat(this, new Vector2(200,200), new Vector2(1500,1500));
+        playerBoat = new PlayerBoat(this, new Vector2(200,200), mapSize.cpy());
         physicsObjects.add(playerBoat);
 
         Texture[] collegeTextures = new Texture[10];
@@ -122,13 +122,13 @@ public class GameController implements Screen {
         //create the moving camera/map borders
 
         //create a test AI boat
-        physicsObjects.add(new NeutralBoat(this, new Vector2(400, 400), new Vector2(2000, 2000)));
-        physicsObjects.add(new NeutralBoat(this, new Vector2(800, 400), new Vector2(2000, 2000)));
-        physicsObjects.add(new NeutralBoat(this, new Vector2(400, 800), new Vector2(2000, 2000)));
-        physicsObjects.add(new NeutralBoat(this, new Vector2(800, 800), new Vector2(2000, 2000)));
+        physicsObjects.add(new NeutralBoat(this, new Vector2(400, 400), mapSize));
+        physicsObjects.add(new NeutralBoat(this, new Vector2(800, 400), mapSize));
+        physicsObjects.add(new NeutralBoat(this, new Vector2(400, 800), mapSize));
+        physicsObjects.add(new NeutralBoat(this, new Vector2(800, 800), mapSize));
 
         map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),
-        (PlayerBoat) playerBoat, batch, 1500, 1500);
+        (PlayerBoat) playerBoat, batch, (int) mapSize.x, (int) mapSize.y);
     }
 
     @Override
