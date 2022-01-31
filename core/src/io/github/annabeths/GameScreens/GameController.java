@@ -31,6 +31,8 @@ public class GameController implements Screen {
     public ArrayList<College> colleges;
     public GameMap map;
     private Vector2 mapSize;
+    public PlayerBoat playerBoat;
+    private EnemyCollege bossCollege;
 
     // UI Related Variables
     private SpriteBatch batch;
@@ -45,15 +47,11 @@ public class GameController implements Screen {
     float xpTick = 1f;
     float xpTickMultiplier = 1f;
 
-    // Upgrade Variables
 
+    // projectile variables
     public ProjectileDataHolder projectileHolder;
-
     public ProjectileDataHolder projectileDataHolder;
 
-    public PlayerBoat playerBoat;
-
-    private EnemyCollege bossCollege;
 
     public GameController(eng1game game){ //passes the game class so that we can change scene back later
         this.game = game;
@@ -66,35 +64,34 @@ public class GameController implements Screen {
     }
 
     @Override
-    public void show() {
+    public void show() { //this function is called when the screen is shown
         batch = new SpriteBatch();
-
-        
-        // Create UI
-
 
         // Create the player boat and place it in the centre of the screen
         playerBoat = new PlayerBoat(this, new Vector2(200,200), mapSize.cpy());
         physicsObjects.add(playerBoat);
 
+        // this section creates a array of textures for the colleges, shuffles it and assigns to 
+        // the created colleges
         Texture[] collegeTextures = new Texture[10];
         Random rd = new Random();
         for(int i=0; i < 9; i++)
         {
             collegeTextures[i] = new Texture("img/castle" + (i+1) + ".png");
-        }
+        } //load the textures
+
         for(int i=0; i < 9; i++)
         {
             Texture tmp = collegeTextures[i];
             int randomInt = rd.nextInt(9);
             collegeTextures[i] = collegeTextures[randomInt];
             collegeTextures[randomInt] = tmp;
-        }
+        } //shuffle the array of textures
 
-        Texture islandTexture = new Texture("img/island.png");
+        Texture islandTexture = new Texture("img/island.png"); // get the texture for colleges to sit on
         PlayerCollege p = new PlayerCollege(new Vector2(50,50), collegeTextures[0], islandTexture);
-        physicsObjects.add(p);
-        colleges.add(p);
+        physicsObjects.add(p); //add college to physics object, for updates
+        colleges.add(p); //also add a reference to the colleges list
 
         EnemyCollege e = new EnemyCollege(new Vector2(50,1350), collegeTextures[1], islandTexture,
                            this, projectileHolder.stock, 200);
@@ -121,7 +118,7 @@ public class GameController implements Screen {
         colleges.add(bossCollege);
         //create the moving camera/map borders
 
-        //create a test AI boat
+        //create some neutral boats (could be extended to a proper spawner at some point)
         physicsObjects.add(new NeutralBoat(this, new Vector2(400, 400), mapSize));
         physicsObjects.add(new NeutralBoat(this, new Vector2(800, 400), mapSize));
         physicsObjects.add(new NeutralBoat(this, new Vector2(400, 800), mapSize));
@@ -135,6 +132,7 @@ public class GameController implements Screen {
     public void render(float delta) {
         // do updates here
 
+        // give the player XP and Plunder each frame, normalised using delta
         xpTick -= delta * xpTickMultiplier;
         if(xpTick <= 0){
             xp += 1;
@@ -145,11 +143,11 @@ public class GameController implements Screen {
         hud.Update(delta);
     	map.Update(delta);
 
-        UpdateObjects(delta);
-        ClearKilledObjects();
+        UpdateObjects(delta); //update all physicsobjects
+        ClearKilledObjects(); //clear any 'killed' objects
 
         if(bossCollege.HP <= 0)
-        {
+        { //if the boss college is dead, the game is won
             game.gotoScreen(Screens.gameWinScreen);
         }
 
@@ -157,13 +155,13 @@ public class GameController implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        batch.setProjectionMatrix(map.camera.combined);
+        batch.setProjectionMatrix(map.camera.combined); //set the sprite batch to use the correct camera
 
         batch.begin(); //begin the sprite batch
         
         map.Draw(batch);
 
-        if (physicsObjects.size() > 0)
+        if (physicsObjects.size() > 0) //draw all the physics objects
         {
             for (PhysicsObject physicsObject : physicsObjects) {
                 physicsObject.Draw(batch);
@@ -176,7 +174,7 @@ public class GameController implements Screen {
 
         //begin debug sprite batch
         boolean debugCollisions = false;
-        if(debugCollisions)
+        if(debugCollisions) //this should be off during normal gameplay, but can be on to debug collisions
         {
             ShapeRenderer sr = new ShapeRenderer();
             sr.setProjectionMatrix(map.camera.combined);
@@ -189,6 +187,14 @@ public class GameController implements Screen {
         }
     }
 
+    /*
+        Returns Nothing
+
+        Updates all physics objects in the PhysicsObjects array
+
+        @param  delta   time since last frame
+        @return nothing
+    */
     public void UpdateObjects(float delta){
         for(int i=0; i < physicsObjects.size(); i++)
         {
@@ -214,6 +220,14 @@ public class GameController implements Screen {
             }
         }
     }
+
+    /*
+        Called when a college is destroyed
+        Makes sure the boss college will be made vulnerable after the rest of the 
+        colleges are destroyed
+
+        @return nothing
+    */
     public void CollegeDestroyed()
     {
         boolean foundCollege = false;
@@ -236,6 +250,10 @@ public class GameController implements Screen {
         }
     }
 
+    /*
+        Goes through all the physicsobjects and removes ones from the list
+        that have had the flag set (killOnNextTick) in a safe manner
+    */
     public void ClearKilledObjects(){
         Iterator<PhysicsObject> p = physicsObjects.iterator();
         while(p.hasNext())
@@ -266,15 +284,19 @@ public class GameController implements Screen {
     public void gameOver(){
         game.gotoScreen(Screens.gameOverScreen);
     }
-    
+
+    /*
+        Called to give a reference to a new physicsobject to the physicsobjects list
+        @param  obj     the object to add
+    */    
     public void NewPhysicsObject(PhysicsObject obj) {
     	// A new PhysicsObject has been created, add it to the list so it receives updates
     	physicsObjects.add(obj);
     }
 
-    public void RemovePhysicsObject(PhysicsObject obj){
-        physicsObjects.remove(obj);
-    }
+    /*
+        add xp to the player's amount
+    */
     public void AddXP(int amount){
         // Give the player an equal amount of gold and XP
         xp += amount;

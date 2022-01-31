@@ -16,6 +16,12 @@ public class Projectile extends PhysicsObject{
     public boolean isPlayerProjectile;
     public float damage;
 
+    /*
+        @param  origin              where it should start
+        @param  originRot           the rotation of the projectile
+        @param  data                the data to use
+        @param  isPlayerProjectile  true if the projectile is shot by the player
+    */
     public Projectile(Vector2 origin, float originRot, ProjectileData data, boolean isPlayerProjectile) {
         position = origin;
         speed = data.speed;

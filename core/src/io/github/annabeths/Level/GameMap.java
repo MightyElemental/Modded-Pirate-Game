@@ -30,13 +30,16 @@ public class GameMap extends GameObject{
     @Override
     public void Update(float delta) {
         Vector2 camPos = new Vector2(boat.position.x + boat.GetCenterX(), boat.position.y + boat.GetCenterY());
+        // centre the camera on the player
+
         if(Gdx.graphics.getWidth() >= boundaries.x)
-        {
+        { // if the screen is wider than the map, then just centre on the map
             camPos.x = boundaries.x / 2;
         }
         else
         {
             camPos.x = MathUtils.clamp(camPos.x, camera.viewportWidth/2, boundaries.x - camera.viewportWidth/2);
+            //else clamp the camera to only show the map, and try to centre on the player
         }
         camPos.y = MathUtils.clamp(camPos.y, camera.viewportHeight/2, boundaries.y - camera.viewportHeight/2);
         camera.position.set(camPos.x, camPos.y, 0);
