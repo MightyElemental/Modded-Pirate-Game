@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Array;
 
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.Projectiles.Projectile;
 
 public class NeutralBoat extends AIBoat {
 
@@ -64,7 +65,11 @@ public class NeutralBoat extends AIBoat {
             controller.xp += xpValue;
             controller.plunder += plunderValue;
             Destroy();
-        } else{
+        } else if (object instanceof Projectile){
+            object.killOnNextTick = true;
+            Projectile p = (Projectile) object;
+            if(p.isPlayerProjectile)
+                controller.xp += xpValue;
             Destroy();
         }
     }

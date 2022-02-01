@@ -96,9 +96,9 @@ public class PlayerBoat extends Boat{
 		{
 			controller.gameOver();
 		}
-		else
+		else if (other.getClass() == NeutralBoat.class)
 		{
-			System.out.println("playerboat hit something else!");
+			HP -= 50;
 		}
 	}
 

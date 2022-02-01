@@ -22,7 +22,7 @@ public abstract class College extends PhysicsObject{
         @param  other   the boat to check the range of
         @return boolean true if the boat is in range of the college
     */
-    boolean isInRange(Boat other)
+    public boolean isInRange(Boat other)
     {
         // work out euclidean distance to the other physics object, and then returns true if the 
         // that distance is <= the range of the college

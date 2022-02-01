@@ -110,7 +110,7 @@ public class GameController implements Screen {
         physicsObjects.add(e);
         colleges.add(e);
 
-        bossCollege = new EnemyCollege(new Vector2(600,600), collegeTextures[4], islandTexture,
+        bossCollege = new EnemyCollege(new Vector2(700,700), collegeTextures[4], islandTexture,
                            this, projectileHolder.boss, 200);
 
         bossCollege.invulnerable = true;
@@ -219,6 +219,19 @@ public class GameController implements Screen {
                 }
             }
         }
+        boolean playerIsCloseToCollege = false;
+        for(int i=0; i < colleges.size(); i++)
+        {
+            if(colleges.get(i).isInRange(playerBoat))
+            {
+                playerIsCloseToCollege = true;
+            }
+        }
+
+        if(playerIsCloseToCollege)
+            xpTickMultiplier = 2f;
+        else
+            xpTickMultiplier = 1f;
     }
 
     /*
@@ -231,6 +244,7 @@ public class GameController implements Screen {
     public void CollegeDestroyed()
     {
         boolean foundCollege = false;
+        AddXP(100);
         for(int i=0; i < physicsObjects.size(); i++)
         {
             PhysicsObject current = physicsObjects.get(i);
