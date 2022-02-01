@@ -33,6 +33,8 @@ public class GameController implements Screen {
     private Vector2 mapSize;
     public PlayerBoat playerBoat;
     private EnemyCollege bossCollege;
+    
+    public float timer = 600;
 
     // UI Related Variables
     private SpriteBatch batch;
@@ -131,7 +133,9 @@ public class GameController implements Screen {
     @Override
     public void render(float delta) {
         // do updates here
-
+    	timer -= delta;
+    	if(timer <= 0) gameOver();
+    	
         // give the player XP and Plunder each frame, normalised using delta
         xpTick -= delta * xpTickMultiplier;
         if(xpTick <= 0){
@@ -219,16 +223,16 @@ public class GameController implements Screen {
                 }
             }
         }
-        boolean playerIsCloseToCollege = false;
+        boolean playerIsInDanger = false;
         for(int i=0; i < colleges.size(); i++)
         {
-            if(colleges.get(i).isInRange(playerBoat))
+            if(colleges.get(i).isInRange(playerBoat) && colleges.get(i) instanceof EnemyCollege)
             {
-                playerIsCloseToCollege = true;
+                playerIsInDanger = true;
             }
         }
 
-        if(playerIsCloseToCollege)
+        if(playerIsInDanger)
             xpTickMultiplier = 2f;
         else
             xpTickMultiplier = 1f;
@@ -296,6 +300,8 @@ public class GameController implements Screen {
     public void dispose() {}
 
     public void gameOver(){
+    	if(timer <=0) game.timeUp = true;
+    	else game.timeUp = false;
         game.gotoScreen(Screens.gameOverScreen);
     }
 

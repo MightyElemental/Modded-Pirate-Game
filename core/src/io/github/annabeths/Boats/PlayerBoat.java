@@ -89,7 +89,7 @@ public class PlayerBoat extends Boat{
 			if(! p.isPlayerProjectile)
 			{
 				p.killOnNextTick = true;
-				HP -= p.damage;
+				HP -= (p.damage - defense);
 			}
 		}
 		else if(other.getClass() == EnemyCollege.class || other.getClass() == PlayerCollege.class)

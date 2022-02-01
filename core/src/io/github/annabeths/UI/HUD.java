@@ -26,6 +26,7 @@ public class HUD extends GameObject{
 
 
     GlyphLayout hpTextLayout;
+    GlyphLayout timerTextLayout;
     WaterBackground bg;
 
     Stage stage;
@@ -65,9 +66,10 @@ public class HUD extends GameObject{
         stage = new Stage(); // Lets us implement interactable UI elements
         font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
 		hpTextLayout = new GlyphLayout();
+		timerTextLayout = new GlyphLayout();
         xpTextLayout = new GlyphLayout();
 		plunderTextLayout = new GlyphLayout();
-        Gdx.input.setInputProcessor(stage);
+		Gdx.input.setInputProcessor(stage);
         
         DrawUpgradeButton(); // put this in its own function to make this function look a bit cleaner
     }
@@ -77,6 +79,7 @@ public class HUD extends GameObject{
     {
         hpTextLayout.setText(font, "HP: " + gc.playerBoat.HP + "/" + gc.playerBoat.maxHP);
         xpTextLayout.setText(font, "XP: " + Integer.toString(gc.xp));
+        timerTextLayout.setText(font, "Time: " + Math.round(gc.timer));
         plunderTextLayout.setText(font, "Plunder: " + Integer.toString(gc.plunder));
         font.getData().setScale(1);
     }
@@ -86,6 +89,7 @@ public class HUD extends GameObject{
     {
         // Draw the text showing the player's stats
         font.draw(batch, hpTextLayout, 5, gc.map.camera.viewportHeight - 10);
+        font.draw(batch, timerTextLayout, 5, gc.map.camera.viewportHeight - 50);
         font.draw(batch, xpTextLayout, gc.map.camera.viewportWidth - xpTextLayout.width - 5, gc.map.camera.viewportHeight - 50);
         font.draw(batch, plunderTextLayout, gc.map.camera.viewportWidth - plunderTextLayout.width - 5, gc.map.camera.viewportHeight - 10);
 
@@ -116,6 +120,7 @@ public class HUD extends GameObject{
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
                 if(pointer == -1){
                     hoveringOverButton = true;
+                    System.out.println("Hovering over");
                 }
             }
 

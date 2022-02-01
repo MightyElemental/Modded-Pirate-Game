@@ -16,10 +16,12 @@ public class GameOverScreen implements Screen {
     BitmapFont font;
     GlyphLayout gameOverTextLayout;
     eng1game game;
+    String text;
 
-    public GameOverScreen(eng1game g)
+    public GameOverScreen(eng1game g, String text)
     {
         game = g;
+        this.text = text;
     }
 
     @Override
@@ -28,7 +30,7 @@ public class GameOverScreen implements Screen {
         batch = new SpriteBatch();
         font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
         gameOverTextLayout = new GlyphLayout();
-        gameOverTextLayout.setText(font, "you died, ENTER to goto menu, R to restart");
+        gameOverTextLayout.setText(font, text);
     }
 
     @Override

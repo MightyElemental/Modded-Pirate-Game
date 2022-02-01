@@ -17,6 +17,8 @@ public class eng1game extends Game {
 	Menu menuScreen;
 	GameController gameScreen;
 	
+	public boolean timeUp = false;
+	
 	@Override
 	public void create () {
 		// create a menu and game screen, then switch to a new splash screen
@@ -45,7 +47,7 @@ public class eng1game extends Game {
 				setScreen(gameScreen);
 				break;
 			case gameOverScreen:
-				GameOverScreen gameOverScreen = new GameOverScreen(this);
+				GameOverScreen gameOverScreen = new GameOverScreen(this, timeUp ? "Time Up! ENTER to go to menu, R to restart" : "You Died! ENTER to go to menu, R to restart");
 				setScreen(gameOverScreen);
 				break;
 			case gameWinScreen:
