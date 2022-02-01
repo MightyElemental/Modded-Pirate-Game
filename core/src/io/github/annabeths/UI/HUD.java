@@ -61,12 +61,14 @@ public class HUD extends GameObject{
     public HUD(GameController gameController)
     {
         gc = gameController;
-        stage = new Stage();
+        
+        stage = new Stage(); // Lets us implement interactable UI elements
         font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
 		hpTextLayout = new GlyphLayout();
         xpTextLayout = new GlyphLayout();
 		plunderTextLayout = new GlyphLayout();
         Gdx.input.setInputProcessor(stage);
+        
         DrawUpgradeButton(); // put this in its own function to make this function look a bit cleaner
     }
 
@@ -109,6 +111,7 @@ public class HUD extends GameObject{
                 ToggleMenu();
             }
 
+            // Giving them enter and exit functions so that the player can't fire with left click while hovering over a button.
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
                 if(pointer == -1){
@@ -132,22 +135,24 @@ public class HUD extends GameObject{
 
     public void ToggleMenu(){
         // Put the XP menu drawing calls in its own function so that render doesn't get too cluttered
+    	
+    	// Initialise the menu if it hasn't been, this avoids repeatedly creating new buttons.
         if(!upgradeMenuInitialised) InitialiseMenu();
         
-        if(upgradeMenuInitialised){
-            if(upgradeMenuOpen){
-                UpdateMenu();
-                stage.addActor(upgradeMenuBackground);
-                stage.addActor(upgradeButton1);
-                stage.addActor(upgradeButton2);
-            } else{ // Remove all menu elements from the stage
-                upgradeMenuBackground.remove();
-                upgradeButton1.remove();
-                upgradeButton2.remove();
-            }
+    	// Add/re-add the UI elements back to the stage
+        if(upgradeMenuOpen){
+            UpdateMenu();
+            stage.addActor(upgradeMenuBackground);
+            stage.addActor(upgradeButton1);
+            stage.addActor(upgradeButton2);
+        } else{ // Remove all menu elements from the stage
+            upgradeMenuBackground.remove();
+            upgradeButton1.remove();
+            upgradeButton2.remove();
         }
     }
 
+    // This function creates the menu for the first time, and also generates the first set of upgrades.
     public void InitialiseMenu(){
         // Create the background
         upgradeMenuBackground = new Image(new Texture("ui/background.png"));
@@ -170,7 +175,7 @@ public class HUD extends GameObject{
             }
         });
 
-        // Create the upgrade buttons and add it to the UI stage
+        // Create the upgrade buttons
         upgradeButton1Style = new TextButtonStyle();   
         upgradeButton1Style.font = font;
         upgradeButton1Style.fontColor = Color.BLACK;
@@ -188,7 +193,6 @@ public class HUD extends GameObject{
             @Override
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 // TODO Auto-generated method stub
-                // do some actions
                 if(gc.xp >= upgrade1cost){
                     gc.xp -= upgrade1cost;
                     BuyUpgrade(1);
@@ -197,8 +201,6 @@ public class HUD extends GameObject{
                 return true;
             }
             
-            
-
             @Override
             public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor){
                 if(pointer == -1){
