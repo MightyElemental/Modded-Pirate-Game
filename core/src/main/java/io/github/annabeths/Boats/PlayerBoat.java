@@ -6,8 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import io.github.annabeths.Colleges.EnemyCollege;
-import io.github.annabeths.Colleges.PlayerCollege;
+import io.github.annabeths.Colleges.College;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
@@ -96,16 +95,17 @@ public class PlayerBoat extends Boat {
 				p.killOnNextTick = true;
 				HP -= (p.damage - defense);
 			}
-		} else if (other.getClass() == EnemyCollege.class
-				|| other.getClass() == PlayerCollege.class) {
+		} else if (other instanceof College) {
+			// End game if player crashes into college
 			controller.gameOver();
-		} else if (other.getClass() == NeutralBoat.class) {
+		} else if (other instanceof NeutralBoat) {
+			// Damage player if collides with boat
 			HP -= 50;
 		}
 	}
 
 	@Override
-	void Shoot() {
+	public void Shoot() {
 		Projectile proj = new Projectile(
 				new Vector2(GetCenterX() + position.x, GetCenterY() + position.y), rotation,
 				controller.projectileHolder.stock, true, projectileDamageMultiplier,
@@ -116,7 +116,7 @@ public class PlayerBoat extends Boat {
 	}
 
 	@Override
-	void Destroy() {
+	public void Destroy() {
 		controller.gameOver();
 	}
 
@@ -128,21 +128,29 @@ public class PlayerBoat extends Boat {
 	 * @param amount the amount to upgrade by
 	 */
 	public void Upgrade(Upgrades upgrade, float amount) {
-		if (upgrade == Upgrades.health) {
+		switch (upgrade) {
+		case defense:
+			defense += amount;
+			break;
+		case health:
 			HP = (int) Math.min(maxHP, HP + amount); // Keeps HP from exceeding max
-		} else if (upgrade == Upgrades.maxhealth) {
+			break;
+		case maxhealth:
 			maxHP += amount;
 			HP += amount; // Also heal the player, we're feeling generous.
-		} else if (upgrade == Upgrades.speed) {
-			speed += amount;
-		} else if (upgrade == Upgrades.turnspeed) {
-			turnSpeed += amount;
-		} else if (upgrade == Upgrades.projectiledamage) {
+			break;
+		case projectiledamage:
 			projectileDamageMultiplier += amount;
-		} else if (upgrade == Upgrades.projectilespeed) {
+			break;
+		case projectilespeed:
 			projectileSpeedMultiplier += amount;
-		} else if (upgrade == Upgrades.defense) {
-			defense += amount;
+			break;
+		case speed:
+			speed += amount;
+			break;
+		case turnspeed:
+			turnSpeed += amount;
+			break;
 		}
 	}
 

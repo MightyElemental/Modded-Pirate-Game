@@ -13,6 +13,10 @@ import io.github.annabeths.Projectiles.Projectile;
 public class NeutralBoat extends AIBoat {
 
 	public NeutralBoat(GameController controller, Vector2 initialPosition, Vector2 mapSize) {
+		// copy the array so we don't modify the original
+		this.mapSize = mapSize.cpy();
+		this.controller = controller;
+
 		xpValue = 25;
 		plunderValue = 25;
 
@@ -21,12 +25,10 @@ public class NeutralBoat extends AIBoat {
 		this.speed = 75;
 		this.turnSpeed = 150;
 
-		this.controller = controller;
-
 		this.initialPosition = initialPosition.cpy();
-		// Force the boat to set a new destination on initialization
-		destination = initialPosition.cpy();
 		position = initialPosition.cpy();
+		// Force the boat to set a new destination on initialization
+		destination = getNewRandomValidTarget();
 
 		sprite = new Sprite(new Texture(Gdx.files.internal("img/boat_neutral.png")));
 		sprite.setSize(100, 50);
@@ -39,8 +41,6 @@ public class NeutralBoat extends AIBoat {
 
 		sprite.setPosition(initialPosition.x, initialPosition.y);
 
-		// copy the array so we don't modify the original
-		this.mapSize = mapSize.cpy();
 		// use a libgdx array of vectors because its an easy way to check point x box
 		// collision
 		mapBounds = new Array<Vector2>(true, 4);

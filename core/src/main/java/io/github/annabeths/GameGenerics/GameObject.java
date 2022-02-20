@@ -32,4 +32,14 @@ public abstract class GameObject {
 
 	public void Draw(SpriteBatch batch) {
 	}
+
+	/**
+	 * Get the center point of the object
+	 * 
+	 * @return The center point
+	 * @author James Burnell
+	 */
+	public Vector2 getCenter() {
+		return new Vector2(sprite.getOriginX() + position.x, sprite.getOriginY() + position.y);
+	}
 }

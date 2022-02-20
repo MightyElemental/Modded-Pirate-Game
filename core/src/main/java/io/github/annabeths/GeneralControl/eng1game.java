@@ -25,11 +25,11 @@ public class eng1game extends Game {
 		// create a menu and game screen, then switch to a new splash screen
 		menuScreen = new Menu(this);
 		gameScreen = new GameController(this);
-		gotoScreen(Screens.splashScreen);
+		//gotoScreen(Screens.splashScreen);
 		// splash screen commented out for now, in order to make testing faster,
 		// splash will be re-added when the game is done
 		// for now go directly to the menu
-		// gotoScreen(Screens.menuScreen);
+		 gotoScreen(Screens.menuScreen);
 	}
 
 	/**

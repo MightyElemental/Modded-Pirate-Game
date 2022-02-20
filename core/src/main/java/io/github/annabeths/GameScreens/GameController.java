@@ -2,17 +2,22 @@ package io.github.annabeths.GameScreens;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.*;
-import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.annabeths.Boats.*;
+import io.github.annabeths.Boats.AIBoat;
+import io.github.annabeths.Boats.NeutralBoat;
+import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.Colleges.College;
 import io.github.annabeths.Colleges.EnemyCollege;
 import io.github.annabeths.Colleges.PlayerCollege;
@@ -38,6 +43,7 @@ public class GameController implements Screen {
 
 	// UI Related Variables
 	private SpriteBatch batch;
+	private ShapeRenderer sr;
 	BitmapFont font;
 	public HUD hud;
 
@@ -50,7 +56,6 @@ public class GameController implements Screen {
 
 	// projectile variables
 	public ProjectileDataHolder projectileHolder;
-	public ProjectileDataHolder projectileDataHolder;
 
 	// passes the game class so that we can change scene back later
 	public GameController(eng1game game) {
@@ -61,12 +66,12 @@ public class GameController implements Screen {
 		projectileHolder = new ProjectileDataHolder();
 		hud = new HUD(this);
 		mapSize = new Vector2(1500, 1500);
+		batch = new SpriteBatch();
+		sr = new ShapeRenderer();
 	}
 
 	@Override
 	public void show() {
-		batch = new SpriteBatch();
-
 		// Create the player boat and place it in the center of the screen
 		playerBoat = new PlayerBoat(this, new Vector2(200, 200), mapSize.cpy());
 		physicsObjects.add(playerBoat);
@@ -74,14 +79,13 @@ public class GameController implements Screen {
 		// this section creates a array of textures for the colleges, shuffles it and
 		// assigns to the created colleges
 		Texture[] collegeTextures = new Texture[10];
-		Random rd = new Random();
 		for (int i = 0; i < 9; i++) {
 			collegeTextures[i] = new Texture("img/castle" + (i + 1) + ".png");
 		} // load the textures
 
 		for (int i = 0; i < 9; i++) {
 			Texture tmp = collegeTextures[i];
-			int randomInt = rd.nextInt(9);
+			int randomInt = MathUtils.random.nextInt(9);
 			collegeTextures[i] = collegeTextures[randomInt];
 			collegeTextures[randomInt] = tmp;
 		} // shuffle the array of textures
@@ -139,7 +143,7 @@ public class GameController implements Screen {
 		if (xpTick <= 0) {
 			xp += 1;
 			plunder += 1;
-			xpTick = 1;
+			xpTick += 1;
 		}
 
 		hud.Update(delta);
@@ -165,10 +169,8 @@ public class GameController implements Screen {
 		map.Draw(batch);
 
 		// draw all the physics objects
-		if (physicsObjects.size() > 0) {
-			for (PhysicsObject physicsObject : physicsObjects) {
-				physicsObject.Draw(batch);
-			}
+		for (PhysicsObject physicsObject : physicsObjects) {
+			physicsObject.Draw(batch);
 		}
 
 		hud.Draw(batch);
@@ -180,11 +182,21 @@ public class GameController implements Screen {
 
 		// this should be off during normal gameplay, but can be on to debug collisions
 		if (debugCollisions) {
-			ShapeRenderer sr = new ShapeRenderer();
 			sr.setProjectionMatrix(map.camera.combined);
 			sr.begin(ShapeType.Line);
 			for (int i = 0; i < physicsObjects.size(); i++) {
-				sr.polygon(physicsObjects.get(i).collisionPolygon.getTransformedVertices());
+				PhysicsObject o = physicsObjects.get(i);
+				sr.setColor(Color.WHITE);
+				sr.polygon(o.collisionPolygon.getTransformedVertices());
+				// Draw boat destinations
+				if (o instanceof AIBoat) {
+					AIBoat aib = (AIBoat) o;
+					float dt = aib.getDestinationThreshold();
+					sr.setColor(Color.GRAY);
+					sr.circle(aib.GetDestination().x, aib.GetDestination().y, dt);
+
+					sr.line(aib.getCenter(), aib.GetDestination());
+				}
 			}
 			sr.end();
 		}
@@ -199,10 +211,10 @@ public class GameController implements Screen {
 		for (int i = 0; i < physicsObjects.size(); i++) {
 			PhysicsObject current = physicsObjects.get(i);
 			/*
-			 * colleges need a slightly different update method signature, so use that
+			 * Colleges need a slightly different update method signature, so use that
 			 * specifically for them
 			 */
-			if (current instanceof EnemyCollege || current instanceof PlayerCollege) {
+			if (current instanceof College) {
 				current.Update(delta, playerBoat);
 			} else { // other physics objects update
 				current.Update(delta);
@@ -216,17 +228,22 @@ public class GameController implements Screen {
 				}
 			}
 		}
-		boolean playerIsInDanger = false;
-		for (int i = 0; i < colleges.size(); i++) {
-			if (colleges.get(i).isInRange(playerBoat) && colleges.get(i) instanceof EnemyCollege) {
-				playerIsInDanger = true;
-			}
-		}
 
-		if (playerIsInDanger)
-			xpTickMultiplier = 2f;
-		else
-			xpTickMultiplier = 1f;
+		// XP is increased if player is in dangerous position
+		xpTickMultiplier = isPlayerInDanger() ? 2f : 1f;
+	}
+
+	/**
+	 * Tests if player is in danger. The player is in danger if it is in range of an
+	 * {@link EnemyCollege}.
+	 * 
+	 * @return {@code true} if within range of an enemy college, {@code false}
+	 *         otherwise.
+	 * @author James Burnell
+	 */
+	public boolean isPlayerInDanger() {
+		return colleges.stream()
+				.anyMatch(c -> c instanceof EnemyCollege && c.isInRange(playerBoat));
 	}
 
 	/**
@@ -234,19 +251,15 @@ public class GameController implements Screen {
 	 * vulnerable after the rest of the colleges are destroyed
 	 */
 	public void CollegeDestroyed() {
-		boolean foundCollege = false;
 		AddXP(100);
-		for (int i = 0; i < physicsObjects.size(); i++) {
-			PhysicsObject current = physicsObjects.get(i);
-			if (current.getClass() == EnemyCollege.class) {
-				EnemyCollege e = (EnemyCollege) current;
-				if (e.HP > 0 && !e.invulnerable) // there is still a normal college alive
-				{
-					foundCollege = true;
-					break;
-				}
-			}
-		}
+
+		boolean foundCollege = physicsObjects.stream().filter(c -> c instanceof EnemyCollege)
+				.anyMatch(c -> {
+					EnemyCollege e = (EnemyCollege) c;
+					// there is still a normal college alive
+					return e.HP > 0 && !e.invulnerable;
+				});
+
 		if (!foundCollege) {
 			bossCollege.becomeVulnerable();
 		}
@@ -254,7 +267,7 @@ public class GameController implements Screen {
 
 	/**
 	 * Goes through all the {@link PhysicsObject} and removes ones from the list
-	 * that have had the flag set ({@link GameObject#killOnNextTick} in a safe
+	 * that have had the flag set ({@link GameObject#killOnNextTick}) in a safe
 	 * manner
 	 */
 	public void ClearKilledObjects() {
@@ -288,10 +301,7 @@ public class GameController implements Screen {
 	}
 
 	public void gameOver() {
-		if (timer <= 0)
-			game.timeUp = true;
-		else
-			game.timeUp = false;
+		game.timeUp = timer <= 0;
 		game.gotoScreen(Screens.gameOverScreen);
 	}
 

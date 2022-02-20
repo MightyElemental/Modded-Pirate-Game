@@ -1,13 +1,12 @@
 package io.github.annabeths.Colleges;
 
-import java.util.Random;
-
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
@@ -23,7 +22,6 @@ public class EnemyCollege extends College {
 	float shootingInaccuracy = 10f; // in degrees (each side)
 	float fireRate = 1.5f;
 	float timeSinceLastShot = 0;
-	Random rd = new Random();
 	GameController gc;
 	ProjectileData projectileType;
 	BitmapFont font;
@@ -96,8 +94,9 @@ public class EnemyCollege extends College {
 			aliveSprite.draw(batch);
 			font.draw(batch, hpText, aliveSprite.getWidth() / 2 + position.x - hpText.width / 2,
 					position.y - hpText.height / 2);
-		} else
+		} else {
 			deadSprite.draw(batch);
+		}
 	}
 
 	void ShootAt(Vector2 target) {
@@ -114,7 +113,7 @@ public class EnemyCollege extends College {
 		 * 0-1. We multiply it by 2* the shooting inaccuracy to get the right width of
 		 * distribution then - the shooting inaccuracy to center the distribution on 0
 		 */
-		shotAngle += (rd.nextFloat() * shootingInaccuracy * 2) - (shootingInaccuracy);
+		shotAngle += (MathUtils.random.nextFloat() * shootingInaccuracy * 2) - (shootingInaccuracy);
 
 		/*
 		 * instantiate a new bullet and pass a reference to the gamecontroller so it can
