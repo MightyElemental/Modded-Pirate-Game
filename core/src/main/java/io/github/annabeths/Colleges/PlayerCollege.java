@@ -9,47 +9,45 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 
-public class PlayerCollege extends College{
+public class PlayerCollege extends College {
 
-    int healAmount;
+	int healAmount;
 
-    public PlayerCollege(Vector2 position, Texture aliveTexture, Texture islandTexture) {
-        //TODO set a collision polygon
-        healAmount = 15;
-        range = 400;
-        aliveSprite = new Sprite(aliveTexture);
-        aliveSprite.setPosition(position.x, position.y);
-        aliveSprite.setSize(100,100);
-        islandSprite = new Sprite(islandTexture);
-        islandSprite.setCenter(aliveSprite.getX()+5, aliveSprite.getY()+5);
-        islandSprite.setSize(120, 120);
-        this.position = position;
-        collisionPolygon = new Polygon(new float[]{0,0,100,0,100,100,0,100});
-        collisionPolygon.setPosition(position.x, position.y);
-    }
+	public PlayerCollege(Vector2 position, Texture aliveTexture, Texture islandTexture) {
+		healAmount = 15;
+		range = 400;
+		aliveSprite = new Sprite(aliveTexture);
+		aliveSprite.setPosition(position.x, position.y);
+		aliveSprite.setSize(100, 100);
+		islandSprite = new Sprite(islandTexture);
+		islandSprite.setCenter(aliveSprite.getX() + 5, aliveSprite.getY() + 5);
+		islandSprite.setSize(120, 120);
+		this.position = position;
+		collisionPolygon = new Polygon(new float[] { 0, 0, 100, 0, 100, 100, 0, 100 });
+		collisionPolygon.setPosition(position.x, position.y);
+	}
 
-    @Override
-    public void OnCollision(PhysicsObject other) {
-        // playercollege doesnt need to handle any collisions itself
-        // the case of the playerboat crashing into it is handled by the 
-        // playerboat
-    }
+	@Override
+	public void OnCollision(PhysicsObject other) {
+		/*
+		 * playercollege doesn't need to handle any collisions itself. The case of the
+		 * playerboat crashing into it is handled by the playerboat
+		 */
+	}
 
-    @Override
-    public void Update(float delta, PhysicsObject playerBoat)
-    {
-        PlayerBoat boat = (PlayerBoat) playerBoat;
-        if(isInRange(boat))
-        { // if the player boat is in range, heal it
-            boat.Heal(healAmount, delta);
-        }
-    }
+	@Override
+	public void Update(float delta, PhysicsObject playerBoat) {
+		PlayerBoat boat = (PlayerBoat) playerBoat;
+		// if the player boat is in range, heal it
+		if (isInRange(boat)) {
+			boat.Heal(healAmount, delta);
+		}
+	}
 
-    @Override
-    public void Draw(SpriteBatch batch)
-    {
-        islandSprite.draw(batch);
-        aliveSprite.draw(batch);    
-    }
+	@Override
+	public void Draw(SpriteBatch batch) {
+		islandSprite.draw(batch);
+		aliveSprite.draw(batch);
+	}
 
 }

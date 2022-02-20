@@ -32,7 +32,11 @@ public class eng1game extends Game {
 		// gotoScreen(Screens.menuScreen);
 	}
 
-	// uses the Screens enum to change between any screen
+	/**
+	 * Uses the {@link Screens} enumeration to change between any screen.
+	 * 
+	 * @param s the screen to switch to
+	 */
 	public void gotoScreen(Screens s) {
 		switch (s) {
 		case splashScreen: // creates a new splash screen
