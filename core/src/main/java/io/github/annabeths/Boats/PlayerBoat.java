@@ -15,6 +15,8 @@ import io.github.annabeths.Projectiles.Projectile;
 public class PlayerBoat extends Boat {
 	float projectileDamageMultiplier = 1;
 	float projectileSpeedMultiplier = 1;
+	float powerTimer = 0;
+	int powerID = 0;
 
 	/**
 	 * The higher the defense, the stronger the player, this is subtracted from the
@@ -51,6 +53,10 @@ public class PlayerBoat extends Boat {
 	@Override
 	public void Update(float delta) {
 		timeSinceLastShot += delta;
+		
+		if (powerTimer > 0) {
+			powerTimer -= delta;
+		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			Move(delta, 1);
@@ -167,6 +173,18 @@ public class PlayerBoat extends Boat {
 			if (HP > maxHP) {
 				HP = maxHP;
 			}
+		}
+	}
+	
+	public void ReceivePower(int power) {
+		powerID = power;
+		switch (powerID) {
+		case 1:
+			//invincibility
+			powerTimer = 50;
+			break;
+		default:
+			//in case of an invalid id			
 		}
 	}
 }
