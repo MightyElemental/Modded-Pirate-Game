@@ -56,6 +56,8 @@ public class PlayerBoat extends Boat {
 		
 		if (powerTimer > 0) {
 			powerTimer -= delta;
+		} else {
+			powerID = 0;
 		}
 
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
@@ -99,7 +101,9 @@ public class PlayerBoat extends Boat {
 			Projectile p = (Projectile) other;
 			if (!p.isPlayerProjectile) {
 				p.killOnNextTick = true;
-				HP -= (p.damage - defense);
+				if (powerID != 1) {
+					HP -= (p.damage - defense);
+				}
 			}
 		} else if (other instanceof College) {
 			// End game if player crashes into college

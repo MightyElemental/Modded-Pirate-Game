@@ -15,24 +15,27 @@ public class Powerup extends PhysicsObject {
 	//position
 	//sprite while on screen
 	//id of powerup given
-
+	int PowerID;
 	
-	public Powerup(int Power) {
-		position = new Vector2(300, 600);
-		int PowerID = Power;
+	public Powerup(int Power, Vector2 initialPosition) {
+		position = initialPosition;
+		PowerID = Power;
 		sprite = new Sprite(new Texture(Gdx.files.internal("img/powerup.png")));
-		sprite.setPosition(300, 600);
+		sprite.setPosition(position.x, position.y);
 		sprite.setSize(50, 50);
 		collisionPolygon = new Polygon(new float[] { 8, 0, 16, 8, 8, 16, 0, 8 });
 		collisionPolygon.setOrigin(8, 8);
-		collisionPolygon.setPosition(300, 600);
+		collisionPolygon.setPosition(position.x, position.y);
 	}
 	
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		if (other instanceof PlayerBoat) {
+			PlayerBoat boat = (PlayerBoat) other;
 			//give powerup based on PowerID
 			//then disappear
+			boat.ReceivePower(PowerID);
+
 			System.out.println("Collected a powerup");
 			killOnNextTick = true;
 		}
