@@ -110,7 +110,9 @@ public class PlayerBoat extends Boat {
 			controller.gameOver();
 		} else if (other instanceof NeutralBoat) {
 			// Damage player if collides with boat
-			HP -= 50;
+			if (powerID != 1) {
+				HP -= 50;
+			}
 		}
 	}
 
@@ -186,9 +188,7 @@ public class PlayerBoat extends Boat {
 		case 1:
 			//invincibility
 			powerTimer = 10;
-			break;
-		default:
-			//in case of an invalid id			
+			break;	
 		}
 	}
 }
