@@ -185,7 +185,7 @@ public class PlayerBoat extends Boat {
 		switch (powerID) {
 		case 1:
 			//invincibility
-			powerTimer = 50;
+			powerTimer = 10;
 			break;
 		default:
 			//in case of an invalid id			
