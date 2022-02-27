@@ -5,17 +5,14 @@ import java.util.Iterator;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.annabeths.Boats.AIBoat;
 import io.github.annabeths.Boats.NeutralBoat;
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.Colleges.College;
@@ -23,6 +20,7 @@ import io.github.annabeths.Colleges.EnemyCollege;
 import io.github.annabeths.Colleges.PlayerCollege;
 import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.PhysicsObject;
+import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.ProjectileDataHolder;
@@ -30,9 +28,9 @@ import io.github.annabeths.UI.HUD;
 
 public class GameController implements Screen {
 
-	eng1game game;
-	ArrayList<GameObject> gameObjects;
-	ArrayList<PhysicsObject> physicsObjects;
+	private eng1game game;
+	public ArrayList<GameObject> gameObjects;
+	public ArrayList<PhysicsObject> physicsObjects;
 	public ArrayList<College> colleges;
 	public GameMap map;
 	private Vector2 mapSize;
@@ -80,7 +78,7 @@ public class GameController implements Screen {
 		// assigns to the created colleges
 		Texture[] collegeTextures = new Texture[10];
 		for (int i = 0; i < 9; i++) {
-			collegeTextures[i] = new Texture("img/castle" + (i + 1) + ".png");
+			collegeTextures[i] = new Texture(String.format("img/castle%d.png", (i + 1)));
 		} // load the textures
 
 		for (int i = 0; i < 9; i++) {
@@ -132,9 +130,7 @@ public class GameController implements Screen {
 				(PlayerBoat) playerBoat, batch, (int) mapSize.x, (int) mapSize.y);
 	}
 
-	@Override
-	public void render(float delta) {
-		// do updates here
+	public void logic(float delta) {
 		timer -= delta;
 		if (timer <= 0) gameOver();
 
@@ -155,6 +151,12 @@ public class GameController implements Screen {
 		if (bossCollege.HP <= 0) { // if the boss college is dead, the game is won
 			game.gotoScreen(Screens.gameWinScreen);
 		}
+	}
+
+	@Override
+	public void render(float delta) {
+		// do updates here
+		logic(delta);
 
 		// do draws here
 		Gdx.gl.glClearColor(0, 0, 0, 0);
@@ -174,31 +176,16 @@ public class GameController implements Screen {
 		}
 
 		hud.Draw(batch);
+
+		DebugUtils.drawDebugText(this, batch);
+
 		// end the sprite batch
 		batch.end();
 
-		// begin debug sprite batch
-		boolean debugCollisions = false;
-
 		// this should be off during normal gameplay, but can be on to debug collisions
-		if (debugCollisions) {
+		if (DebugUtils.DRAW_DEBUG_COLLISIONS) {
 			sr.setProjectionMatrix(map.camera.combined);
-			sr.begin(ShapeType.Line);
-			for (int i = 0; i < physicsObjects.size(); i++) {
-				PhysicsObject o = physicsObjects.get(i);
-				sr.setColor(Color.WHITE);
-				sr.polygon(o.collisionPolygon.getTransformedVertices());
-				// Draw boat destinations
-				if (o instanceof AIBoat) {
-					AIBoat aib = (AIBoat) o;
-					float dt = aib.getDestinationThreshold();
-					sr.setColor(Color.GRAY);
-					sr.circle(aib.GetDestination().x, aib.GetDestination().y, dt);
-
-					sr.line(aib.getCenter(), aib.GetDestination());
-				}
-			}
-			sr.end();
+			DebugUtils.drawDebugCollisions(this, sr);
 		}
 	}
 
@@ -282,6 +269,7 @@ public class GameController implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
+
 	}
 
 	@Override
