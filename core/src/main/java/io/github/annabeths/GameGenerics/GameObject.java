@@ -21,15 +21,6 @@ public abstract class GameObject {
 	public void Update(float delta) {
 	}
 
-	/**
-	 * Update Method, define on inheritance, required for colleges
-	 * 
-	 * @param delta time since last frame
-	 * @param other the other object
-	 */
-	public void Update(float delta, PhysicsObject other) {
-	}
-
 	public void Draw(SpriteBatch batch) {
 	}
 
@@ -40,6 +31,34 @@ public abstract class GameObject {
 	 * @author James Burnell
 	 */
 	public Vector2 getCenter() {
-		return new Vector2(sprite.getOriginX() + position.x, sprite.getOriginY() + position.y);
+		return new Vector2(getCenterX(), getCenterY());
+	}
+
+	/** @return The center x position */
+	public float getCenterX() {
+		return getLocalCenterX() + position.x;
+	}
+
+	/** @return The center y position */
+	public float getCenterY() {
+		return getLocalCenterY() + position.y;
+	}
+
+	/**
+	 * Get the center x local to the object
+	 * 
+	 * @return The local center x, or {@code NaN} if {@link #sprite} is {@code null}
+	 */
+	public float getLocalCenterX() {
+		return sprite == null ? Float.NaN : sprite.getWidth() / 2;
+	}
+
+	/**
+	 * Get the center y local to the object
+	 * 
+	 * @return The local center y, or {@code NaN} if {@link #sprite} is {@code null}
+	 */
+	public float getLocalCenterY() {
+		return sprite == null ? Float.NaN : sprite.getHeight() / 2;
 	}
 }

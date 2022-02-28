@@ -29,8 +29,7 @@ public class GameMap extends GameObject {
 	@Override
 	public void Update(float delta) {
 		// center the camera on the player
-		Vector2 camPos = new Vector2(boat.position.x + boat.GetCenterX(),
-				boat.position.y + boat.GetCenterY());
+		Vector2 camPos = boat.getCenter();
 
 		// if the screen is wider than the map, then just center on the map
 		if (Gdx.graphics.getWidth() >= boundaries.x) {

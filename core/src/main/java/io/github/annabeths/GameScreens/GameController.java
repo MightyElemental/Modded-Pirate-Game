@@ -90,7 +90,8 @@ public class GameController implements Screen {
 
 		// get the texture for colleges to sit on
 		Texture islandTexture = new Texture("img/island.png");
-		PlayerCollege p = new PlayerCollege(new Vector2(50, 50), collegeTextures[0], islandTexture);
+		PlayerCollege p = new PlayerCollege(new Vector2(50, 50), collegeTextures[0], islandTexture,
+				this);
 		physicsObjects.add(p); // add college to physics object, for updates
 		colleges.add(p); // also add a reference to the colleges list
 
@@ -197,15 +198,9 @@ public class GameController implements Screen {
 	public void UpdateObjects(float delta) {
 		for (int i = 0; i < physicsObjects.size(); i++) {
 			PhysicsObject current = physicsObjects.get(i);
-			/*
-			 * Colleges need a slightly different update method signature, so use that
-			 * specifically for them
-			 */
-			if (current instanceof College) {
-				current.Update(delta, playerBoat);
-			} else { // other physics objects update
-				current.Update(delta);
-			}
+
+			current.Update(delta);
+
 			for (int j = 0; j < physicsObjects.size(); j++) {
 				PhysicsObject other = physicsObjects.get(j);
 				if (i == j) continue;

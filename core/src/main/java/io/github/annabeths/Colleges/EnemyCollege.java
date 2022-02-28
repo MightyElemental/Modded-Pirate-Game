@@ -18,70 +18,71 @@ import io.github.annabeths.Projectiles.ProjectileData;
 
 public class EnemyCollege extends College {
 
-	int damage;
-	float shootingInaccuracy = 10f; // in degrees (each side)
-	float fireRate = 1.5f;
-	float timeSinceLastShot = 0;
-	GameController gc;
-	ProjectileData projectileType;
-	BitmapFont font;
-	GlyphLayout hpText;
-	int maxHP;
-	public int HP;
-	public boolean invulnerable;
+	/**
+	 * The inaccuracy when firing cannonballs. Measured in degrees and reflected
+	 * about the center. i.e. the cannon could be fired anywhere between -x and x
+	 * where x is the inaccuracy.
+	 */
+	public float shootingInaccuracy = 10f;
+	public float timeSinceLastShot = 0;
+
+	public ProjectileData projectileType;
+	public BitmapFont font;
+	public GlyphLayout hpText;
 
 	public EnemyCollege(Vector2 position, Texture aliveTexture, Texture islandTexture,
 			GameController controller, ProjectileData projectileData, int maxHP) {
-		aliveSprite = new Sprite(aliveTexture);
-		aliveSprite.setPosition(position.x, position.y);
-		aliveSprite.setSize(100, 100);
+		super(position, aliveTexture, islandTexture, controller);
+
 		deadSprite = new Sprite(new Texture(Gdx.files.internal("img/castle10.png")));
 		deadSprite.setPosition(position.x, position.y);
 		deadSprite.setSize(100, 100);
-		islandSprite = new Sprite(islandTexture);
-		islandSprite.setCenter(aliveSprite.getX() + 5, aliveSprite.getY() + 5);
-		islandSprite.setSize(120, 120);
-		this.position = position;
+
+		this.maxHP = maxHP;
+		HP = maxHP;
 		range = 500;
-		gc = controller;
+		fireRate = 1.5f;
 		projectileType = projectileData;
 		collisionPolygon = new Polygon(new float[] { 0, 0, 100, 0, 100, 100, 0, 100 });
 		collisionPolygon.setPosition(position.x, position.y);
-		this.maxHP = maxHP;
-		HP = maxHP;
 		font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
 		hpText = new GlyphLayout();
+		updateHpText();
+	}
+
+	public void updateHpText() {
 		hpText.setText(font, HP + "/" + maxHP);
 	}
 
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		// if the enemy college is hit by a projectile
-		if (other.getClass() == Projectile.class && HP > 0) {
+		if (other instanceof Projectile && HP > 0) {
 			Projectile p = (Projectile) other;
 			if (p.isPlayerProjectile) { // if its a player projectile
 				p.killOnNextTick = true;
 				if (!invulnerable) {
 					HP -= p.damage;
-					hpText.setText(font, HP + "/" + maxHP);
+					updateHpText();
 					if (HP <= 0) gc.CollegeDestroyed();
-				} else
+				} else {
 					hpText.setText(font, "RESISTED, destroy other colleges first!");
+				}
 			}
 		}
 	}
 
-	public void Update(float delta, PhysicsObject playerBoat) {
+	public void Update(float delta) {
 		if (HP > 0) {
 			if (timeSinceLastShot < fireRate) {
 				timeSinceLastShot += delta;
 			} // increase the time on the timer to allow for fire rate calculation
 
-			PlayerBoat boat = (PlayerBoat) playerBoat;
+			PlayerBoat boat = gc.playerBoat;
 			// is the player boat in range
 			if (isInRange(boat)) {
 				if (timeSinceLastShot >= fireRate) {
-					ShootAt(new Vector2(boat.position.x, boat.position.y));
+					ShootAt(boat.getCenter());
 					timeSinceLastShot = 0;
 				}
 			}
@@ -91,8 +92,8 @@ public class EnemyCollege extends College {
 	public void Draw(SpriteBatch batch) {
 		islandSprite.draw(batch);
 		if (HP > 0) {
-			aliveSprite.draw(batch);
-			font.draw(batch, hpText, aliveSprite.getWidth() / 2 + position.x - hpText.width / 2,
+			sprite.draw(batch);
+			font.draw(batch, hpText, getCenterX() - hpText.width / 2,
 					position.y - hpText.height / 2);
 		} else {
 			deadSprite.draw(batch);
@@ -101,34 +102,25 @@ public class EnemyCollege extends College {
 
 	void ShootAt(Vector2 target) {
 		/*
-		 * calculate the shot angle by getting a vector from the centre of the college
+		 * calculate the shot angle by getting a vector from the center of the college
 		 * to the target. Convert to degrees for the inaccuracy calculation.
 		 */
-		float shotAngle = (float) Math
-				.toDegrees(Math.atan2(target.y - (position.y + aliveSprite.getHeight() / 2),
-						target.x - (position.x + aliveSprite.getWidth() / 2)));
+		Vector2 directionVec = target.cpy().sub(getCenter());
+		float shotAngle = directionVec.angleDeg();
 
-		/*
-		 * Inaccuracy calculation works by rd.nextfloat() gets a pseudorandom float from
-		 * 0-1. We multiply it by 2* the shooting inaccuracy to get the right width of
-		 * distribution then - the shooting inaccuracy to center the distribution on 0
-		 */
-		shotAngle += (MathUtils.random.nextFloat() * shootingInaccuracy * 2) - (shootingInaccuracy);
+		shotAngle += MathUtils.random(-shootingInaccuracy, shootingInaccuracy);
 
 		/*
 		 * instantiate a new bullet and pass a reference to the gamecontroller so it can
 		 * be updated and drawn
 		 */
-		gc.NewPhysicsObject(new Projectile(
-				new Vector2(position.x + aliveSprite.getWidth() / 2,
-						position.y + aliveSprite.getHeight() / 2),
-				shotAngle, projectileType, false));
+		gc.NewPhysicsObject(new Projectile(getCenter(), shotAngle, projectileType, false));
 
 	}
 
 	public void becomeVulnerable() {
 		invulnerable = false;
-		hpText.setText(font, HP + "/" + maxHP);
+		updateHpText();
 	}
 
 }
