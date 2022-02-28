@@ -1,20 +1,41 @@
 package io.github.annabeths.Colleges;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.Boat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 
-import java.lang.Math;
-
 public abstract class College extends PhysicsObject {
-	int range;
-	int HP;
-	int damage;
-	int fireRate;
-	Sprite aliveSprite;
-	Sprite deadSprite;
-	Sprite islandSprite;
+
+	public int maxHP;
+	public int range;
+	public int HP;
+	public int damage;
+
+	public float fireRate;
+
+	public boolean invulnerable;
+
+	public Sprite aliveSprite;
+	public Sprite deadSprite;
+	public Sprite islandSprite;
+
+	public College(Vector2 pos, Texture aliveTexture, Texture islandTexture) {
+		position = pos;
+
+		aliveSprite = new Sprite(aliveTexture);
+		aliveSprite.setPosition(position.x, position.y);
+		aliveSprite.setSize(100, 100);
+
+		islandSprite = new Sprite(islandTexture);
+		islandSprite.setCenter(aliveSprite.getX() + 5, aliveSprite.getY() + 5);
+		islandSprite.setSize(120, 120);
+	}
+
+	public College() {
+	}
 
 	/**
 	 * Work out euclidean distance to the other physics object, and then returns
