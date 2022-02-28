@@ -26,15 +26,13 @@ public class EnemyCollege extends College {
 	public float shootingInaccuracy = 10f;
 	public float timeSinceLastShot = 0;
 
-	/** Used to notify the game controller when the college has been destroyed */
-	private GameController gc;
 	public ProjectileData projectileType;
 	public BitmapFont font;
 	public GlyphLayout hpText;
 
 	public EnemyCollege(Vector2 position, Texture aliveTexture, Texture islandTexture,
 			GameController controller, ProjectileData projectileData, int maxHP) {
-		super(position, aliveTexture, islandTexture);
+		super(position, aliveTexture, islandTexture, controller);
 
 		deadSprite = new Sprite(new Texture(Gdx.files.internal("img/castle10.png")));
 		deadSprite.setPosition(position.x, position.y);
@@ -44,7 +42,6 @@ public class EnemyCollege extends College {
 		HP = maxHP;
 		range = 500;
 		fireRate = 1.5f;
-		gc = controller;
 		projectileType = projectileData;
 		collisionPolygon = new Polygon(new float[] { 0, 0, 100, 0, 100, 100, 0, 100 });
 		collisionPolygon.setPosition(position.x, position.y);
@@ -75,17 +72,17 @@ public class EnemyCollege extends College {
 		}
 	}
 
-	public void Update(float delta, PhysicsObject playerBoat) {
+	public void Update(float delta) {
 		if (HP > 0) {
 			if (timeSinceLastShot < fireRate) {
 				timeSinceLastShot += delta;
 			} // increase the time on the timer to allow for fire rate calculation
 
-			PlayerBoat boat = (PlayerBoat) playerBoat;
+			PlayerBoat boat = gc.playerBoat;
 			// is the player boat in range
 			if (isInRange(boat)) {
 				if (timeSinceLastShot >= fireRate) {
-					ShootAt(new Vector2(boat.position.x, boat.position.y));
+					ShootAt(boat.getCenter());
 					timeSinceLastShot = 0;
 				}
 			}
@@ -95,8 +92,8 @@ public class EnemyCollege extends College {
 	public void Draw(SpriteBatch batch) {
 		islandSprite.draw(batch);
 		if (HP > 0) {
-			aliveSprite.draw(batch);
-			font.draw(batch, hpText, aliveSprite.getWidth() / 2 + position.x - hpText.width / 2,
+			sprite.draw(batch);
+			font.draw(batch, hpText, getCenterX() - hpText.width / 2,
 					position.y - hpText.height / 2);
 		} else {
 			deadSprite.draw(batch);
@@ -108,8 +105,7 @@ public class EnemyCollege extends College {
 		 * calculate the shot angle by getting a vector from the center of the college
 		 * to the target. Convert to degrees for the inaccuracy calculation.
 		 */
-		Vector2 directionVec = target.cpy().sub(position.x + aliveSprite.getWidth() / 2,
-				position.y + aliveSprite.getHeight() / 2);
+		Vector2 directionVec = target.cpy().sub(getCenter());
 		float shotAngle = directionVec.angleDeg();
 
 		shotAngle += MathUtils.random(-shootingInaccuracy, shootingInaccuracy);
@@ -118,10 +114,7 @@ public class EnemyCollege extends College {
 		 * instantiate a new bullet and pass a reference to the gamecontroller so it can
 		 * be updated and drawn
 		 */
-		gc.NewPhysicsObject(new Projectile(
-				new Vector2(position.x + aliveSprite.getWidth() / 2,
-						position.y + aliveSprite.getHeight() / 2),
-				shotAngle, projectileType, false));
+		gc.NewPhysicsObject(new Projectile(getCenter(), shotAngle, projectileType, false));
 
 	}
 

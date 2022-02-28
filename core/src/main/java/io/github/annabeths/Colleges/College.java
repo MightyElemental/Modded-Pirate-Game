@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.Boat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
+import io.github.annabeths.GameScreens.GameController;
 
 public abstract class College extends PhysicsObject {
 
@@ -18,19 +19,25 @@ public abstract class College extends PhysicsObject {
 
 	public boolean invulnerable;
 
-	public Sprite aliveSprite;
 	public Sprite deadSprite;
 	public Sprite islandSprite;
 
-	public College(Vector2 pos, Texture aliveTexture, Texture islandTexture) {
+	/**
+	 * Used to access player boat and to notify the game controller when the college
+	 * has been destroyed
+	 */
+	protected GameController gc;
+
+	public College(Vector2 pos, Texture aliveTexture, Texture islandTexture, GameController gc) {
+		this.gc = gc;
 		position = pos;
 
-		aliveSprite = new Sprite(aliveTexture);
-		aliveSprite.setPosition(position.x, position.y);
-		aliveSprite.setSize(100, 100);
+		sprite = new Sprite(aliveTexture);
+		sprite.setPosition(position.x, position.y);
+		sprite.setSize(100, 100);
 
 		islandSprite = new Sprite(islandTexture);
-		islandSprite.setCenter(aliveSprite.getX() + 5, aliveSprite.getY() + 5);
+		islandSprite.setCenter(sprite.getX() + 5, sprite.getY() + 5);
 		islandSprite.setSize(120, 120);
 	}
 
@@ -46,12 +53,9 @@ public abstract class College extends PhysicsObject {
 	 * @param other the boat to check the range of
 	 * @return {@code true} if the boat is in range of the college, {@code false}
 	 *         otherwise
+	 * @author James Burnell
 	 */
 	public boolean isInRange(Boat other) {
-		return range >= Math.sqrt(Math
-				.pow((aliveSprite.getX() + aliveSprite.getWidth() / 2)
-						- (other.position.x + other.GetCenterX()), 2)
-				+ Math.pow((aliveSprite.getY() + aliveSprite.getHeight() / 2)
-						- (other.position.y + other.GetCenterY()), 2));
+		return getCenter().dst(other.getCenter()) <= range;
 	}
 }

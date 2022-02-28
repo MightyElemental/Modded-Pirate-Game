@@ -3,6 +3,7 @@ package io.github.annabeths.Boats;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
@@ -25,20 +26,13 @@ public class PlayerBoat extends Boat {
 	float timeSinceLastHeal = 0;
 
 	public PlayerBoat(GameController controller, Vector2 initialPosition, Vector2 mapSize) {
+		super(initialPosition, "img/boat1.png");
 		this.controller = controller;
 
 		this.HP = 100;
 		this.maxHP = 100;
 		this.speed = 200;
 		this.turnSpeed = 150;
-		position = initialPosition;
-
-		collisionPolygon.setPosition(initialPosition.x + GetCenterX() / 2,
-				initialPosition.y - GetCenterY() / 2 - 10);
-		collisionPolygon.setOrigin(25, 50);
-		collisionPolygon.setRotation(rotation - 90);
-
-		sprite.setPosition(initialPosition.x, initialPosition.y);
 
 		this.mapSize = mapSize;
 		mapBounds = new Array<Vector2>(true, 4);
@@ -106,10 +100,8 @@ public class PlayerBoat extends Boat {
 
 	@Override
 	public void Shoot() {
-		Projectile proj = new Projectile(
-				new Vector2(GetCenterX() + position.x, GetCenterY() + position.y), rotation,
-				controller.projectileHolder.stock, true, projectileDamageMultiplier,
-				projectileSpeedMultiplier);
+		Projectile proj = new Projectile(getCenter(), rotation, controller.projectileHolder.stock,
+				true, projectileDamageMultiplier, projectileSpeedMultiplier);
 		// Add the projectile to the GameController's physics objects list so it
 		// receives updates
 		controller.NewPhysicsObject(proj);
@@ -133,7 +125,7 @@ public class PlayerBoat extends Boat {
 			defense += amount;
 			break;
 		case health:
-			HP = (int) Math.min(maxHP, HP + amount); // Keeps HP from exceeding max
+			HP = MathUtils.clamp((int) (HP + amount), 0, maxHP);
 			break;
 		case maxhealth:
 			maxHP += amount;
@@ -164,9 +156,7 @@ public class PlayerBoat extends Boat {
 		if (amount * timeSinceLastHeal >= 1) {
 			HP += amount * timeSinceLastHeal;
 			timeSinceLastHeal = 0;
-			if (HP > maxHP) {
-				HP = maxHP;
-			}
+			HP = MathUtils.clamp(HP, 0, maxHP);
 		}
 	}
 }

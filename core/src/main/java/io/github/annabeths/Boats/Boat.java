@@ -28,6 +28,7 @@ public abstract class Boat extends PhysicsObject {
 	protected Array<Vector2> mapBounds;
 	protected Vector2 mapSize;
 
+	@Deprecated
 	public Boat() {
 		sprite = new Sprite(new Texture(Gdx.files.internal("img/boat1.png")));
 		sprite.setSize(100, 50);
@@ -37,6 +38,23 @@ public abstract class Boat extends PhysicsObject {
 		collisionPolygon = new Polygon(new float[] { 0, 0, 0, 68, 25, 100, 50, 68, 50, 0 });
 
 		position = new Vector2();
+	}
+
+	public Boat(Vector2 position, String texLoc) {
+		this.position = position.cpy();
+
+		collisionPolygon = new Polygon(new float[] { 0, 0, 0, 68, 25, 100, 50, 68, 50, 0 });
+
+		sprite = new Sprite(new Texture(Gdx.files.internal(texLoc)));
+		sprite.setSize(100, 50);
+		sprite.setOrigin(50, 25);
+
+		sprite.setPosition(position.x, position.y);
+
+		collisionPolygon.setPosition(position.x + getLocalCenterX() / 2,
+				position.y - getLocalCenterY() / 2 - 10);
+		collisionPolygon.setOrigin(25, 50);
+		collisionPolygon.setRotation(rotation - 90);
 	}
 
 	public abstract void Update(float delta);
@@ -56,12 +74,11 @@ public abstract class Boat extends PhysicsObject {
 		position.y += Math.sin(Math.toRadians(rotation)) * speed * delta * multiplier;
 
 		sprite.setPosition(position.x, position.y);
-		collisionPolygon.setPosition(position.x + GetCenterX() / 2,
-				position.y - GetCenterY() / 2 - 10);
+		collisionPolygon.setPosition(position.x + getLocalCenterX() / 2,
+				position.y - getLocalCenterY() / 2 - 10);
 		collisionPolygon.setOrigin(25, 50);
 
-		if (!Intersector.isPointInPolygon(mapBounds,
-				new Vector2(position.x + GetCenterX(), position.y + GetCenterY()))) {
+		if (!Intersector.isPointInPolygon(mapBounds, getCenter())) {
 			position = oldPos.cpy();
 		}
 	}
@@ -100,13 +117,5 @@ public abstract class Boat extends PhysicsObject {
 	@Override
 	public void Draw(SpriteBatch batch) {
 		sprite.draw(batch);
-	}
-
-	public float GetCenterX() {
-		return sprite.getOriginX();
-	}
-
-	public float GetCenterY() {
-		return sprite.getOriginY();
 	}
 }

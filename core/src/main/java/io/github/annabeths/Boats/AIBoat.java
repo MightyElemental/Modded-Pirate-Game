@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.annabeths.Colleges.College;
 
 public abstract class AIBoat extends Boat {
+
 	Vector2 initialPosition;
 	Vector2 destination;
 	float plunderValue;
@@ -19,6 +20,10 @@ public abstract class AIBoat extends Boat {
 	 * rotating
 	 */
 	float angleThreshold = 0.25f;
+
+	public AIBoat(Vector2 position, String texLoc) {
+		super(position, texLoc);
+	}
 
 	/**
 	 * Moves the boat towards its current destination
@@ -70,6 +75,7 @@ public abstract class AIBoat extends Boat {
 	/**
 	 * A target destination is valid if the path does not intersect with a college.
 	 * 
+	 * @param target the target destination
 	 * @return {@code true} if the destination was valid, {@code false} otherwise
 	 * @author James Burnell
 	 */

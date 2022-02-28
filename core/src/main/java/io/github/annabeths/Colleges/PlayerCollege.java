@@ -7,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
+import io.github.annabeths.GameScreens.GameController;
 
 public class PlayerCollege extends College {
 
@@ -17,8 +18,9 @@ public class PlayerCollege extends College {
 	 */
 	public int healAmount;
 
-	public PlayerCollege(Vector2 position, Texture aliveTexture, Texture islandTexture) {
-		super(position, aliveTexture, islandTexture);
+	public PlayerCollege(Vector2 position, Texture aliveTexture, Texture islandTexture,
+			GameController gc) {
+		super(position, aliveTexture, islandTexture, gc);
 		healAmount = 15;
 		range = 400;
 		collisionPolygon = new Polygon(new float[] { 0, 0, 100, 0, 100, 100, 0, 100 });
@@ -37,8 +39,8 @@ public class PlayerCollege extends College {
 	}
 
 	@Override
-	public void Update(float delta, PhysicsObject playerBoat) {
-		PlayerBoat boat = (PlayerBoat) playerBoat;
+	public void Update(float delta) {
+		PlayerBoat boat = gc.playerBoat;
 		// if the player boat is in range, heal it
 		if (isInRange(boat)) {
 			boat.Heal(healAmount, delta);
@@ -48,7 +50,7 @@ public class PlayerCollege extends College {
 	@Override
 	public void Draw(SpriteBatch batch) {
 		islandSprite.draw(batch);
-		aliveSprite.draw(batch);
+		sprite.draw(batch);
 	}
 
 }
