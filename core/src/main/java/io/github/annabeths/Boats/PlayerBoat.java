@@ -19,6 +19,7 @@ public class PlayerBoat extends Boat {
 	float projectileSpeedMultiplier = 1;
 	float powerTimer = 0;
 	int powerID = 0;
+	
 
 	/**
 	 * The higher the defense, the stronger the player, this is subtracted from the
@@ -55,6 +56,9 @@ public class PlayerBoat extends Boat {
 	@Override
 	public void Update(float delta) {
 		timeSinceLastShot += delta;
+		if (powerID == 2) {
+			timeSinceLastShot += (delta * 2);
+		}
 		
 		if (powerTimer > 0) {
 			powerTimer -= delta;
@@ -120,7 +124,7 @@ public class PlayerBoat extends Boat {
 
 	@Override
 	public void Shoot() {
-		Projectile proj = new Projectile(
+			Projectile proj = new Projectile(
 				new Vector2(GetCenterX() + position.x, GetCenterY() + position.y), rotation,
 				controller.projectileHolder.stock, true, projectileDamageMultiplier,
 				projectileSpeedMultiplier);
@@ -192,6 +196,10 @@ public class PlayerBoat extends Boat {
 			//invincibility
 			powerTimer = 10;
 			break;	
+		case 2:
+			//rapidfire
+			powerTimer = 10;
+			break;
 		}
 	}
 	
@@ -199,6 +207,8 @@ public class PlayerBoat extends Boat {
 		switch (powerID) {
 		case 1:
 			return("Invincible!");	
+		case 2:
+			return("Rapid fire!");
 		default:
 			return("");
 		}

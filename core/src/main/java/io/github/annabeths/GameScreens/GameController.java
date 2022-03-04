@@ -130,7 +130,7 @@ public class GameController implements Screen {
 		physicsObjects.add(new NeutralBoat(this, new Vector2(400, 800), mapSize));
 		physicsObjects.add(new NeutralBoat(this, new Vector2(800, 800), mapSize));
 
-		physicsObjects.add(new Powerup(1, new Vector2(300, 600)));
+		physicsObjects.add(new Powerup(2, new Vector2(300, 600)));
 		
 		map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),
 				(PlayerBoat) playerBoat, batch, (int) mapSize.x, (int) mapSize.y);
