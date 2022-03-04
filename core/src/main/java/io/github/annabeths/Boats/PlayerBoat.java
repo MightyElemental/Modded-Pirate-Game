@@ -45,20 +45,28 @@ public class PlayerBoat extends Boat {
 	@Override
 	public void Update(float delta) {
 		timeSinceLastShot += delta;
+		boolean isKeyPressed = false;
 
-		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-			Move(delta, 1);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-			Move(delta, -1);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-			Turn(delta, -1);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			Turn(delta, 1);
+		boolean up =Gdx.input.isKeyPressed(Input.Keys.W);
+		boolean down = Gdx.input.isKeyPressed(Input.Keys.S);
+		boolean left = Gdx.input.isKeyPressed(Input.Keys.A);
+		boolean right = Gdx.input.isKeyPressed(Input.Keys.D);
+
+		float desiredAngle = 0;
+
+		if(up){
+			desiredAngle = 90;
+		}else if(down){
+			desiredAngle = 270;
+		}else if(left){
+			desiredAngle = 180;
+		}else if (right){
+			desiredAngle = 0;
 		}
 
+		if(up || down || left || right) {
+			turnTowardsDesiredAngle(desiredAngle, delta);
+		}
 		// make sure we don't fire when hovering over a button and clicking
 		// doesn't matter if we're over a button or not when pressing space
 		if (((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
