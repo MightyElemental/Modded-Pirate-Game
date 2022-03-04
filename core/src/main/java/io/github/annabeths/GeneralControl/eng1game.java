@@ -19,25 +19,24 @@ public class eng1game extends Game {
 	GameController gameScreen;
 
 	public boolean timeUp = false;
-	public boolean showSplashScreen = false;
 
 	@Override
 	public void create() {
 		// create a menu and game screen, then switch to a new splash screen
 		menuScreen = new Menu(this);
 		gameScreen = new GameController(this);
-
+		//gotoScreen(Screens.splashScreen);
 		// splash screen commented out for now, in order to make testing faster,
 		// splash will be re-added when the game is done
 		// for now go directly to the menu
-		if(showSplashScreen){
-			gotoScreen(Screens.splashScreen);
-		}else{
-			gotoScreen(Screens.menuScreen);
-		}
+		 gotoScreen(Screens.menuScreen);
 	}
 
-	// uses the Screens enum to change between any screen
+	/**
+	 * Uses the {@link Screens} enumeration to change between any screen.
+	 * 
+	 * @param s the screen to switch to
+	 */
 	public void gotoScreen(Screens s) {
 		switch (s) {
 		case splashScreen: // creates a new splash screen

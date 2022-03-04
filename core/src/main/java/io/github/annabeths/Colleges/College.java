@@ -1,34 +1,61 @@
 package io.github.annabeths.Colleges;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.Boat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
+import io.github.annabeths.GameScreens.GameController;
 
-import java.lang.Math;
+public abstract class College extends PhysicsObject {
 
-public abstract class College extends PhysicsObject{
-    int range;
-    int HP;
-    int damage;
-    int fireRate;
-    Sprite aliveSprite;
-    Sprite deadSprite;
-    Sprite islandSprite;
+	public int maxHP;
+	public int range;
+	public int HP;
+	public int damage;
 
-    /*
-        Returns true if the specified boat object is in range of the college
+	public float fireRate;
 
-        @param  other   the boat to check the range of
-        @return boolean true if the boat is in range of the college
-    */
-    public boolean isInRange(Boat other)
-    {
-        // work out euclidean distance to the other physics object, and then returns true if the 
-        // that distance is <= the range of the college
-        // this will be used to check if the enemy college should attack the player
-        // this will be used to check if the friendly college should heal the player
-        return range >= Math.sqrt(Math.pow((aliveSprite.getX() + aliveSprite.getWidth()/2) - (other.position.x + other.GetCenterX()), 2) +
-                                  Math.pow((aliveSprite.getY() + aliveSprite.getHeight()/2) - (other.position.y + other.GetCenterY()), 2));
-    }
+	public boolean invulnerable;
+
+	public Sprite deadSprite;
+	public Sprite islandSprite;
+
+	/**
+	 * Used to access player boat and to notify the game controller when the college
+	 * has been destroyed
+	 */
+	protected GameController gc;
+
+	public College(Vector2 pos, Texture aliveTexture, Texture islandTexture, GameController gc) {
+		this.gc = gc;
+		position = pos;
+
+		sprite = new Sprite(aliveTexture);
+		sprite.setPosition(position.x, position.y);
+		sprite.setSize(100, 100);
+
+		islandSprite = new Sprite(islandTexture);
+		islandSprite.setCenter(sprite.getX() + 5, sprite.getY() + 5);
+		islandSprite.setSize(120, 120);
+	}
+
+	public College() {
+	}
+
+	/**
+	 * Work out euclidean distance to the other physics object, and then returns
+	 * true if the that distance is &lt;= the range of the college.<br>
+	 * This will be used to check if the enemy college should attack the player.<br>
+	 * This will be used to check if the friendly college should heal the player.
+	 * 
+	 * @param other the boat to check the range of
+	 * @return {@code true} if the boat is in range of the college, {@code false}
+	 *         otherwise
+	 * @author James Burnell
+	 */
+	public boolean isInRange(Boat other) {
+		return getCenter().dst(other.getCenter()) <= range;
+	}
 }

@@ -3,159 +3,160 @@ package io.github.annabeths.Boats;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
-import io.github.annabeths.Colleges.EnemyCollege;
-import io.github.annabeths.Colleges.PlayerCollege;
+import io.github.annabeths.Colleges.College;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
 
-public class PlayerBoat extends Boat{
+public class PlayerBoat extends Boat {
 	float projectileDamageMultiplier = 1;
 	float projectileSpeedMultiplier = 1;
 
-	// The higher the defense, the stronger the player, this is subtracted from the damage
+	/**
+	 * The higher the defense, the stronger the player, this is subtracted from the
+	 * damage
+	 */
 	int defense = 1;
 
 	float timeSinceLastHeal = 0;
 
-    public PlayerBoat(GameController controller, Vector2 initialPosition, Vector2 mapSize) {
-        this.controller = controller;
+	public PlayerBoat(GameController controller, Vector2 initialPosition, Vector2 mapSize) {
+		super(initialPosition, "img/boat1.png");
+		this.controller = controller;
 
 		this.HP = 100;
 		this.maxHP = 100;
 		this.speed = 200;
 		this.turnSpeed = 150;
-		position = initialPosition;
-
-		collisionPolygon.setPosition(initialPosition.x + GetCenterX()/2, initialPosition.y - GetCenterY()/2 - 10);
-		collisionPolygon.setOrigin(25,50);
-		collisionPolygon.setRotation(rotation - 90);
-
-		sprite.setPosition(initialPosition.x, initialPosition.y);
 
 		this.mapSize = mapSize;
 		mapBounds = new Array<Vector2>(true, 4);
-		mapBounds.add(new Vector2(0,0));
+		mapBounds.add(new Vector2(0, 0));
 		mapBounds.add(new Vector2(mapSize.x, 0));
 		mapBounds.add(new Vector2(mapSize.x, mapSize.y));
 		mapBounds.add(new Vector2(0, mapSize.y));
 	}
-	
+
 	@Override
 	public void Update(float delta) {
 		timeSinceLastShot += delta;
 
-        if(Gdx.input.isKeyPressed(Input.Keys.W)){
+		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			Move(delta, 1);
 		}
-        if(Gdx.input.isKeyPressed(Input.Keys.S)){
+		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
 			Move(delta, -1);
 		}
-        if(Gdx.input.isKeyPressed(Input.Keys.D)){
+		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
 			Turn(delta, -1);
 		}
-        if(Gdx.input.isKeyPressed(Input.Keys.A)){
+		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
 			Turn(delta, 1);
 		}
 
-        if(((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && !controller.hud.hoveringOverButton) // make sure we don't fire when hovering over a button and clicking
-		|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) // doesn't matter if we're over a button or not when pressing space
-		&& shotDelay <= timeSinceLastShot){
-            Shoot();
+		// make sure we don't fire when hovering over a button and clicking
+		// doesn't matter if we're over a button or not when pressing space
+		if (((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+				&& !controller.hud.hoveringOverButton)
+				|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+				&& shotDelay <= timeSinceLastShot) {
+			Shoot();
 			timeSinceLastShot = 0;
-        }
+		}
 
-		if(HP <= 0)
-		{
-			//the player is dead
+		if (HP <= 0) {
+			// the player is dead
 			controller.gameOver();
 		}
 
 	}
-	
-	/*
-		Method that executes when a collision is detected
 
-		@param	other	the other object, as a PhysicsObject to be generic
-	*/
+	/**
+	 * Method that executes when a collision is detected
+	 * 
+	 * @param other the other object, as a PhysicsObject to be generic
+	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
-		if(other instanceof Projectile){ //check the type of object passed
+		if (other instanceof Projectile) { // check the type of object passed
 			Projectile p = (Projectile) other;
-			if(! p.isPlayerProjectile)
-			{
+			if (!p.isPlayerProjectile) {
 				p.killOnNextTick = true;
 				HP -= (p.damage - defense);
 			}
-		}
-		else if(other.getClass() == EnemyCollege.class || other.getClass() == PlayerCollege.class)
-		{
+		} else if (other instanceof College) {
+			// End game if player crashes into college
 			controller.gameOver();
-		}
-		else if (other.getClass() == NeutralBoat.class)
-		{
+		} else if (other instanceof NeutralBoat) {
+			// Damage player if collides with boat
 			HP -= 50;
 		}
 	}
 
 	@Override
-	void Shoot(){
-        Projectile proj = new Projectile(new Vector2(GetCenterX() + position.x, GetCenterY() + position.y),
-        								 rotation, controller.projectileHolder.stock, true,
-										 projectileDamageMultiplier, projectileSpeedMultiplier);
-        controller.NewPhysicsObject(proj); // Add the projectile to the GameController's physics objects list so it receives updates
+	public void Shoot() {
+		Projectile proj = new Projectile(getCenter(), rotation, controller.projectileHolder.stock,
+				true, projectileDamageMultiplier, projectileSpeedMultiplier);
+		// Add the projectile to the GameController's physics objects list so it
+		// receives updates
+		controller.NewPhysicsObject(proj);
 	}
 
 	@Override
-	void Destroy(){
+	public void Destroy() {
 		controller.gameOver();
 	}
 
-	/*
-		Allows the player to upgrade their boat
-
-		@param	upgrade		The requested upgrade
-		@param	amount		the amount to upgrade by
-	*/
-    public void Upgrade(Upgrades upgrade, float amount){
-    	if(upgrade == Upgrades.health) {
-    		HP = (int) Math.min(maxHP, HP + amount); // Keeps HP from exceeding max
-    	} else if(upgrade == Upgrades.maxhealth) {
-    		maxHP += amount;
-    		HP += amount; // Also heal the player, we're feeling generous.
-    	} else if(upgrade == Upgrades.speed) {
-    		speed += amount;
-    	} else if(upgrade == Upgrades.turnspeed) {
-    		turnSpeed += amount;
-    	} else if(upgrade == Upgrades.projectiledamage) {
-    		projectileDamageMultiplier += amount;
-    	} else if(upgrade == Upgrades.projectilespeed) {
-    		projectileSpeedMultiplier += amount;
-    	} else if(upgrade == Upgrades.defense) {
-    		defense += amount;
-    	}
-    }
+	/**
+	 * Allows the player to upgrade their boat
+	 * 
+	 * @param upgrade The requested upgrade
+	 * 
+	 * @param amount the amount to upgrade by
+	 */
+	public void Upgrade(Upgrades upgrade, float amount) {
+		switch (upgrade) {
+		case defense:
+			defense += amount;
+			break;
+		case health:
+			HP = MathUtils.clamp((int) (HP + amount), 0, maxHP);
+			break;
+		case maxhealth:
+			maxHP += amount;
+			HP += amount; // Also heal the player, we're feeling generous.
+			break;
+		case projectiledamage:
+			projectileDamageMultiplier += amount;
+			break;
+		case projectilespeed:
+			projectileSpeedMultiplier += amount;
+			break;
+		case speed:
+			speed += amount;
+			break;
+		case turnspeed:
+			turnSpeed += amount;
+			break;
+		}
+	}
 
 	@Override
 	public void Draw(SpriteBatch batch) {
 		sprite.draw(batch);
 	}
 
-	public void Heal(int amount, float delta)
-	{
+	public void Heal(int amount, float delta) {
 		timeSinceLastHeal += delta;
-		if(amount * timeSinceLastHeal >= 1)
-		{
+		if (amount * timeSinceLastHeal >= 1) {
 			HP += amount * timeSinceLastHeal;
 			timeSinceLastHeal = 0;
-			if(HP > maxHP)
-			{
-				HP = maxHP;
-			}
+			HP = MathUtils.clamp(HP, 0, maxHP);
 		}
 	}
 }
