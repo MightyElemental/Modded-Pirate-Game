@@ -100,11 +100,16 @@ public class PlayerBoat extends Boat {
 
 	@Override
 	public void Shoot() {
-		Projectile proj = new Projectile(getCenter(), rotation, controller.projectileHolder.stock,
-				true, projectileDamageMultiplier, projectileSpeedMultiplier);
+		Projectile projLeft = new Projectile(getCenter(), rotation - 90,
+				controller.projectileHolder.stock, true, projectileDamageMultiplier,
+				projectileSpeedMultiplier);
+		Projectile projRight = new Projectile(getCenter(), rotation + 90,
+				controller.projectileHolder.stock, true, projectileDamageMultiplier,
+				projectileSpeedMultiplier);
 		// Add the projectile to the GameController's physics objects list so it
 		// receives updates
-		controller.NewPhysicsObject(proj);
+		controller.NewPhysicsObject(projLeft);
+		controller.NewPhysicsObject(projRight);
 	}
 
 	@Override
