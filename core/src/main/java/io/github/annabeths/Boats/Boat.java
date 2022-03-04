@@ -98,6 +98,24 @@ public abstract class Boat extends PhysicsObject {
 		collisionPolygon.setRotation(rotation - 90);
 	}
 
+	public void turnTowardsDesiredAngle(float desiredAngle, float delta){
+
+		if (rotation <= 90 && desiredAngle >= 270) desiredAngle -= 360;
+		if (rotation >= 270 && desiredAngle <= 90) desiredAngle += 360;
+		if (rotation > 180 && desiredAngle < 90) desiredAngle += 360;
+
+		if(rotation != desiredAngle){
+			if(rotation < desiredAngle){
+				Turn(delta,1);
+			}else{
+				Turn(delta,-1);
+			}
+
+		}
+
+		Move(delta,1);
+	}
+
 	abstract void Shoot();
 
 	abstract void Destroy();
