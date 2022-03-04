@@ -2,6 +2,8 @@ package io.github.annabeths.Boats;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -169,6 +171,7 @@ public class PlayerBoat extends Boat {
 	@Override
 	public void Draw(SpriteBatch batch) {
 		sprite.draw(batch);
+		
 	}
 
 	public void Heal(int amount, float delta) {
@@ -189,6 +192,15 @@ public class PlayerBoat extends Boat {
 			//invincibility
 			powerTimer = 10;
 			break;	
+		}
+	}
+	
+	public String GetPowerName() {
+		switch (powerID) {
+		case 1:
+			return("Invincible!");	
+		default:
+			return("");
 		}
 	}
 }
