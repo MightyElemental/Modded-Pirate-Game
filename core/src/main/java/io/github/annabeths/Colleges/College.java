@@ -2,6 +2,7 @@ package io.github.annabeths.Colleges;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.Boat;
@@ -39,6 +40,9 @@ public abstract class College extends PhysicsObject {
 		islandSprite = new Sprite(islandTexture);
 		islandSprite.setCenter(sprite.getX() + 5, sprite.getY() + 5);
 		islandSprite.setSize(120, 120);
+
+		collisionPolygon = new Polygon(new float[] { 0, 0, 100, 0, 100, 100, 0, 100 });
+		collisionPolygon.setPosition(position.x, position.y);
 	}
 
 	public College() {
