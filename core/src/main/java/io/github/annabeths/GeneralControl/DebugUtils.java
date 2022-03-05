@@ -26,6 +26,7 @@ public class DebugUtils {
 
 	public static boolean DRAW_DEBUG_COLLISIONS = true;
 	public static boolean DRAW_DEBUG_TEXT = true;
+	public static boolean ENEMY_COLLEGE_FIRE = true;
 
 	public static void drawDebugText(GameController gc, SpriteBatch batch) {
 		List<String> debugText = generateDebugText(gc);
@@ -35,8 +36,8 @@ public class DebugUtils {
 	}
 
 	private static List<String> generateDebugText(GameController gc) {
-		return Arrays.asList("PhysObj Count = " + gc.physicsObjects.size());
-		// , "Living College Count = " + gc.colleges.stream().filter(c->c.)
+		return Arrays.asList("PhysObj Count = " + gc.physicsObjects.size(),
+				"Living College Count = " + gc.colleges.stream().filter(c -> c.HP > 0).count());
 	}
 
 	public static void drawDebugCollisions(GameController gc, ShapeRenderer sr) {

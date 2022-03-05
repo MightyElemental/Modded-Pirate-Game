@@ -13,6 +13,7 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
@@ -101,6 +102,8 @@ public class EnemyCollege extends College {
 	}
 
 	void ShootAt(Vector2 target) {
+		// If fire is disabled, skip calculation.
+		if (!DebugUtils.ENEMY_COLLEGE_FIRE) return;
 		/*
 		 * calculate the shot angle by getting a vector from the center of the college
 		 * to the target. Convert to degrees for the inaccuracy calculation.
