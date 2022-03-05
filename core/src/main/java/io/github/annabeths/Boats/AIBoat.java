@@ -1,10 +1,10 @@
 package io.github.annabeths.Boats;
 
 import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Colleges.College;
+import io.github.annabeths.GameScreens.GameController;
 
 public abstract class AIBoat extends Boat {
 
@@ -21,8 +21,11 @@ public abstract class AIBoat extends Boat {
 	 */
 	float angleThreshold = 0.25f;
 
-	public AIBoat(Vector2 position, String texLoc) {
-		super(position, texLoc);
+	public AIBoat(GameController controller, Vector2 initialPosition, String texLoc) {
+		super(controller, initialPosition, texLoc);
+		// Force the boat to set a new destination on initialization
+		this.destination = getNewRandomValidTarget();
+		this.initialPosition = initialPosition.cpy();
 	}
 
 	/**
@@ -31,25 +34,24 @@ public abstract class AIBoat extends Boat {
 	 * @param delta time since last frame
 	 */
 	public void MoveToDestination(float delta) {
-		Move(delta, 1);
-
 		// Figure out the angle between the boat and the destination
-		float targetAngle = (float) Math
-				.toDegrees(Math.atan2(destination.y - position.y, destination.x - position.x));
-		float turningMultiplier = 0.5f;
-		// TODO: Fix rotation direction calculation
-		if (Math.abs(targetAngle - rotation) > angleThreshold) {
-			turningMultiplier = (targetAngle > rotation) ? 0.5f : -0.5f;
-		} else {
-			turningMultiplier = 0;
-		}
-		Turn(delta, turningMultiplier);
+		float targetAngle = destination.cpy().sub(getCenter()).angleDeg();
 
+		moveTowardsDesiredAngle(targetAngle, delta);
+	}
+
+	@Override
+	public void Update(float delta) {
+		MoveToDestination(delta);
+		if (HP <= 0) Destroy();
 		// Boat is near destination, set a new one
+		updateDestination();
+	}
+
+	public void updateDestination() {
 		if (getCenter().dst(destination) <= destinationThreshold) {
 			Vector2 target = getNewRandomValidTarget();
 			SetDestination(target);
-			// System.out.println("New Target! " + target);
 		}
 	}
 
@@ -61,13 +63,11 @@ public abstract class AIBoat extends Boat {
 	 * @see #isDestValid(Vector2)
 	 */
 	protected Vector2 getNewRandomValidTarget() {
-		Vector2 target = new Vector2(MathUtils.random.nextInt((int) mapSize.x + 1),
-				MathUtils.random.nextInt((int) mapSize.y + 1));
+		Vector2 target = controller.map.getRandomPointInBounds();
 
 		// Keep going until we find a valid destination
 		while (!isDestValid(target)) { // TODO: Write more efficient algorithm
-			target = new Vector2(MathUtils.random(100, (int) mapSize.x + 1),
-					MathUtils.random((int) mapSize.y + 1));
+			target = controller.map.getRandomPointInBounds();
 		}
 		return target;
 	}
@@ -82,8 +82,9 @@ public abstract class AIBoat extends Boat {
 	public boolean isDestValid(Vector2 target) {
 		// We want to check if there is any college between the boat and its destination
 		for (College college : controller.colleges) {
-			if (Intersector.intersectLinePolygon(getCenter(), target, college.collisionPolygon)) {
+			if (Intersector.intersectSegmentPolygon(getCenter(), target, college.collisionPolygon)) {
 				// the line has hit a college, return false and set a new destination
+				// System.out.println("hit: "+college.getCenter()+" | "+getCenter()+" <-> "+target);
 				return false;
 			}
 		}
