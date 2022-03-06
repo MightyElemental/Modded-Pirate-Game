@@ -14,18 +14,40 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
-
-    runs-on: ubuntu-latest
-
+  test:
+    strategy:
+        matrix:
+          os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
       uses: actions/setup-java@v2
       with:
         java-version: '11'
-        distribution: 'temurin'
-    - name: Build with Gradle
-      uses: gradle/gradle-build-action@937999e9cc2425eddc7fd62d1053baf041147db7
+        distribution: 'adopt'
+    - name: Run Unit Tests
+      uses: gradle/gradle-build-action@v2
       with:
-        arguments: build
+        gradle-version: 6.7.1
+        arguments: core:test
+    - name: Publish Test Report
+      uses: mikepenz/action-junit-report@v2
+      if: always()
+      with:
+        report_paths: '**/build/test-results/test/TEST-*.xml'
+        
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 11
+      uses: actions/setup-java@v2
+      with:
+        java-version: '11'
+        distribution: 'adopt'
+    - name: Build with Gradle
+      uses: gradle/gradle-build-action@v2
+      with:
+        gradle-version: 6.7.1
+        arguments: desktop:dist

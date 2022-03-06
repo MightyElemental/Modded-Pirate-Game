@@ -1,4 +1,5 @@
 # ENG1 Pirate Game Assessment 2
+[![Java CI with Gradle](https://github.com/ENG1-Team-29/Assessment-2/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/ENG1-Team-29/Assessment-2/actions/workflows/gradle.yml)
 
 ## Description
 
