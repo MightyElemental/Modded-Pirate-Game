@@ -1,7 +1,10 @@
 package io.github.annabeths.GameScreens;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -26,6 +29,8 @@ import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.ProjectileDataHolder;
 import io.github.annabeths.UI.HUD;
 
+import static io.github.annabeths.Level.GameMap.BORDER_BRIM;
+
 public class GameController implements Screen {
 
 	private eng1game game;
@@ -37,7 +42,7 @@ public class GameController implements Screen {
 	public PlayerBoat playerBoat;
 	private EnemyCollege bossCollege;
 
-	public float timer = 600;
+	public float timer = 10 * 60 + 0;
 
 	// UI Related Variables
 	private SpriteBatch batch;
@@ -63,72 +68,69 @@ public class GameController implements Screen {
 		colleges = new ArrayList<College>();
 		projectileHolder = new ProjectileDataHolder();
 		hud = new HUD(this);
-		mapSize = new Vector2(1500, 1500);
+		mapSize = new Vector2(3000, 3000);
 		batch = new SpriteBatch();
 		sr = new ShapeRenderer();
-	}
 
-	@Override
-	public void show() {
 		// Create the player boat and place it in the center of the screen
-		playerBoat = new PlayerBoat(this, new Vector2(200, 200), mapSize.cpy());
+		playerBoat = new PlayerBoat(this, new Vector2(500, 500), mapSize.cpy());
 		physicsObjects.add(playerBoat);
 
-		// this section creates a array of textures for the colleges, shuffles it and
-		// assigns to the created colleges
-		Texture[] collegeTextures = new Texture[10];
-		for (int i = 0; i < 9; i++) {
-			collegeTextures[i] = new Texture(String.format("img/castle%d.png", (i + 1)));
-		} // load the textures
+		map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),
+				(PlayerBoat) playerBoat, batch, (int) mapSize.x, (int) mapSize.y);
 
-		for (int i = 0; i < 9; i++) {
-			Texture tmp = collegeTextures[i];
-			int randomInt = MathUtils.random.nextInt(9);
-			collegeTextures[i] = collegeTextures[randomInt];
-			collegeTextures[randomInt] = tmp;
-		} // shuffle the array of textures
+		generateGameObjects();
+
+	}
+
+	private void generateGameObjects() {
+		// Generate a list of random college textures
+		List<Texture> collegeTextures = MathUtils.random.ints(5, 0, 9)
+				.mapToObj(tn -> new Texture(String.format("img/castle%d.png", (tn + 1))))
+				.collect(Collectors.toList());
+
+		Vector2 collegePlayer = new Vector2(BORDER_BRIM, BORDER_BRIM);
+		Vector2 college1 = new Vector2(BORDER_BRIM, mapSize.y - 100 - BORDER_BRIM);
+		Vector2 college2 = new Vector2(mapSize.x - 100 - BORDER_BRIM, BORDER_BRIM);
+		Vector2 college3 = new Vector2(mapSize.x - 100 - BORDER_BRIM,
+				mapSize.y - 100 - BORDER_BRIM);
+		List<Vector2> collegePos = Arrays.asList(college1, college2, college3);
+		Vector2 collegeBoss = new Vector2((mapSize.x - 100) / 2, (mapSize.y - 100) / 2);
 
 		// get the texture for colleges to sit on
 		Texture islandTexture = new Texture("img/island.png");
-		PlayerCollege p = new PlayerCollege(new Vector2(50, 50), collegeTextures[0], islandTexture,
+		PlayerCollege p = new PlayerCollege(collegePlayer, collegeTextures.get(0), islandTexture,
 				this);
 		physicsObjects.add(p); // add college to physics object, for updates
 		colleges.add(p); // also add a reference to the colleges list
 
-		EnemyCollege e = new EnemyCollege(new Vector2(50, 1350), collegeTextures[1], islandTexture,
-				this, projectileHolder.stock, 200);
-		physicsObjects.add(e);
-		colleges.add(e);
-
-		e = (new EnemyCollege(new Vector2(1350, 50), collegeTextures[2], islandTexture, this,
-				projectileHolder.stock, 200));
-
-		physicsObjects.add(e);
-		colleges.add(e);
-
-		e = (new EnemyCollege(new Vector2(1350, 1350), collegeTextures[3], islandTexture, this,
-				projectileHolder.stock, 200));
-
-		physicsObjects.add(e);
-		colleges.add(e);
-
-		bossCollege = new EnemyCollege(new Vector2(700, 700), collegeTextures[4], islandTexture,
-				this, projectileHolder.boss, 200);
+		// Generate the boss college
+		bossCollege = new EnemyCollege(collegeBoss, collegeTextures.get(1), islandTexture, this,
+				projectileHolder.boss, 200);
 
 		bossCollege.invulnerable = true;
 		physicsObjects.add(bossCollege);
 		colleges.add(bossCollege);
-		// create the moving camera/map borders
 
-		// create some neutral boats (could be extended to a proper spawner at some
-		// point)
-		physicsObjects.add(new NeutralBoat(this, new Vector2(400, 400), mapSize));
-		physicsObjects.add(new NeutralBoat(this, new Vector2(800, 400), mapSize));
-		physicsObjects.add(new NeutralBoat(this, new Vector2(400, 800), mapSize));
-		physicsObjects.add(new NeutralBoat(this, new Vector2(800, 800), mapSize));
+		// Generate enemy colleges
+		for (int i = 0; i < 3; i++) {
+			EnemyCollege e = new EnemyCollege(collegePos.get(i), collegeTextures.get(i + 2),
+					islandTexture, this, projectileHolder.stock, 200);
+			physicsObjects.add(e);
+			colleges.add(e);
+		}
 
-		map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),
-				(PlayerBoat) playerBoat, batch, (int) mapSize.x, (int) mapSize.y);
+		// create some neutral boats
+		physicsObjects.add(new NeutralBoat(this, new Vector2(mapSize.x / 3, mapSize.y / 3)));
+		physicsObjects.add(new NeutralBoat(this, new Vector2(2 * mapSize.x / 3, mapSize.y / 3)));
+		physicsObjects.add(new NeutralBoat(this, new Vector2(mapSize.x / 3, 2 * mapSize.y / 3)));
+		physicsObjects
+				.add(new NeutralBoat(this, new Vector2(2 * mapSize.x / 3, 2 * mapSize.y / 3)));
+	}
+
+	@Override
+	public void show() {
+
 	}
 
 	public void logic(float delta) {
