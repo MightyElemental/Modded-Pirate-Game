@@ -1,5 +1,7 @@
 package io.github.annabeths.GameScreens;
 
+import static io.github.annabeths.Level.GameMap.BORDER_BRIM;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -16,6 +18,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.annabeths.Boats.EnemyBoat;
 import io.github.annabeths.Boats.NeutralBoat;
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.Colleges.College;
@@ -28,8 +31,6 @@ import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.ProjectileDataHolder;
 import io.github.annabeths.UI.HUD;
-
-import static io.github.annabeths.Level.GameMap.BORDER_BRIM;
 
 public class GameController implements Screen {
 
@@ -124,8 +125,7 @@ public class GameController implements Screen {
 		physicsObjects.add(new NeutralBoat(this, new Vector2(mapSize.x / 3, mapSize.y / 3)));
 		physicsObjects.add(new NeutralBoat(this, new Vector2(2 * mapSize.x / 3, mapSize.y / 3)));
 		physicsObjects.add(new NeutralBoat(this, new Vector2(mapSize.x / 3, 2 * mapSize.y / 3)));
-		physicsObjects
-				.add(new NeutralBoat(this, new Vector2(2 * mapSize.x / 3, 2 * mapSize.y / 3)));
+		physicsObjects.add(new EnemyBoat(this, new Vector2(2 * mapSize.x / 3, 2 * mapSize.y / 3)));
 	}
 
 	@Override
