@@ -7,12 +7,12 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
@@ -43,8 +43,6 @@ public class EnemyCollege extends College {
 		range = 500;
 		fireRate = 1.5f;
 		projectileType = projectileData;
-		collisionPolygon = new Polygon(new float[] { 0, 0, 100, 0, 100, 100, 0, 100 });
-		collisionPolygon.setPosition(position.x, position.y);
 		font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
 		hpText = new GlyphLayout();
 		updateHpText();
@@ -101,6 +99,8 @@ public class EnemyCollege extends College {
 	}
 
 	void ShootAt(Vector2 target) {
+		// If fire is disabled, skip calculation.
+		if (!DebugUtils.ENEMY_COLLEGE_FIRE) return;
 		/*
 		 * calculate the shot angle by getting a vector from the center of the college
 		 * to the target. Convert to degrees for the inaccuracy calculation.

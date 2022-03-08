@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 import io.github.annabeths.Colleges.College;
 import io.github.annabeths.GameGenerics.PhysicsObject;
@@ -26,47 +25,28 @@ public class PlayerBoat extends Boat {
 	float timeSinceLastHeal = 0;
 
 	public PlayerBoat(GameController controller, Vector2 initialPosition, Vector2 mapSize) {
-		super(initialPosition, "img/boat1.png");
-		this.controller = controller;
+		super(controller, initialPosition, "img/boat1.png");
 
 		this.HP = 100;
 		this.maxHP = 100;
 		this.speed = 200;
 		this.turnSpeed = 150;
 
-		this.mapSize = mapSize;
-		mapBounds = new Array<Vector2>(true, 4);
-		mapBounds.add(new Vector2(0, 0));
-		mapBounds.add(new Vector2(mapSize.x, 0));
-		mapBounds.add(new Vector2(mapSize.x, mapSize.y));
-		mapBounds.add(new Vector2(0, mapSize.y));
 	}
 
 	@Override
 	public void Update(float delta) {
 		timeSinceLastShot += delta;
-		boolean isKeyPressed = false;
 
-		boolean up =Gdx.input.isKeyPressed(Input.Keys.W);
+		boolean up = Gdx.input.isKeyPressed(Input.Keys.W);
 		boolean down = Gdx.input.isKeyPressed(Input.Keys.S);
 		boolean left = Gdx.input.isKeyPressed(Input.Keys.A);
 		boolean right = Gdx.input.isKeyPressed(Input.Keys.D);
 
-		float desiredAngle = 0;
+		if (left) Turn(delta, 1);
+		if (right) Turn(delta, -1);
+		if (left || right || up || down) Move(delta, 1);
 
-		if(up){
-			desiredAngle = 90;
-		}else if(down){
-			desiredAngle = 270;
-		}else if(left){
-			desiredAngle = 180;
-		}else if (right){
-			desiredAngle = 0;
-		}
-
-		if(up || down || left || right) {
-			turnTowardsDesiredAngle(desiredAngle, delta);
-		}
 		// make sure we don't fire when hovering over a button and clicking
 		// doesn't matter if we're over a button or not when pressing space
 		if (((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
@@ -108,11 +88,16 @@ public class PlayerBoat extends Boat {
 
 	@Override
 	public void Shoot() {
-		Projectile proj = new Projectile(getCenter(), rotation, controller.projectileHolder.stock,
-				true, projectileDamageMultiplier, projectileSpeedMultiplier);
+		Projectile projLeft = new Projectile(getCenter(), rotation - 90,
+				controller.projectileHolder.stock, true, projectileDamageMultiplier,
+				projectileSpeedMultiplier);
+		Projectile projRight = new Projectile(getCenter(), rotation + 90,
+				controller.projectileHolder.stock, true, projectileDamageMultiplier,
+				projectileSpeedMultiplier);
 		// Add the projectile to the GameController's physics objects list so it
 		// receives updates
-		controller.NewPhysicsObject(proj);
+		controller.NewPhysicsObject(projLeft);
+		controller.NewPhysicsObject(projRight);
 	}
 
 	@Override

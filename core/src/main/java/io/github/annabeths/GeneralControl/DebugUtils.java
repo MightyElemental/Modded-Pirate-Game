@@ -24,8 +24,9 @@ public class DebugUtils {
 		debugFont.getData().setScale(0.5f);
 	}
 
-	public static boolean DRAW_DEBUG_COLLISIONS = true;
+	public static boolean DRAW_DEBUG_COLLISIONS = false;
 	public static boolean DRAW_DEBUG_TEXT = true;
+	public static boolean ENEMY_COLLEGE_FIRE = false;
 
 	public static void drawDebugText(GameController gc, SpriteBatch batch) {
 		List<String> debugText = generateDebugText(gc);
@@ -35,8 +36,9 @@ public class DebugUtils {
 	}
 
 	private static List<String> generateDebugText(GameController gc) {
-		return Arrays.asList("PhysObj Count = " + gc.physicsObjects.size());
-		// , "Living College Count = " + gc.colleges.stream().filter(c->c.)
+		return Arrays.asList("PhysObj Count = " + gc.physicsObjects.size(),
+				"Living College Count = " + gc.colleges.stream().filter(c -> c.HP > 0).count(),
+				"FPS: " + Gdx.graphics.getFramesPerSecond());
 	}
 
 	public static void drawDebugCollisions(GameController gc, ShapeRenderer sr) {
@@ -50,6 +52,8 @@ public class DebugUtils {
 			// Draw boat destinations
 			if (o instanceof AIBoat) {
 				AIBoat aib = (AIBoat) o;
+				// skip null destinations
+				if (aib.GetDestination() == null) continue;
 				float dt = aib.getDestinationThreshold();
 				sr.setColor(Color.GRAY);
 				// Draw destination

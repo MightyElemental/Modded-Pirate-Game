@@ -4,14 +4,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
-
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Polygon;
 
 public abstract class Boat extends PhysicsObject {
 	GameController controller;
@@ -25,9 +22,6 @@ public abstract class Boat extends PhysicsObject {
 	protected float shotDelay = 0.5f;
 	protected float timeSinceLastShot = 0f;
 
-	protected Array<Vector2> mapBounds;
-	protected Vector2 mapSize;
-
 	@Deprecated
 	public Boat() {
 		sprite = new Sprite(new Texture(Gdx.files.internal("img/boat1.png")));
@@ -40,7 +34,8 @@ public abstract class Boat extends PhysicsObject {
 		position = new Vector2();
 	}
 
-	public Boat(Vector2 position, String texLoc) {
+	public Boat(GameController controller, Vector2 position, String texLoc) {
+		this.controller = controller;
 		this.position = position.cpy();
 
 		collisionPolygon = new Polygon(new float[] { 0, 0, 0, 68, 25, 100, 50, 68, 50, 0 });
@@ -78,7 +73,7 @@ public abstract class Boat extends PhysicsObject {
 				position.y - getLocalCenterY() / 2 - 10);
 		collisionPolygon.setOrigin(25, 50);
 
-		if (!Intersector.isPointInPolygon(mapBounds, getCenter())) {
+		if (!controller.map.isPointInBounds(getCenter())) {
 			position = oldPos.cpy();
 		}
 	}
@@ -98,22 +93,27 @@ public abstract class Boat extends PhysicsObject {
 		collisionPolygon.setRotation(rotation - 90);
 	}
 
-	public void turnTowardsDesiredAngle(float desiredAngle, float delta){
+	/**
+	 * Turns the boat towards a desired angle using the shortest angular distance.
+	 * Moves the boat forwards at the same time.
+	 * 
+	 * @param desiredAngle the angle the boat should end up at
+	 * @param delta the time since the last update
+	 * @author James Burnell
+	 * @author Hector Woods
+	 */
+	public void moveTowardsDesiredAngle(float desiredAngle, float delta) {
 
+		// Manipulate angle to compensate for [0-360] limitations
 		if (rotation <= 90 && desiredAngle >= 270) desiredAngle -= 360;
 		if (rotation >= 270 && desiredAngle <= 90) desiredAngle += 360;
 		if (rotation > 180 && desiredAngle < 90) desiredAngle += 360;
 
-		if(rotation != desiredAngle){
-			if(rotation < desiredAngle){
-				Turn(delta,1);
-			}else{
-				Turn(delta,-1);
-			}
-
+		if (Math.abs(rotation - desiredAngle) > 0.5f) {
+			Turn(delta, rotation < desiredAngle ? 1 : -1);
 		}
 
-		Move(delta,1);
+		Move(delta, 1);
 	}
 
 	abstract void Shoot();

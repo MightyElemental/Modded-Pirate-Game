@@ -2,7 +2,6 @@ package io.github.annabeths.Colleges;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.PlayerBoat;
@@ -23,8 +22,6 @@ public class PlayerCollege extends College {
 		super(position, aliveTexture, islandTexture, gc);
 		healAmount = 15;
 		range = 400;
-		collisionPolygon = new Polygon(new float[] { 0, 0, 100, 0, 100, 100, 0, 100 });
-		collisionPolygon.setPosition(position.x, position.y);
 	}
 
 	/**
