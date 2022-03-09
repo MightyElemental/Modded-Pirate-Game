@@ -122,13 +122,22 @@ public class PlayerBoat extends Boat {
 
 	@Override
 	public void Shoot() {
+		if (powerID == 3) {
+			Projectile proj = new Projectile(
+				new Vector2(GetCenterX() + position.x, GetCenterY() + position.y), rotation,
+				controller.projectileHolder.stock, true, projectileDamageMultiplier * 3,
+				projectileSpeedMultiplier);
+			controller.NewPhysicsObject(proj);
+		} else {
 			Projectile proj = new Projectile(
 				new Vector2(GetCenterX() + position.x, GetCenterY() + position.y), rotation,
 				controller.projectileHolder.stock, true, projectileDamageMultiplier,
 				projectileSpeedMultiplier);
+			controller.NewPhysicsObject(proj);
+		}
 		// Add the projectile to the GameController's physics objects list so it
 		// receives updates
-		controller.NewPhysicsObject(proj);
+		
 	}
 
 	@Override
@@ -198,6 +207,10 @@ public class PlayerBoat extends Boat {
 			//rapidfire
 			powerTimer = 10;
 			break;
+		case 3:
+			//damage up
+			powerTimer = 10;
+			break;
 		}
 	}
 	
@@ -207,6 +220,8 @@ public class PlayerBoat extends Boat {
 			return("Invincible!");	
 		case 2:
 			return("Rapid fire!");
+		case 3:
+			return("Super power!");
 		default:
 			return("");
 		}
