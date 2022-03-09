@@ -6,8 +6,8 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 
 import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.Colleges.College;
@@ -31,27 +31,13 @@ public class PlayerBoat extends Boat {
 	float timeSinceLastHeal = 0;
 
 	public PlayerBoat(GameController controller, Vector2 initialPosition, Vector2 mapSize) {
-		this.controller = controller;
+		super(controller, initialPosition, "img/boat1.png");
 
 		this.HP = 100;
 		this.maxHP = 100;
 		this.speed = 200;
 		this.turnSpeed = 150;
-		position = initialPosition;
 
-		collisionPolygon.setPosition(initialPosition.x + GetCenterX() / 2,
-				initialPosition.y - GetCenterY() / 2 - 10);
-		collisionPolygon.setOrigin(25, 50);
-		collisionPolygon.setRotation(rotation - 90);
-
-		sprite.setPosition(initialPosition.x, initialPosition.y);
-
-		this.mapSize = mapSize;
-		mapBounds = new Array<Vector2>(true, 4);
-		mapBounds.add(new Vector2(0, 0));
-		mapBounds.add(new Vector2(mapSize.x, 0));
-		mapBounds.add(new Vector2(mapSize.x, mapSize.y));
-		mapBounds.add(new Vector2(0, mapSize.y));
 	}
 
 	@Override
@@ -67,18 +53,14 @@ public class PlayerBoat extends Boat {
 		// Remove active power up if it has run out
 		activePowerups.entrySet().removeIf(e -> e.getValue() <= 0);
 
-		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
-			Move(delta, 1);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.S)) {
-			Move(delta, -1);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.D)) {
-			Turn(delta, -1);
-		}
-		if (Gdx.input.isKeyPressed(Input.Keys.A)) {
-			Turn(delta, 1);
-		}
+		boolean up = Gdx.input.isKeyPressed(Input.Keys.W);
+		boolean down = Gdx.input.isKeyPressed(Input.Keys.S);
+		boolean left = Gdx.input.isKeyPressed(Input.Keys.A);
+		boolean right = Gdx.input.isKeyPressed(Input.Keys.D);
+
+		if (left) Turn(delta, 1);
+		if (right) Turn(delta, -1);
+		if (left || right || up || down) Move(delta, 1);
 
 		// make sure we don't fire when hovering over a button and clicking
 		// doesn't matter if we're over a button or not when pressing space
@@ -123,17 +105,22 @@ public class PlayerBoat extends Boat {
 		}
 	}
 
+	private Projectile createProjectile(float rotationOffset, float dmgMul, float spdMul) {
+		return new Projectile(getCenter(), rotation + rotationOffset,
+				controller.projectileHolder.stock, true, projectileDamageMultiplier * dmgMul,
+				projectileSpeedMultiplier * spdMul);
+	}
+
 	@Override
 	public void Shoot() {
 		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 3 : 1;
-		Projectile proj = new Projectile(
-				new Vector2(GetCenterX() + position.x, GetCenterY() + position.y), rotation,
-				controller.projectileHolder.stock, true, projectileDamageMultiplier * dmgMul,
-				projectileSpeedMultiplier);
-		controller.NewPhysicsObject(proj);
+
+		Projectile projLeft = createProjectile(-90, dmgMul, 1);
+		Projectile projRight = createProjectile(90, dmgMul, 1);
 		// Add the projectile to the GameController's physics objects list so it
 		// receives updates
-
+		controller.NewPhysicsObject(projLeft);
+		controller.NewPhysicsObject(projRight);
 	}
 
 	@Override
@@ -154,7 +141,7 @@ public class PlayerBoat extends Boat {
 			defense += amount;
 			break;
 		case health:
-			HP = (int) Math.min(maxHP, HP + amount); // Keeps HP from exceeding max
+			HP = MathUtils.clamp((int) (HP + amount), 0, maxHP);
 			break;
 		case maxhealth:
 			maxHP += amount;
@@ -186,9 +173,7 @@ public class PlayerBoat extends Boat {
 		if (amount * timeSinceLastHeal >= 1) {
 			HP += amount * timeSinceLastHeal;
 			timeSinceLastHeal = 0;
-			if (HP > maxHP) {
-				HP = maxHP;
-			}
+			HP = MathUtils.clamp(HP, 0, maxHP);
 		}
 	}
 
