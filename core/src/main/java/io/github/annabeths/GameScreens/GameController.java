@@ -19,6 +19,7 @@ import io.github.annabeths.Boats.AIBoat;
 import io.github.annabeths.Boats.NeutralBoat;
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.Collectables.Powerup;
+import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.Colleges.College;
 import io.github.annabeths.Colleges.EnemyCollege;
 import io.github.annabeths.Colleges.PlayerCollege;
@@ -130,7 +131,7 @@ public class GameController implements Screen {
 		physicsObjects.add(new NeutralBoat(this, new Vector2(400, 800), mapSize));
 		physicsObjects.add(new NeutralBoat(this, new Vector2(800, 800), mapSize));
 
-		physicsObjects.add(new Powerup(2, new Vector2(300, 600)));
+		physicsObjects.add(new Powerup(PowerupType.RAPIDFIRE, new Vector2(300, 600)));
 		
 		map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),
 				(PlayerBoat) playerBoat, batch, (int) mapSize.x, (int) mapSize.y);

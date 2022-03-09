@@ -43,7 +43,7 @@ public class HUD extends GameObject {
 
 	GlyphLayout xpTextLayout;
 	GlyphLayout plunderTextLayout;
-	
+
 	GlyphLayout powerTextLayout;
 
 	BitmapFont font;
@@ -84,7 +84,14 @@ public class HUD extends GameObject {
 		xpTextLayout.setText(font, "XP: " + Integer.toString(gc.xp));
 		timerTextLayout.setText(font, "Time: " + Math.round(gc.timer));
 		plunderTextLayout.setText(font, "Plunder: " + Integer.toString(gc.plunder));
-		powerTextLayout.setText(font, gc.playerBoat.GetPowerName());
+
+		StringBuilder powerupText = new StringBuilder();
+		gc.playerBoat.activePowerups.forEach((k, v) -> {
+			String line = String.format("%s %.1fs\n", k.getName(), v);
+			powerupText.append(line);
+		});
+		powerTextLayout.setText(font, powerupText.toString());
+
 		font.getData().setScale(1);
 	}
 

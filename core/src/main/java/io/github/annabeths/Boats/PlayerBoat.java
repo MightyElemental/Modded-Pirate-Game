@@ -1,11 +1,15 @@
 package io.github.annabeths.Boats;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.Colleges.College;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
@@ -15,9 +19,8 @@ import io.github.annabeths.Projectiles.Projectile;
 public class PlayerBoat extends Boat {
 	float projectileDamageMultiplier = 1;
 	float projectileSpeedMultiplier = 1;
-	float powerTimer = 0;
-	int powerID = 0;
-	
+
+	public Map<PowerupType, Float> activePowerups = new HashMap<>();
 
 	/**
 	 * The higher the defense, the stronger the player, this is subtracted from the
@@ -54,15 +57,15 @@ public class PlayerBoat extends Boat {
 	@Override
 	public void Update(float delta) {
 		timeSinceLastShot += delta;
-		if (powerID == 2) {
+		// TODO: Rewrite to change shotDelay instead
+		if (activePowerups.containsKey(PowerupType.RAPIDFIRE)) {
 			timeSinceLastShot += (delta * 2);
 		}
-		
-		if (powerTimer > 0) {
-			powerTimer -= delta;
-		} else {
-			powerID = 0;
-		}
+
+		// Subtract delta time from each active power up
+		activePowerups.replaceAll((k, v) -> v - delta);
+		// Remove active power up if it has run out
+		activePowerups.entrySet().removeIf(e -> e.getValue() <= 0);
 
 		if (Gdx.input.isKeyPressed(Input.Keys.W)) {
 			Move(delta, 1);
@@ -105,16 +108,16 @@ public class PlayerBoat extends Boat {
 			Projectile p = (Projectile) other;
 			if (!p.isPlayerProjectile) {
 				p.killOnNextTick = true;
-				if (powerID != 1) {
+				if (!activePowerups.containsKey(PowerupType.INVINCIBILITY)) {
 					HP -= (p.damage - defense);
 				}
 			}
 		} else if (other instanceof College) {
 			// End game if player crashes into college
 			controller.gameOver();
-		} else if (other instanceof NeutralBoat) {
+		} else if (other instanceof Boat) {
 			// Damage player if collides with boat
-			if (powerID != 1) {
+			if (!activePowerups.containsKey(PowerupType.INVINCIBILITY)) {
 				HP -= 50;
 			}
 		}
@@ -122,22 +125,15 @@ public class PlayerBoat extends Boat {
 
 	@Override
 	public void Shoot() {
-		if (powerID == 3) {
-			Projectile proj = new Projectile(
+		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 3 : 1;
+		Projectile proj = new Projectile(
 				new Vector2(GetCenterX() + position.x, GetCenterY() + position.y), rotation,
-				controller.projectileHolder.stock, true, projectileDamageMultiplier * 3,
+				controller.projectileHolder.stock, true, projectileDamageMultiplier * dmgMul,
 				projectileSpeedMultiplier);
-			controller.NewPhysicsObject(proj);
-		} else {
-			Projectile proj = new Projectile(
-				new Vector2(GetCenterX() + position.x, GetCenterY() + position.y), rotation,
-				controller.projectileHolder.stock, true, projectileDamageMultiplier,
-				projectileSpeedMultiplier);
-			controller.NewPhysicsObject(proj);
-		}
+		controller.NewPhysicsObject(proj);
 		// Add the projectile to the GameController's physics objects list so it
 		// receives updates
-		
+
 	}
 
 	@Override
@@ -182,7 +178,7 @@ public class PlayerBoat extends Boat {
 	@Override
 	public void Draw(SpriteBatch batch) {
 		sprite.draw(batch);
-		
+
 	}
 
 	public void Heal(int amount, float delta) {
@@ -195,35 +191,9 @@ public class PlayerBoat extends Boat {
 			}
 		}
 	}
-	
-	public void ReceivePower(int power) {
-		powerID = power;
-		switch (powerID) {
-		case 1:
-			//invincibility
-			powerTimer = 10;
-			break;	
-		case 2:
-			//rapidfire
-			powerTimer = 10;
-			break;
-		case 3:
-			//damage up
-			powerTimer = 10;
-			break;
-		}
+
+	public void receivePower(PowerupType powerup) {
+		activePowerups.put(powerup, powerup.getDefaultTime());
 	}
-	
-	public String GetPowerName() {
-		switch (powerID) {
-		case 1:
-			return("Invincible!");	
-		case 2:
-			return("Rapid fire!");
-		case 3:
-			return("Super power!");
-		default:
-			return("");
-		}
-	}
+
 }
