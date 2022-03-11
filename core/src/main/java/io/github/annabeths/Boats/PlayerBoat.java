@@ -57,10 +57,12 @@ public class PlayerBoat extends Boat {
 		boolean down = Gdx.input.isKeyPressed(Input.Keys.S);
 		boolean left = Gdx.input.isKeyPressed(Input.Keys.A);
 		boolean right = Gdx.input.isKeyPressed(Input.Keys.D);
+		
+		int movMul = activePowerups.containsKey(PowerupType.SPEED) ? 2 : 1;
 
-		if (left) Turn(delta, 1);
-		if (right) Turn(delta, -1);
-		if (left || right || up || down) Move(delta, 1);
+		if (left) Turn(delta, movMul);
+		if (right) Turn(delta, movMul * -1);
+		if (left || right || up || down) Move(delta, movMul);
 
 		// make sure we don't fire when hovering over a button and clicking
 		// doesn't matter if we're over a button or not when pressing space
