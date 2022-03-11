@@ -123,6 +123,21 @@ public class PlayerBoat extends Boat {
 		// receives updates
 		controller.NewPhysicsObject(projLeft);
 		controller.NewPhysicsObject(projRight);
+		
+		if (activePowerups.containsKey(PowerupType.STARBURSTFIRE)) {
+			Projectile burst1 = createProjectile(-45, dmgMul, 1);
+			Projectile burst2 = createProjectile(-135, dmgMul, 1);
+			Projectile burst3 = createProjectile(0, dmgMul, 1);
+			Projectile burst4 = createProjectile(45, dmgMul, 1);
+			Projectile burst5 = createProjectile(135, dmgMul, 1);
+			Projectile burst6 = createProjectile(180, dmgMul, 1);
+			controller.NewPhysicsObject(burst1);
+			controller.NewPhysicsObject(burst2);
+			controller.NewPhysicsObject(burst3);
+			controller.NewPhysicsObject(burst4);
+			controller.NewPhysicsObject(burst5);
+			controller.NewPhysicsObject(burst6);
+		}
 	}
 
 	@Override
