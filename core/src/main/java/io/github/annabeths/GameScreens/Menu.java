@@ -53,8 +53,8 @@ public class Menu implements Screen {
 		} else if (Gdx.input.isKeyJustPressed(Keys.ENTER)) {
 			// Ensure the player has seen the instructions
 			if (instructionsBeenShown) {
-				// if the ENTER key is pressed, switch to the game screen
-				game.gotoScreen(Screens.gameScreen);
+				// if the ENTER key is pressed, switch to the difficulty screen
+				game.gotoScreen(Screens.gameDifScreen);
 			} else {
 				toggleInstructions();
 			}

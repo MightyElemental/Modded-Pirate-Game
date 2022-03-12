@@ -13,6 +13,7 @@ import io.github.annabeths.GameScreens.GameWinScreen;
 import io.github.annabeths.GameScreens.Menu;
 import io.github.annabeths.GameScreens.Screens;
 import io.github.annabeths.GameScreens.Splash;
+import io.github.annabeths.GameScreens.GameDifScreen;
 
 public class eng1game extends Game {
 
@@ -80,6 +81,11 @@ public class eng1game extends Game {
 		case gameWinScreen:
 			GameWinScreen gameWinScreen = new GameWinScreen(this);
 			setScreen(gameWinScreen);
+			break;
+		case gameDifScreen:
+			GameDifScreen gameDifScreen = new GameDifScreen(this);
+			setScreen(gameDifScreen);
+			break;
 		}
 	}
 
