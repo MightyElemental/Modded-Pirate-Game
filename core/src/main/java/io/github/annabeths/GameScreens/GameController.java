@@ -60,16 +60,12 @@ public class GameController implements Screen {
 	float xpTick = 1f;
 	float xpTickMultiplier = 1f;
 
-	// projectile variables
-	public ProjectileDataHolder projectileHolder;
-
 	// passes the game class so that we can change scene back later
 	public GameController(eng1game game) {
 		this.game = game;
 		gameObjects = new ArrayList<GameObject>();
 		physicsObjects = new ArrayList<PhysicsObject>();
 		colleges = new ArrayList<College>();
-		projectileHolder = new ProjectileDataHolder();
 		hud = new HUD(this);
 		mapSize = new Vector2(3000, 3000);
 		batch = new SpriteBatch();
@@ -110,7 +106,7 @@ public class GameController implements Screen {
 
 		// create the boss college
 		bossCollege = new EnemyCollege(collegeBoss, collegeTextures.get(1), islandTexture, this,
-				projectileHolder.boss, 200);
+				ProjectileDataHolder.boss, 200);
 
 		bossCollege.invulnerable = true;
 		physicsObjects.add(bossCollege);
@@ -119,7 +115,7 @@ public class GameController implements Screen {
 		// create some enemy colleges
 		for (int i = 0; i < 3; i++) {
 			EnemyCollege e = new EnemyCollege(collegePos.get(i), collegeTextures.get(i + 2),
-					islandTexture, this, projectileHolder.stock, 200);
+					islandTexture, this, ProjectileDataHolder.stock, 200);
 			physicsObjects.add(e);
 			colleges.add(e);
 		}

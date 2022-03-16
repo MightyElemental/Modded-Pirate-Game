@@ -9,6 +9,7 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
+import io.github.annabeths.Projectiles.ProjectileDataHolder;
 
 /**
  * A boat that attacks the player
@@ -121,7 +122,7 @@ public class EnemyBoat extends AIBoat {
 	@Override
 	void Shoot() {
 		// the projectile type to shoot
-		ProjectileData pd = controller.projectileHolder.stock;
+		ProjectileData pd = ProjectileDataHolder.stock;
 
 		Projectile projLeft = createProjectile(pd, -90, 1, 1);
 		Projectile projRight = createProjectile(pd, 90, 1, 1);
