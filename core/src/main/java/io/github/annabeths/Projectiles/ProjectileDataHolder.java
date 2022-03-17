@@ -13,6 +13,10 @@ import com.badlogic.gdx.math.Vector2;
  */
 public class ProjectileDataHolder {
 
+	// Prevent instantiation
+	private ProjectileDataHolder() {
+	}
+
 	public static final ProjectileData stock;
 	public static final ProjectileData enemy;
 	public static final ProjectileData boss;

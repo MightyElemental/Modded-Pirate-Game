@@ -17,4 +17,46 @@ public class ProjectileData {
 		this.size = size;
 		this.texture = texture;
 	}
+
+	/**
+	 * @return the speed
+	 */
+	public float getSpeed() {
+		return speed;
+	}
+
+	/**
+	 * @return the damage
+	 */
+	public float getDamage() {
+		return damage;
+	}
+
+	/**
+	 * @return the size
+	 */
+	public Vector2 getSize() {
+		return size;
+	}
+
+	/**
+	 * @return the width
+	 */
+	public float getWidth() {
+		return size.x;
+	}
+
+	/**
+	 * @return the height
+	 */
+	public float getHeight() {
+		return size.y;
+	}
+
+	/**
+	 * @return the texture
+	 */
+	public String getTexture() {
+		return texture;
+	}
 }

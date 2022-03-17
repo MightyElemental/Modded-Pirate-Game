@@ -35,8 +35,8 @@ public class Projectile extends PhysicsObject {
 
 	/**
 	 * @param origin where it should start
-	 * @param originRot the rotation of the projectile
-	 * @param data the data to use
+	 * @param originRot the angle the projectile is facing
+	 * @param data the projectile data type to use
 	 * @param isPlayerProjectile true if the projectile is shot by the player
 	 * @see #Projectile(Vector2, float, ProjectileData, boolean, float, float)
 	 */
@@ -47,8 +47,8 @@ public class Projectile extends PhysicsObject {
 
 	/**
 	 * @param origin where it should start
-	 * @param originRot the rotation of the projectile
-	 * @param data the data to use
+	 * @param originRot the angle the projectile is facing
+	 * @param data the projectile data type to use
 	 * @param isPlayerProjectile true if the projectile is shot by the player
 	 * @param damageMultiplier how much to multiply the damage by
 	 * @param speedMultiplier how much to multiple the speed by
@@ -57,11 +57,11 @@ public class Projectile extends PhysicsObject {
 			boolean isPlayerProjectile, float damageMultiplier, float speedMultiplier) {
 		this.startingPos = origin.cpy();
 		position = origin;
-		damage = data.damage * damageMultiplier;
+		damage = data.getDamage() * damageMultiplier;
 		this.isPlayerProjectile = isPlayerProjectile;
 
 		// speed is only needed to initialize the velocity
-		float speed = data.speed * speedMultiplier;
+		float speed = data.getSpeed() * speedMultiplier;
 
 		// Calculate the projectile's velocity in the game space
 		velocity = new Vector2(speed, 0).setAngleDeg(originRot);
@@ -71,9 +71,10 @@ public class Projectile extends PhysicsObject {
 		sprite.setOrigin(data.size.x / 2, data.size.y / 2);
 		sprite.setRotation(originRot);
 
-		collisionPolygon = new Polygon(new float[] { data.size.x / 2, 0, data.size.x,
-				data.size.y / 2, data.size.x / 2, data.size.y, 0, data.size.y / 2 });
-		collisionPolygon.setOrigin(data.size.x / 2, data.size.y / 2);
+		collisionPolygon = new Polygon(
+				new float[] { data.getWidth() / 2, 0, data.getWidth(), data.getHeight() / 2,
+						data.getWidth() / 2, data.getHeight(), 0, data.getHeight() / 2 });
+		collisionPolygon.setOrigin(data.getWidth() / 2, data.getHeight() / 2);
 
 		lifeDist = MathUtils.random(500 - 50, 500 + 50);
 		lifeDist2 = lifeDist * lifeDist;
