@@ -1,5 +1,7 @@
 package io.github.annabeths.Collectables;
 
+import java.util.Random;
+
 /** @author James Burnell */
 public enum PowerupType {
 
@@ -32,4 +34,8 @@ public enum PowerupType {
 		return defaultActiveTime;
 	}
 
+	private static Random rand = new Random();
+	public static PowerupType randomPower() {
+		return PowerupType.values()[rand.nextInt(5)];
+	}
 }
