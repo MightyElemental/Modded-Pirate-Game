@@ -69,6 +69,7 @@ public class Projectile extends PhysicsObject {
 		sprite = new Sprite(ResourceManager.getTexture(data.texture));
 		sprite.setSize(data.size.x, data.size.y);
 		sprite.setOrigin(data.size.x / 2, data.size.y / 2);
+
 		sprite.setRotation(originRot);
 
 		collisionPolygon = new Polygon(
@@ -82,8 +83,7 @@ public class Projectile extends PhysicsObject {
 
 	@Override
 	public void Update(float delta) {
-		position.x += velocity.x * delta;
-		position.y += velocity.y * delta;
+		position.mulAdd(velocity, delta);
 		collisionPolygon.setPosition(position.x - getLocalCenterY(),
 				position.y - getLocalCenterX());
 
