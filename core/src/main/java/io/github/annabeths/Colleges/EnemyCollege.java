@@ -44,7 +44,7 @@ public class EnemyCollege extends College {
 	}
 
 	public void updateHpText() {
-		hpText.setText(font, HP + "/" + maxHP);
+		hpText.setText(font, String.format("%.0f/%.0f", HP, maxHP));
 	}
 
 	@Override
