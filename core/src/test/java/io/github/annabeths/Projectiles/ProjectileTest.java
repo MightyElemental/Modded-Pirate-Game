@@ -1,5 +1,7 @@
 package io.github.annabeths.Projectiles;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -40,12 +42,27 @@ public class ProjectileTest {
 	public void testProjectileDespawn() {
 		Projectile p = new Projectile(Vector2.Zero, 0f, projTestData, true);
 
+		// ensure despawn flag is not set
+		assertFalse(p.killOnNextTick);
+
 		// update projectile to move it
-		for (int i = 0; i <= 4; i++) {
-			p.Update(0.5f);
+		for (int i = 0; i <= 10; i++) {
+			p.Update(1f);
 		}
 
+		// ensure despawn flag is set
 		assertTrue(p.killOnNextTick);
+	}
+
+	@Test
+	@DisplayName("Test speed is the same after being converted to velocity (2d.p.)")
+	public void testSpeedIsEqual() {
+		// various angles to test
+		float[] rotations = { 0f, 10f, 17f, 37f, 180f, 61.54f };
+		for (float r : rotations) {
+			Projectile p = new Projectile(Vector2.Zero, r, projTestData, true);
+			assertEquals(projTestData.getSpeed(), Math.round(p.getSpeed() * 100) / 100f);
+		}
 	}
 
 }
