@@ -2,6 +2,8 @@ package io.github.annabeths.Boats;
 
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.annabeths.Collectables.Powerup;
+import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
@@ -129,6 +131,9 @@ public class EnemyBoat extends AIBoat {
 	@Override
 	void Destroy() {
 		killOnNextTick = true;
+		if (Math.random() < 0.8) {
+			controller.NewPhysicsObject(new Powerup(PowerupType.randomPower(), getCenter()));
+		}
 	}
 
 	@Override
