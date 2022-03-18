@@ -43,7 +43,8 @@ public class eng1game extends Game {
 	@Override
 	public void create() {
 		ResourceManager.init(new AssetManager());
-		if (!debug) DebugUtils.initDebugSettings();
+		if (!debug)
+			DebugUtils.initDebugSettings();
 		// create a menu and game screen, then switch to a new splash screen
 		menuScreen = new Menu(this);
 		gameScreen = new GameController(this);
@@ -95,4 +96,8 @@ public class eng1game extends Game {
 		Gdx.app.log("eng1game", "Switched to Fullscreen");
 	}
 
+	public void setDifficulty(Difficulty difficulty) {
+		System.out.printf("Set game difficulty to %s\n", difficulty.toString());
+		gameScreen.setDifficulty(difficulty);
+	}
 }
