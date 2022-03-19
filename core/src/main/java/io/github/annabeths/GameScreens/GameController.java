@@ -77,7 +77,7 @@ public class GameController implements Screen {
 		sr = new ShapeRenderer();
 
 		// Create the player boat and place it in the center of the screen
-		playerBoat = new PlayerBoat(this, new Vector2(500, 500), mapSize.cpy());
+		playerBoat = new PlayerBoat(this, new Vector2(500, 500));
 		physicsObjects.add(playerBoat);
 
 		map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),

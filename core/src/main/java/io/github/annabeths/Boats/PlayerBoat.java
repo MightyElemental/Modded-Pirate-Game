@@ -42,7 +42,7 @@ public class PlayerBoat extends Boat {
 
 	float timeSinceLastHeal = 0;
 
-	public PlayerBoat(GameController controller, Vector2 initialPosition, Vector2 mapSize) {
+	public PlayerBoat(GameController controller, Vector2 initialPosition) {
 		super(controller, initialPosition, "img/boat1.png");
 
 		this.HP = 100;
