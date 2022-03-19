@@ -22,7 +22,7 @@ public class Powerup extends PhysicsObject {
 		sprite = new Sprite(new Texture(Gdx.files.internal("img/powerup.png")));
 		sprite.setPosition(position.x, position.y);
 		sprite.setSize(50, 50);
-		collisionPolygon = new Polygon(new float[] { 8, 0, 16, 8, 8, 16, 0, 8 });
+		collisionPolygon = new Polygon(new float[] { 0, 25, 25, 50, 50, 25, 25, 0 });
 		collisionPolygon.setOrigin(8, 8);
 		collisionPolygon.setPosition(position.x, position.y);
 	}
