@@ -36,6 +36,6 @@ public enum PowerupType {
 
 	public static PowerupType randomPower() {
 		PowerupType[] vals = PowerupType.values();
-		return vals[MathUtils.random(vals.length)];
+		return vals[MathUtils.random(vals.length - 1)];
 	}
 }
