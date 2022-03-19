@@ -125,7 +125,11 @@ public class GameController implements Screen {
 		}
 
 		// create some powerups
-		physicsObjects.add(new Powerup(PowerupType.RAPIDFIRE, new Vector2(300, 600)));
+		for (int i = 0; i < 5; i++) {
+			// TODO: Prevent powerups spawning on top of colleges
+			physicsObjects
+					.add(new Powerup(PowerupType.randomPower(), map.getRandomPointInBounds()));
+		}
 
 		// create some boats
 		physicsObjects.add(new NeutralBoat(this, new Vector2(mapSize.x / 3, mapSize.y / 3)));
