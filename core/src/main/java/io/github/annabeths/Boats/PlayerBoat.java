@@ -15,10 +15,22 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
+import io.github.annabeths.Projectiles.ProjectileData;
 
 public class PlayerBoat extends Boat {
-	float projectileDamageMultiplier = 1;
-	float projectileSpeedMultiplier = 1;
+
+	/**
+	 * How much to multiply the projectile damage by
+	 * 
+	 * @see #Upgrade(Upgrades, float)
+	 */
+	float projDmgMul = 1;
+	/**
+	 * How much to multiply the projectile speed by
+	 * 
+	 * @see #Upgrade(Upgrades, float)
+	 */
+	float projSpdMul = 1;
 
 	public Map<PowerupType, Float> activePowerups = new HashMap<>();
 
@@ -57,7 +69,7 @@ public class PlayerBoat extends Boat {
 		boolean down = Gdx.input.isKeyPressed(Input.Keys.S);
 		boolean left = Gdx.input.isKeyPressed(Input.Keys.A);
 		boolean right = Gdx.input.isKeyPressed(Input.Keys.D);
-		
+
 		int movMul = activePowerups.containsKey(PowerupType.SPEED) ? 2 : 1;
 
 		if (left) Turn(delta, movMul);
@@ -66,10 +78,8 @@ public class PlayerBoat extends Boat {
 
 		// make sure we don't fire when hovering over a button and clicking
 		// doesn't matter if we're over a button or not when pressing space
-		if (((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-				&& !controller.hud.hoveringOverButton)
-				|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-				&& shotDelay <= timeSinceLastShot) {
+		if (((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && !controller.hud.hoveringOverButton)
+				|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) && shotDelay <= timeSinceLastShot) {
 			Shoot();
 			timeSinceLastShot = 0;
 		}
@@ -107,30 +117,28 @@ public class PlayerBoat extends Boat {
 		}
 	}
 
-	private Projectile createProjectile(float rotationOffset, float dmgMul, float spdMul) {
-		return new Projectile(getCenter(), rotation + rotationOffset,
-				controller.projectileHolder.stock, true, projectileDamageMultiplier * dmgMul,
-				projectileSpeedMultiplier * spdMul);
-	}
-
 	@Override
 	public void Shoot() {
 		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 3 : 1;
+		// multiply by the overall damage multiplier
+		dmgMul *= projDmgMul;
+		// the projectile type to shoot
+		ProjectileData pd = controller.projectileHolder.stock;
 
-		Projectile projLeft = createProjectile(-90, dmgMul, 1);
-		Projectile projRight = createProjectile(90, dmgMul, 1);
+		Projectile projLeft = createProjectile(pd, -90, dmgMul, projSpdMul);
+		Projectile projRight = createProjectile(pd, 90, dmgMul, projSpdMul);
 		// Add the projectile to the GameController's physics objects list so it
 		// receives updates
 		controller.NewPhysicsObject(projLeft);
 		controller.NewPhysicsObject(projRight);
-		
+
 		if (activePowerups.containsKey(PowerupType.STARBURSTFIRE)) {
-			Projectile burst1 = createProjectile(-45, dmgMul, 1);
-			Projectile burst2 = createProjectile(-135, dmgMul, 1);
-			Projectile burst3 = createProjectile(0, dmgMul, 1);
-			Projectile burst4 = createProjectile(45, dmgMul, 1);
-			Projectile burst5 = createProjectile(135, dmgMul, 1);
-			Projectile burst6 = createProjectile(180, dmgMul, 1);
+			Projectile burst1 = createProjectile(pd, -45, dmgMul, projSpdMul);
+			Projectile burst2 = createProjectile(pd, -135, dmgMul, projSpdMul);
+			Projectile burst3 = createProjectile(pd, 0, dmgMul, projSpdMul);
+			Projectile burst4 = createProjectile(pd, 45, dmgMul, projSpdMul);
+			Projectile burst5 = createProjectile(pd, 135, dmgMul, projSpdMul);
+			Projectile burst6 = createProjectile(pd, 180, dmgMul, projSpdMul);
 			controller.NewPhysicsObject(burst1);
 			controller.NewPhysicsObject(burst2);
 			controller.NewPhysicsObject(burst3);
@@ -165,10 +173,10 @@ public class PlayerBoat extends Boat {
 			HP += amount; // Also heal the player, we're feeling generous.
 			break;
 		case projectiledamage:
-			projectileDamageMultiplier += amount;
+			projDmgMul += amount;
 			break;
 		case projectilespeed:
-			projectileSpeedMultiplier += amount;
+			projSpdMul += amount;
 			break;
 		case speed:
 			speed += amount;
