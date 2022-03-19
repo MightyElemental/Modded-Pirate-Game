@@ -17,7 +17,7 @@ public class Powerup extends PhysicsObject {
 	private PowerupType powerup;
 
 	public Powerup(PowerupType powerup, Vector2 initialPosition) {
-		sprite = new Sprite(new Texture(Gdx.files.internal("img/powerup.png")));
+		sprite = new Sprite(new Texture(Gdx.files.internal(powerup.getTexture())));
 		sprite.setSize(50, 50);
 		setCenter(initialPosition);
 		sprite.setPosition(position.x, position.y);
