@@ -17,11 +17,13 @@ public class Powerup extends PhysicsObject {
 	private PowerupType powerup;
 
 	public Powerup(PowerupType powerup, Vector2 initialPosition) {
-		position = initialPosition;
-		this.powerup = powerup;
 		sprite = new Sprite(new Texture(Gdx.files.internal("img/powerup.png")));
-		sprite.setPosition(position.x, position.y);
 		sprite.setSize(50, 50);
+		setCenter(initialPosition);
+		sprite.setPosition(position.x, position.y);
+
+		this.powerup = powerup;
+
 		collisionPolygon = new Polygon(new float[] { 0, 25, 25, 50, 50, 25, 25, 0 });
 		collisionPolygon.setOrigin(8, 8);
 		collisionPolygon.setPosition(position.x, position.y);
