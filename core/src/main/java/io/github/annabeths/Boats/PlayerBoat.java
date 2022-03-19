@@ -54,11 +54,8 @@ public class PlayerBoat extends Boat {
 
 	@Override
 	public void Update(float delta) {
-		timeSinceLastShot += delta;
-		// TODO: Rewrite to change shotDelay instead
-		if (activePowerups.containsKey(PowerupType.RAPIDFIRE)) {
-			timeSinceLastShot += (delta * 2);
-		}
+		boolean rapidFire = activePowerups.containsKey(PowerupType.RAPIDFIRE);
+		timeSinceLastShot += delta * (rapidFire ? 2 : 1);
 
 		// Subtract delta time from each active power up
 		activePowerups.replaceAll((k, v) -> v - delta);
@@ -72,14 +69,16 @@ public class PlayerBoat extends Boat {
 
 		int movMul = activePowerups.containsKey(PowerupType.SPEED) ? 2 : 1;
 
-		if (left) Turn(delta, movMul);
-		if (right) Turn(delta, movMul * -1);
+		if (left) Turn(delta, 1);
+		if (right) Turn(delta, -1);
 		if (left || right || up || down) Move(delta, movMul);
 
 		// make sure we don't fire when hovering over a button and clicking
 		// doesn't matter if we're over a button or not when pressing space
-		if (((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT) && !controller.hud.hoveringOverButton)
-				|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) && shotDelay <= timeSinceLastShot) {
+		if (((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+				&& !controller.hud.hoveringOverButton)
+				|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+				&& shotDelay <= timeSinceLastShot) {
 			Shoot();
 			timeSinceLastShot = 0;
 		}
@@ -98,12 +97,15 @@ public class PlayerBoat extends Boat {
 	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
+		boolean isInvincible = isInvincible();
+
 		if (other instanceof Projectile) { // check the type of object passed
 			Projectile p = (Projectile) other;
 			if (!p.isPlayerProjectile) {
 				p.killOnNextTick = true;
-				if (!activePowerups.containsKey(PowerupType.INVINCIBILITY)) {
+				if (!isInvincible) {
 					HP -= (p.damage - defense);
+					HP = MathUtils.clamp(HP, 0, maxHP);
 				}
 			}
 		} else if (other instanceof College) {
@@ -111,10 +113,13 @@ public class PlayerBoat extends Boat {
 			controller.gameOver();
 		} else if (other instanceof Boat) {
 			// Damage player if collides with boat
-			if (!activePowerups.containsKey(PowerupType.INVINCIBILITY)) {
-				HP -= 50;
-			}
+			if (!isInvincible) HP -= 50;
 		}
+	}
+
+	/** @return {@code true} if player has invincibility powerup */
+	public boolean isInvincible() {
+		return activePowerups.containsKey(PowerupType.INVINCIBILITY);
 	}
 
 	@Override
@@ -125,26 +130,18 @@ public class PlayerBoat extends Boat {
 		// the projectile type to shoot
 		ProjectileData pd = controller.projectileHolder.stock;
 
-		Projectile projLeft = createProjectile(pd, -90, dmgMul, projSpdMul);
-		Projectile projRight = createProjectile(pd, 90, dmgMul, projSpdMul);
-		// Add the projectile to the GameController's physics objects list so it
-		// receives updates
-		controller.NewPhysicsObject(projLeft);
-		controller.NewPhysicsObject(projRight);
-
 		if (activePowerups.containsKey(PowerupType.STARBURSTFIRE)) {
-			Projectile burst1 = createProjectile(pd, -45, dmgMul, projSpdMul);
-			Projectile burst2 = createProjectile(pd, -135, dmgMul, projSpdMul);
-			Projectile burst3 = createProjectile(pd, 0, dmgMul, projSpdMul);
-			Projectile burst4 = createProjectile(pd, 45, dmgMul, projSpdMul);
-			Projectile burst5 = createProjectile(pd, 135, dmgMul, projSpdMul);
-			Projectile burst6 = createProjectile(pd, 180, dmgMul, projSpdMul);
-			controller.NewPhysicsObject(burst1);
-			controller.NewPhysicsObject(burst2);
-			controller.NewPhysicsObject(burst3);
-			controller.NewPhysicsObject(burst4);
-			controller.NewPhysicsObject(burst5);
-			controller.NewPhysicsObject(burst6);
+			for (int i = 0; i < 360; i += 45) {
+				Projectile burst = createProjectile(pd, i, dmgMul, projSpdMul);
+				controller.NewPhysicsObject(burst);
+			}
+		} else {
+			Projectile projLeft = createProjectile(pd, -90, dmgMul, projSpdMul);
+			Projectile projRight = createProjectile(pd, 90, dmgMul, projSpdMul);
+			// Add the projectile to the GameController's physics objects list so it
+			// receives updates
+			controller.NewPhysicsObject(projLeft);
+			controller.NewPhysicsObject(projRight);
 		}
 	}
 
