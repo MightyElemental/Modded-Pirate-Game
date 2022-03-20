@@ -81,9 +81,10 @@ public class HUD extends GameObject {
 
 	@Override
 	public void Update(float delta) {
-		hpTextLayout.setText(font, "HP: " + gc.playerBoat.HP + "/" + gc.playerBoat.maxHP);
+		hpTextLayout.setText(font,
+				String.format("HP: %.0f/%.0f", gc.playerBoat.HP, gc.playerBoat.maxHP));
 		xpTextLayout.setText(font, "XP: " + Integer.toString(gc.xp));
-		timerTextLayout.setText(font, "Time: " + Math.round(gc.timer));
+		timerTextLayout.setText(font, "Time: " + generateTimeString((int) gc.timer));
 		plunderTextLayout.setText(font, "Plunder: " + Integer.toString(gc.plunder));
 
 		StringBuilder powerupText = new StringBuilder();
@@ -94,6 +95,12 @@ public class HUD extends GameObject {
 		powerTextLayout.setText(font, powerupText.toString());
 
 		font.getData().setScale(1);
+	}
+
+	public String generateTimeString(int seconds) {
+		int sec = seconds % 60;
+		int min = seconds / 60;
+		return min > 0 ? String.format("%d\'%02d\"", min, sec) : String.format("%02d seconds", sec);
 	}
 
 	@Override
