@@ -1,6 +1,5 @@
 package io.github.annabeths.Projectiles;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
 /**
@@ -15,7 +14,7 @@ public class ProjectileDataHolder {
 	public ProjectileData boss;
 
 	public ProjectileDataHolder() {
-		stock = new ProjectileData(250, 20, new Vector2(20, 20), new Texture("img/cannonball.png"));
-		boss = new ProjectileData(300, 20, new Vector2(20, 20), new Texture("img/cannonball.png"));
+		stock = new ProjectileData(250, 20, new Vector2(20, 20), "img/entity/cannonball.png");
+		boss = new ProjectileData(300, 20, new Vector2(20, 20), "img/entity/cannonball.png");
 	}
 }

@@ -13,6 +13,7 @@ import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.GeneralControl.DebugUtils;
+import io.github.annabeths.GeneralControl.ResourceManager;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
@@ -34,7 +35,7 @@ public class EnemyCollege extends College {
 			GameController controller, ProjectileData projectileData, int maxHP) {
 		super(position, aliveTexture, islandTexture, controller);
 
-		deadSprite = new Sprite(new Texture(Gdx.files.internal("img/castle10.png")));
+		deadSprite = new Sprite(ResourceManager.getTexture("img/world/castle/castle10.png"));
 		deadSprite.setPosition(position.x, position.y);
 		deadSprite.setSize(100, 100);
 

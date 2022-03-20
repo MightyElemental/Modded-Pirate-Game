@@ -12,7 +12,7 @@ import io.github.annabeths.Projectiles.Projectile;
 public class NeutralBoat extends AIBoat {
 
 	public NeutralBoat(GameController controller, Vector2 initialPosition) {
-		super(controller, initialPosition, "img/boat_neutral.png");
+		super(controller, initialPosition, "img/entity/boat_neutral.png");
 
 		xpValue = 25;
 		plunderValue = 25;

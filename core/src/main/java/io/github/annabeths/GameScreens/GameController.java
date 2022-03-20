@@ -29,6 +29,7 @@ import io.github.annabeths.Colleges.PlayerCollege;
 import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GeneralControl.DebugUtils;
+import io.github.annabeths.GeneralControl.ResourceManager;
 import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.ProjectileDataHolder;
@@ -89,8 +90,9 @@ public class GameController implements Screen {
 
 	private void generateGameObjects() {
 		// Generate a list of random college textures
-		List<Texture> collegeTextures = MathUtils.random.ints(5, 0, 9)
-				.mapToObj(tn -> new Texture(String.format("img/castle%d.png", (tn + 1))))
+		// TODO: Make textures unique
+		List<Texture> collegeTextures = MathUtils.random.ints(5, 0, 9).mapToObj(
+				tn -> ResourceManager.getTexture(String.format("img/world/castle/castle%d.png", (tn + 1))))
 				.collect(Collectors.toList());
 
 		Vector2 collegePlayer = new Vector2(BORDER_BRIM, BORDER_BRIM);
@@ -102,7 +104,7 @@ public class GameController implements Screen {
 		Vector2 collegeBoss = new Vector2((mapSize.x - 100) / 2, (mapSize.y - 100) / 2);
 
 		// get the texture for colleges to sit on
-		Texture islandTexture = new Texture("img/island.png");
+		Texture islandTexture = ResourceManager.getTexture("img/world/island.png");
 		PlayerCollege p = new PlayerCollege(collegePlayer, collegeTextures.get(0), islandTexture,
 				this);
 		physicsObjects.add(p); // add college to physics object, for updates

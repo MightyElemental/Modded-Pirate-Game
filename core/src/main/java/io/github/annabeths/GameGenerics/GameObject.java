@@ -4,6 +4,8 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.annabeths.GeneralControl.ResourceManager;
+
 public abstract class GameObject {
 	// every GameObject needs to have these values, and define these methods
 
@@ -23,6 +25,14 @@ public abstract class GameObject {
 
 	public void Draw(SpriteBatch batch) {
 	}
+	
+	protected void setSprite(String texture, Vector2 position, Vector2 size) {
+		sprite = new Sprite(ResourceManager.getTexture(texture));
+		sprite.setSize(100, 50);
+		sprite.setOrigin(50, 25);
+
+		sprite.setPosition(position.x, position.y);
+	}
 
 	/**
 	 * Set the position of the object, centered around the given point.
@@ -32,6 +42,7 @@ public abstract class GameObject {
 	 */
 	public void setCenter(Vector2 pos) {
 		position = pos.cpy().sub(getLocalCenterX(), getLocalCenterY());
+		sprite.setCenter(pos.x, pos.y);
 	}
 
 	/**

@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.ResourceManager;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
@@ -42,7 +43,7 @@ public abstract class Boat extends PhysicsObject {
 
 		collisionPolygon = new Polygon(new float[] { 0, 0, 0, 68, 25, 100, 50, 68, 50, 0 });
 
-		sprite = new Sprite(new Texture(Gdx.files.internal(texLoc)));
+		sprite = new Sprite(ResourceManager.getTexture(texLoc));
 		sprite.setSize(100, 50);
 		sprite.setOrigin(50, 25);
 
@@ -152,6 +153,7 @@ public abstract class Boat extends PhysicsObject {
 	protected Projectile createProjectile(ProjectileData type, float rotationOffset, float dmgMul,
 			float spdMul) {
 		boolean isPlayer = this instanceof PlayerBoat;
-		return new Projectile(getCenter(), rotation + rotationOffset, type, isPlayer, dmgMul, spdMul);
+		return new Projectile(getCenter(), rotation + rotationOffset, type, isPlayer, dmgMul,
+				spdMul);
 	}
 }
