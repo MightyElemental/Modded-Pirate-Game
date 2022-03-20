@@ -1,13 +1,11 @@
 package io.github.annabeths.Projectiles;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.GameGenerics.PhysicsObject;
-import io.github.annabeths.GeneralControl.ResourceManager;
 
 /**
  * Projectiles are fired from other game objects. For example, cannonballs from
@@ -66,10 +64,7 @@ public class Projectile extends PhysicsObject {
 		// Calculate the projectile's velocity in the game space
 		velocity = new Vector2(speed, 0).setAngleDeg(originRot);
 
-		sprite = new Sprite(ResourceManager.getTexture(data.texture));
-		sprite.setSize(data.size.x, data.size.y);
-		sprite.setOrigin(data.size.x / 2, data.size.y / 2);
-
+		setSprite(data.texture, position, data.size);
 		sprite.setRotation(originRot);
 
 		collisionPolygon = new Polygon(
