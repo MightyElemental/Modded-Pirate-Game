@@ -25,6 +25,16 @@ public abstract class GameObject {
 	}
 
 	/**
+	 * Set the position of the object, centered around the given point.
+	 * 
+	 * @param pos the center point to move the object to
+	 * @author James Burnell
+	 */
+	public void setCenter(Vector2 pos) {
+		position = pos.cpy().sub(getLocalCenterX(), getLocalCenterY());
+	}
+
+	/**
 	 * Get the center point of the object
 	 * 
 	 * @return The center point

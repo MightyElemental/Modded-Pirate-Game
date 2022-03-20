@@ -21,6 +21,8 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.annabeths.Boats.EnemyBoat;
 import io.github.annabeths.Boats.NeutralBoat;
 import io.github.annabeths.Boats.PlayerBoat;
+import io.github.annabeths.Collectables.Powerup;
+import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.Colleges.College;
 import io.github.annabeths.Colleges.EnemyCollege;
 import io.github.annabeths.Colleges.PlayerCollege;
@@ -42,6 +44,7 @@ public class GameController implements Screen {
 	private Vector2 mapSize;
 	public PlayerBoat playerBoat;
 	private EnemyCollege bossCollege;
+	public Powerup powerUp;
 
 	public float timer = 10 * 60 + 0;
 
@@ -74,7 +77,7 @@ public class GameController implements Screen {
 		sr = new ShapeRenderer();
 
 		// Create the player boat and place it in the center of the screen
-		playerBoat = new PlayerBoat(this, new Vector2(500, 500), mapSize.cpy());
+		playerBoat = new PlayerBoat(this, new Vector2(500, 500));
 		physicsObjects.add(playerBoat);
 
 		map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),
@@ -105,7 +108,7 @@ public class GameController implements Screen {
 		physicsObjects.add(p); // add college to physics object, for updates
 		colleges.add(p); // also add a reference to the colleges list
 
-		// Generate the boss college
+		// create the boss college
 		bossCollege = new EnemyCollege(collegeBoss, collegeTextures.get(1), islandTexture, this,
 				projectileHolder.boss, 200);
 
@@ -113,7 +116,7 @@ public class GameController implements Screen {
 		physicsObjects.add(bossCollege);
 		colleges.add(bossCollege);
 
-		// Generate enemy colleges
+		// create some enemy colleges
 		for (int i = 0; i < 3; i++) {
 			EnemyCollege e = new EnemyCollege(collegePos.get(i), collegeTextures.get(i + 2),
 					islandTexture, this, projectileHolder.stock, 200);
@@ -121,7 +124,14 @@ public class GameController implements Screen {
 			colleges.add(e);
 		}
 
-		// create some neutral boats
+		// create some powerups
+		for (int i = 0; i < 5; i++) {
+			// TODO: Prevent powerups spawning on top of colleges
+			physicsObjects
+					.add(new Powerup(PowerupType.randomPower(), map.getRandomPointInBounds()));
+		}
+
+		// create some boats
 		physicsObjects.add(new NeutralBoat(this, new Vector2(mapSize.x / 3, mapSize.y / 3)));
 		physicsObjects.add(new NeutralBoat(this, new Vector2(2 * mapSize.x / 3, mapSize.y / 3)));
 		physicsObjects.add(new NeutralBoat(this, new Vector2(mapSize.x / 3, 2 * mapSize.y / 3)));

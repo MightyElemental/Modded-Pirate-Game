@@ -9,6 +9,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.Projectiles.Projectile;
+import io.github.annabeths.Projectiles.ProjectileData;
 
 public abstract class Boat extends PhysicsObject {
 	GameController controller;
@@ -135,5 +137,21 @@ public abstract class Boat extends PhysicsObject {
 	@Override
 	public void Draw(SpriteBatch batch) {
 		sprite.draw(batch);
+	}
+
+	/**
+	 * Creates a new projectile fired from the boat.
+	 * 
+	 * @param type the type of projectile to shoot
+	 * @param rotationOffset the angle to fire the projectile relative to the boat
+	 * @param dmgMul the damage multiplier
+	 * @param spdMul the speed multiplier
+	 * 
+	 * @return A new projectile object
+	 */
+	protected Projectile createProjectile(ProjectileData type, float rotationOffset, float dmgMul,
+			float spdMul) {
+		boolean isPlayer = this instanceof PlayerBoat;
+		return new Projectile(getCenter(), rotation + rotationOffset, type, isPlayer, dmgMul, spdMul);
 	}
 }

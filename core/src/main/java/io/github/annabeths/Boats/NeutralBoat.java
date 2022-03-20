@@ -1,7 +1,10 @@
 package io.github.annabeths.Boats;
 
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.annabeths.Collectables.Powerup;
+import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
@@ -26,6 +29,9 @@ public class NeutralBoat extends AIBoat {
 
 	public void Destroy() {
 		killOnNextTick = true;
+		if (MathUtils.randomBoolean(0.2f)) {
+			controller.NewPhysicsObject(new Powerup(PowerupType.randomPower(), getCenter()));
+		}
 	}
 
 	public void Shoot() {

@@ -44,6 +44,8 @@ public class HUD extends GameObject {
 	GlyphLayout xpTextLayout;
 	GlyphLayout plunderTextLayout;
 
+	GlyphLayout powerTextLayout;
+
 	BitmapFont font;
 	GameController gc;
 
@@ -68,6 +70,8 @@ public class HUD extends GameObject {
 		timerTextLayout = new GlyphLayout();
 		xpTextLayout = new GlyphLayout();
 		plunderTextLayout = new GlyphLayout();
+		powerTextLayout = new GlyphLayout();
+		powerTextLayout.setText(font, "No power");
 		Gdx.input.setInputProcessor(stage);
 
 		DrawUpgradeButton(); // put this in its own function to make this function look a bit
@@ -80,6 +84,14 @@ public class HUD extends GameObject {
 		xpTextLayout.setText(font, "XP: " + Integer.toString(gc.xp));
 		timerTextLayout.setText(font, "Time: " + Math.round(gc.timer));
 		plunderTextLayout.setText(font, "Plunder: " + Integer.toString(gc.plunder));
+
+		StringBuilder powerupText = new StringBuilder();
+		gc.playerBoat.activePowerups.forEach((k, v) -> {
+			String line = String.format("%s %.1fs\n", k.getName(), v);
+			powerupText.append(line);
+		});
+		powerTextLayout.setText(font, powerupText.toString());
+
 		font.getData().setScale(1);
 	}
 
@@ -93,6 +105,7 @@ public class HUD extends GameObject {
 		font.draw(batch, plunderTextLayout,
 				gc.map.camera.viewportWidth - plunderTextLayout.width - 5,
 				gc.map.camera.viewportHeight - 10);
+		font.draw(batch, powerTextLayout, 5, gc.map.camera.viewportHeight - 100);
 
 		stage.draw();
 	}
