@@ -1,5 +1,6 @@
 package io.github.annabeths.GameGenerics;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -25,12 +26,16 @@ public abstract class GameObject {
 
 	public void Draw(SpriteBatch batch) {
 	}
-	
-	protected void setSprite(String texture, Vector2 position, Vector2 size) {
-		sprite = new Sprite(ResourceManager.getTexture(texture));
-		sprite.setSize(100, 50);
-		sprite.setOrigin(50, 25);
 
+	protected void setSprite(String texture, Vector2 position, Vector2 size) {
+		Texture t = ResourceManager.getTexture(texture);
+		if (t == null) {
+			sprite = new Sprite();
+		} else {
+			sprite = new Sprite(t);
+		}
+		sprite.setSize(size.x, size.y);
+		sprite.setOrigin(size.x / 2, size.y / 2);
 		sprite.setPosition(position.x, position.y);
 	}
 

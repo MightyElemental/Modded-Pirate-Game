@@ -90,7 +90,7 @@ public class ResourceManager {
 	 * 
 	 */
 	public static Texture getTexture(String location) {
-		if (location == null) return null;
+		if (location == null || assets == null) return null;
 		if (assets.contains(location)) return assets.get(location);
 		return assets.get(location);
 	}
