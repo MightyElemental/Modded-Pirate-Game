@@ -1,10 +1,11 @@
 package io.github.annabeths.UI;
 
+import static io.github.annabeths.GeneralControl.ResourceManager.getTexture;
+
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -117,7 +118,7 @@ public class HUD extends GameObject {
 		menuButtonStyle = new TextButtonStyle();
 		menuButtonStyle.font = font;
 		menuButtonStyle.fontColor = Color.BLACK;
-		menuButtonStyle.up = new TextureRegionDrawable(new Texture("ui/button.png"));
+		menuButtonStyle.up = new TextureRegionDrawable(getTexture("ui/button.png"));
 		menuButton = new TextButton("Upgrade", menuButtonStyle);
 
 		menuButton.addListener(new ClickListener() {
@@ -180,7 +181,7 @@ public class HUD extends GameObject {
 	 */
 	public void InitialiseMenu() {
 		// Create the background
-		upgradeMenuBackground = new Image(new Texture("ui/background.png"));
+		upgradeMenuBackground = new Image(getTexture("ui/background.png"));
 		upgradeMenuBackground.setPosition(
 				Gdx.graphics.getWidth() / 2 - upgradeMenuBackground.getWidth() / 2,
 				Gdx.graphics.getHeight() / 2 - upgradeMenuBackground.getHeight() / 2);
@@ -206,12 +207,12 @@ public class HUD extends GameObject {
 		upgradeButton1Style = new TextButtonStyle();
 		upgradeButton1Style.font = font;
 		upgradeButton1Style.fontColor = Color.BLACK;
-		upgradeButton1Style.up = new TextureRegionDrawable(new Texture("ui/upgradebutton.png"));
+		upgradeButton1Style.up = new TextureRegionDrawable(getTexture("ui/upgradebutton.png"));
 
 		upgradeButton2Style = new TextButtonStyle();
 		upgradeButton2Style.font = font;
 		upgradeButton2Style.fontColor = Color.BLACK;
-		upgradeButton2Style.up = new TextureRegionDrawable(new Texture("ui/upgradebutton.png"));
+		upgradeButton2Style.up = new TextureRegionDrawable(getTexture("ui/upgradebutton.png"));
 
 		upgradeButton1 = new TextButton("", upgradeButton1Style);
 		upgradeButton2 = new TextButton("", upgradeButton2Style);
