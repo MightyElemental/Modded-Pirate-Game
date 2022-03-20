@@ -3,14 +3,22 @@ package io.github.annabeths.Colleges;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.mock;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.GameGenerics.PhysicsObject;
+import io.github.annabeths.GeneralControl.ResourceManager;
 import io.github.annabeths.Projectiles.ProjectileData;
 
 public class GenericCollegeTests {
+
+	@BeforeAll
+	public static void init() {
+		ResourceManager.font = mock(BitmapFont.class);
+	}
 
 	@Test
 	public void testCollegeInstantiation() {

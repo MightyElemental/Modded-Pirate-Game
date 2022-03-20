@@ -1,10 +1,11 @@
 package io.github.annabeths.GameScreens;
 
+import static io.github.annabeths.GeneralControl.ResourceManager.font;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -13,13 +14,11 @@ import io.github.annabeths.GeneralControl.eng1game;
 public class GameWinScreen implements Screen {
 
 	private SpriteBatch batch;
-	BitmapFont font;
 	GlyphLayout winTextLayout;
 	eng1game game;
 
 	public GameWinScreen(eng1game g) {
 		game = g;
-		font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"));
 		winTextLayout = new GlyphLayout();
 		winTextLayout.setText(font, "YOU WIN! Press ENTER to return to the menu");
 		batch = new SpriteBatch();

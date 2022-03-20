@@ -3,6 +3,7 @@ package io.github.annabeths.GeneralControl;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import io.github.annabeths.Collectables.PowerupType;
 
@@ -14,6 +15,9 @@ import io.github.annabeths.Collectables.PowerupType;
 public class ResourceManager {
 
 	public static AssetManager assets;
+
+	public static BitmapFont font;
+	public static BitmapFont debugFont;
 
 	// Prevent instantiation
 	private ResourceManager() {
@@ -28,6 +32,14 @@ public class ResourceManager {
 		assets = assetMan;
 
 		long time = DebugUtils.timeCodeMs(() -> {
+			font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
+			debugFont = new BitmapFont(Gdx.files.internal("fonts/cozette.fnt"), false);
+			debugFont.getData().setScale(0.5f);
+		});
+
+		System.out.printf("Loaded fonts in %dms\n", time);
+
+		time = DebugUtils.timeCodeMs(() -> {
 			/* World Textures */
 			loadWorldTexture("island.png");
 			loadWorldTexture("grass.png");

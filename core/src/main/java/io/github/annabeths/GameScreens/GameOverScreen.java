@@ -1,10 +1,11 @@
 package io.github.annabeths.GameScreens;
 
+import static io.github.annabeths.GeneralControl.ResourceManager.font;
+
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -13,7 +14,6 @@ import io.github.annabeths.GeneralControl.eng1game;
 public class GameOverScreen implements Screen {
 
 	private SpriteBatch batch;
-	BitmapFont font;
 	GlyphLayout gameOverTextLayout;
 	eng1game game;
 	String text;
@@ -26,7 +26,6 @@ public class GameOverScreen implements Screen {
 	@Override
 	public void show() {
 		batch = new SpriteBatch();
-		font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
 		gameOverTextLayout = new GlyphLayout();
 		gameOverTextLayout.setText(font, text);
 	}

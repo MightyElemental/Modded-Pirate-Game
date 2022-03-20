@@ -1,7 +1,7 @@
 package io.github.annabeths.Colleges;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import static io.github.annabeths.GeneralControl.ResourceManager.font;
+
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -25,7 +25,6 @@ public class EnemyCollege extends College {
 	public float timeSinceLastShot = 0;
 
 	public ProjectileData projectileType;
-	public BitmapFont font;
 	public GlyphLayout hpText;
 
 	public EnemyCollege(Vector2 position, String aliveTexture, String islandTexture,
@@ -40,9 +39,8 @@ public class EnemyCollege extends College {
 		range = 500;
 		fireRate = 1.5f;
 		projectileType = projectileData;
-		font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
 		hpText = new GlyphLayout();
-		updateHpText();
+		// updateHpText();
 	}
 
 	public void updateHpText() {
