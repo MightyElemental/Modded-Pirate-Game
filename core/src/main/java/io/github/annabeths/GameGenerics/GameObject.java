@@ -27,16 +27,39 @@ public abstract class GameObject {
 	public void Draw(SpriteBatch batch) {
 	}
 
+	/**
+	 * Calls {@link #initSprite(String, Vector2, Vector2) initSprite()} to set the
+	 * {@link #sprite} field.
+	 * 
+	 * @param texture the texture to use
+	 * @param position the position of the sprite
+	 * @param size the size of the sprite
+	 */
 	protected void setSprite(String texture, Vector2 position, Vector2 size) {
+		sprite = initSprite(texture, position, size);
+	}
+
+	/**
+	 * Loads a texture from the {@link ResourceManager} and instantiates a
+	 * {@link Sprite} object with the position and size.
+	 * 
+	 * @param texture the texture to use
+	 * @param position the position of the sprite
+	 * @param size the size of the sprite
+	 * @return The initialized sprite
+	 */
+	protected Sprite initSprite(String texture, Vector2 position, Vector2 size) {
 		Texture t = ResourceManager.getTexture(texture);
+		Sprite result;
 		if (t == null) {
-			sprite = new Sprite();
+			result = new Sprite();
 		} else {
-			sprite = new Sprite(t);
+			result = new Sprite(t);
 		}
-		sprite.setSize(size.x, size.y);
-		sprite.setOrigin(size.x / 2, size.y / 2);
-		sprite.setPosition(position.x, position.y);
+		result.setSize(size.x, size.y);
+		result.setOrigin(size.x / 2, size.y / 2);
+		result.setPosition(position.x, position.y);
+		return result;
 	}
 
 	/**
