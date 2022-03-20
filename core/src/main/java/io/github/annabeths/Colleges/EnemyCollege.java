@@ -1,10 +1,8 @@
 package io.github.annabeths.Colleges;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -13,7 +11,6 @@ import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.GeneralControl.DebugUtils;
-import io.github.annabeths.GeneralControl.ResourceManager;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
@@ -31,13 +28,12 @@ public class EnemyCollege extends College {
 	public BitmapFont font;
 	public GlyphLayout hpText;
 
-	public EnemyCollege(Vector2 position, Texture aliveTexture, Texture islandTexture,
+	public EnemyCollege(Vector2 position, String aliveTexture, String islandTexture,
 			GameController controller, ProjectileData projectileData, int maxHP) {
 		super(position, aliveTexture, islandTexture, controller);
 
-		deadSprite = new Sprite(ResourceManager.getTexture("img/world/castle/castle10.png"));
-		deadSprite.setPosition(position.x, position.y);
-		deadSprite.setSize(100, 100);
+		deadSprite = initSprite("img/world/castle/castle_dead.png", position,
+				new Vector2(100, 100));
 
 		this.maxHP = maxHP;
 		HP = maxHP;

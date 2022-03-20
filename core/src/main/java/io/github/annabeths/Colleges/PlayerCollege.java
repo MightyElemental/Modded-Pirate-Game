@@ -1,6 +1,5 @@
 package io.github.annabeths.Colleges;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -17,7 +16,7 @@ public class PlayerCollege extends College {
 	 */
 	public int healAmount;
 
-	public PlayerCollege(Vector2 position, Texture aliveTexture, Texture islandTexture,
+	public PlayerCollege(Vector2 position, String aliveTexture, String islandTexture,
 			GameController gc) {
 		super(position, aliveTexture, islandTexture, gc);
 		healAmount = 15;

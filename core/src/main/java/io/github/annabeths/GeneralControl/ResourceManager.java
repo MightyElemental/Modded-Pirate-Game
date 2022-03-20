@@ -34,9 +34,10 @@ public class ResourceManager {
 			for (int i = 0; i < 3; i++) {
 				loadWorldTexture("water/water" + (i + 1) + ".png");
 			}
-			for (int i = 0; i < 10; i++) {
+			for (int i = 0; i < 9; i++) {
 				loadWorldTexture("castle/castle" + (i + 1) + ".png");
 			}
+			loadWorldTexture("castle/castle_dead.png");
 			/* Entity Textures */
 			loadEntityTexture("cannonball.png");
 			loadEntityTexture("boat_neutral.png");
