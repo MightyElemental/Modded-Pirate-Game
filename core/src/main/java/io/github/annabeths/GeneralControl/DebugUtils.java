@@ -66,4 +66,28 @@ public class DebugUtils {
 		sr.end();
 	}
 
+	/**
+	 * Time how long a piece of code takes to run.
+	 * 
+	 * @param r the code to time
+	 * @return the duration in nano seconds
+	 */
+	public static long timeCodeNano(Runnable r) {
+		long t = System.nanoTime();
+		r.run();
+		return System.nanoTime() - t;
+	}
+
+	/**
+	 * Time how long a piece of code takes to run.
+	 * 
+	 * @param r the code to time
+	 * @return the duration in milliseconds
+	 */
+	public static long timeCodeMs(Runnable r) {
+		long t = System.nanoTime();
+		r.run();
+		return (System.nanoTime() - t) / 1000000;
+	}
+
 }
