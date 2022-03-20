@@ -1,6 +1,5 @@
 package io.github.annabeths.Colleges;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
@@ -29,17 +28,14 @@ public abstract class College extends PhysicsObject {
 	 */
 	protected GameController gc;
 
-	public College(Vector2 pos, Texture aliveTexture, Texture islandTexture, GameController gc) {
+	public College(Vector2 pos, String aliveTexture, String islandTexture, GameController gc) {
 		this.gc = gc;
 		position = pos;
 
-		sprite = new Sprite(aliveTexture);
-		sprite.setPosition(position.x, position.y);
-		sprite.setSize(100, 100);
+		setSprite(aliveTexture, position, new Vector2(100, 100));
 
-		islandSprite = new Sprite(islandTexture);
-		islandSprite.setCenter(sprite.getX() + 5, sprite.getY() + 5);
-		islandSprite.setSize(120, 120);
+		islandSprite = initSprite(islandTexture,
+				new Vector2(sprite.getX() - 10, sprite.getY() - 10), new Vector2(120, 120));
 
 		collisionPolygon = new Polygon(new float[] { 0, 0, 100, 0, 100, 100, 0, 100 });
 		collisionPolygon.setPosition(position.x, position.y);

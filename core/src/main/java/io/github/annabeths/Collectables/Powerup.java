@@ -1,7 +1,5 @@
 package io.github.annabeths.Collectables;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Polygon;
@@ -9,6 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
+import io.github.annabeths.GeneralControl.ResourceManager;
 
 /** @author Ben Faulkner */
 public class Powerup extends PhysicsObject {
@@ -17,7 +16,7 @@ public class Powerup extends PhysicsObject {
 	private PowerupType powerup;
 
 	public Powerup(PowerupType powerup, Vector2 initialPosition) {
-		sprite = new Sprite(new Texture(Gdx.files.internal(powerup.getTexture())));
+		sprite = new Sprite(ResourceManager.getTexture(powerup.getTexture()));
 		sprite.setSize(50, 50);
 		setCenter(initialPosition);
 		sprite.setPosition(position.x, position.y);

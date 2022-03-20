@@ -1,8 +1,11 @@
 package io.github.annabeths.GameGenerics;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
+
+import io.github.annabeths.GeneralControl.ResourceManager;
 
 public abstract class GameObject {
 	// every GameObject needs to have these values, and define these methods
@@ -25,6 +28,41 @@ public abstract class GameObject {
 	}
 
 	/**
+	 * Calls {@link #initSprite(String, Vector2, Vector2) initSprite()} to set the
+	 * {@link #sprite} field.
+	 * 
+	 * @param texture the texture to use
+	 * @param position the position of the sprite
+	 * @param size the size of the sprite
+	 */
+	protected void setSprite(String texture, Vector2 position, Vector2 size) {
+		sprite = initSprite(texture, position, size);
+	}
+
+	/**
+	 * Loads a texture from the {@link ResourceManager} and instantiates a
+	 * {@link Sprite} object with the position and size.
+	 * 
+	 * @param texture the texture to use
+	 * @param position the position of the sprite
+	 * @param size the size of the sprite
+	 * @return The initialized sprite
+	 */
+	protected Sprite initSprite(String texture, Vector2 position, Vector2 size) {
+		Texture t = ResourceManager.getTexture(texture);
+		Sprite result;
+		if (t == null) {
+			result = new Sprite();
+		} else {
+			result = new Sprite(t);
+		}
+		result.setSize(size.x, size.y);
+		result.setOrigin(size.x / 2, size.y / 2);
+		result.setPosition(position.x, position.y);
+		return result;
+	}
+
+	/**
 	 * Set the position of the object, centered around the given point.
 	 * 
 	 * @param pos the center point to move the object to
@@ -32,6 +70,7 @@ public abstract class GameObject {
 	 */
 	public void setCenter(Vector2 pos) {
 		position = pos.cpy().sub(getLocalCenterX(), getLocalCenterY());
+		sprite.setCenter(pos.x, pos.y);
 	}
 
 	/**

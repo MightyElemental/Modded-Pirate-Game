@@ -1,10 +1,8 @@
 package io.github.annabeths.Colleges;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import static io.github.annabeths.GeneralControl.ResourceManager.font;
+
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -27,25 +25,22 @@ public class EnemyCollege extends College {
 	public float timeSinceLastShot = 0;
 
 	public ProjectileData projectileType;
-	public BitmapFont font;
 	public GlyphLayout hpText;
 
-	public EnemyCollege(Vector2 position, Texture aliveTexture, Texture islandTexture,
+	public EnemyCollege(Vector2 position, String aliveTexture, String islandTexture,
 			GameController controller, ProjectileData projectileData, int maxHP) {
 		super(position, aliveTexture, islandTexture, controller);
 
-		deadSprite = new Sprite(new Texture(Gdx.files.internal("img/castle10.png")));
-		deadSprite.setPosition(position.x, position.y);
-		deadSprite.setSize(100, 100);
+		deadSprite = initSprite("img/world/castle/castle_dead.png", position,
+				new Vector2(100, 100));
 
 		this.maxHP = maxHP;
 		HP = maxHP;
 		range = 500;
 		fireRate = 1.5f;
 		projectileType = projectileData;
-		font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
 		hpText = new GlyphLayout();
-		updateHpText();
+		// updateHpText();
 	}
 
 	public void updateHpText() {

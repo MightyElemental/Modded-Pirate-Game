@@ -1,11 +1,12 @@
 package io.github.annabeths.GeneralControl;
 
+import static io.github.annabeths.GeneralControl.ResourceManager.debugFont;
+
 import java.util.Arrays;
 import java.util.List;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -16,13 +17,6 @@ import io.github.annabeths.GameScreens.GameController;
 
 /** @author James Burnell */
 public class DebugUtils {
-
-	private static BitmapFont debugFont;
-
-	static {
-		debugFont = new BitmapFont(Gdx.files.internal("fonts/cozette.fnt"), false);
-		debugFont.getData().setScale(0.5f);
-	}
 
 	public static boolean DRAW_DEBUG_COLLISIONS = false;
 	public static boolean DRAW_DEBUG_TEXT = true;
@@ -64,6 +58,30 @@ public class DebugUtils {
 		}
 
 		sr.end();
+	}
+
+	/**
+	 * Time how long a piece of code takes to run.
+	 * 
+	 * @param r the code to time
+	 * @return the duration in nano seconds
+	 */
+	public static long timeCodeNano(Runnable r) {
+		long t = System.nanoTime();
+		r.run();
+		return System.nanoTime() - t;
+	}
+
+	/**
+	 * Time how long a piece of code takes to run.
+	 * 
+	 * @param r the code to time
+	 * @return the duration in milliseconds
+	 */
+	public static long timeCodeMs(Runnable r) {
+		long t = System.nanoTime();
+		r.run();
+		return (System.nanoTime() - t) / 1000000;
 	}
 
 }

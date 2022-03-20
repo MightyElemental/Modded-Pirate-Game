@@ -42,11 +42,7 @@ public abstract class Boat extends PhysicsObject {
 
 		collisionPolygon = new Polygon(new float[] { 0, 0, 0, 68, 25, 100, 50, 68, 50, 0 });
 
-		sprite = new Sprite(new Texture(Gdx.files.internal(texLoc)));
-		sprite.setSize(100, 50);
-		sprite.setOrigin(50, 25);
-
-		sprite.setPosition(position.x, position.y);
+		setSprite(texLoc, position, new Vector2(100, 50));
 
 		collisionPolygon.setPosition(position.x + getLocalCenterX() / 2,
 				position.y - getLocalCenterY() / 2 - 10);
@@ -152,6 +148,7 @@ public abstract class Boat extends PhysicsObject {
 	protected Projectile createProjectile(ProjectileData type, float rotationOffset, float dmgMul,
 			float spdMul) {
 		boolean isPlayer = this instanceof PlayerBoat;
-		return new Projectile(getCenter(), rotation + rotationOffset, type, isPlayer, dmgMul, spdMul);
+		return new Projectile(getCenter(), rotation + rotationOffset, type, isPlayer, dmgMul,
+				spdMul);
 	}
 }

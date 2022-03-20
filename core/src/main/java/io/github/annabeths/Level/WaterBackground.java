@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 import io.github.annabeths.GameGenerics.GameObject;
+import io.github.annabeths.GeneralControl.ResourceManager;
 
 public class WaterBackground extends GameObject {
 
@@ -26,7 +27,8 @@ public class WaterBackground extends GameObject {
 		waterTextureRegion = new TextureRegion[3];
 		for (int i = 0; i < 3; i++) {
 			// load a texture into memory
-			Texture x = new Texture("img/water" + (i + 1) + ".png");
+			Texture x = ResourceManager.getTexture("img/world/water/water" + (i + 1) + ".png");
+
 			x.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 			// make a texture region and set the size
 			waterTextureRegion[i] = new TextureRegion(x);
@@ -41,7 +43,7 @@ public class WaterBackground extends GameObject {
 
 		mapSize = new Vector2(mapWidth, mapHeight);
 		// load the grass texture
-		Texture grassTexture = new Texture("img/grass.png");
+		Texture grassTexture = ResourceManager.getTexture("img/world/grass.png");
 		grassTexture.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 		grassTextureRegion = new TextureRegion(grassTexture);
 		// draw the grass texture off screen

@@ -25,7 +25,7 @@ public class EnemyBoat extends AIBoat {
 	public float approachRange = 650;
 
 	public EnemyBoat(GameController controller, Vector2 position) {
-		super(controller, position, "img/boat2.png");
+		super(controller, position, "img/entity/boat2.png");
 
 		xpValue = 150;
 		plunderValue = 100;
