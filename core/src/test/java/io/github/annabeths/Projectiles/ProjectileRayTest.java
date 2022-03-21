@@ -22,6 +22,7 @@ public class ProjectileRayTest {
 	public List<PhysicsObject> objects;
 	/** Array of objects where the order does not change */
 	public PhysicsObject[] sortedObjects;
+	public ProjectileData pd = ProjectileData.STOCK;
 
 	@BeforeEach
 	public void setupWorld() {
@@ -46,7 +47,7 @@ public class ProjectileRayTest {
 	@Test
 	public void testIntersection() {
 		// default ray facing to the right
-		ProjectileRay ray = new ProjectileRay(new Vector2(0, 25), 0, true);
+		ProjectileRay ray = new ProjectileRay(new Vector2(0, 25), 0, pd, true);
 		List<PhysicsObject> objs = ray.getIntersectingObjects(objects);
 
 		// should contain the first three objects in the array
@@ -62,7 +63,7 @@ public class ProjectileRayTest {
 
 	@Test
 	public void testIntersectionSorting() {
-		ProjectileRay ray = new ProjectileRay(new Vector2(0, 25), 0, true);
+		ProjectileRay ray = new ProjectileRay(new Vector2(0, 25), 0, pd, true);
 		List<PhysicsObject> objs = ray.getSortedIntersectingObjects(objects);
 
 		// each element should match the sorted order
@@ -73,7 +74,7 @@ public class ProjectileRayTest {
 
 	@Test
 	public void testLimitIntersection() {
-		ProjectileRay ray = new ProjectileRay(new Vector2(0, 25), 0, true);
+		ProjectileRay ray = new ProjectileRay(new Vector2(0, 25), 0, pd, true);
 		List<PhysicsObject> objs = ray.getNClosestIntersectingObjects(objects, 2);
 
 		// should contain the first three objects in the array

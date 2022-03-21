@@ -18,29 +18,41 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
  * @author James Burnell
  */
 public class ProjectileRay extends GameObject {
-	
+
 	// TODO: Damage objects that intersect
 
 	private Vector2 endPoint;
+
+	private ProjectileData pd;
+	private float dmgMul;
 
 	/**
 	 * Create a projectile ray with a default distance of 500 units.
 	 * 
 	 * @param origin the starting point of the ray
+	 * @param data the type of projectile
 	 * @param angle the angle the ray is facing
+	 * @param isPlayerProjectile if the ray belongs to the player
 	 */
-	public ProjectileRay(Vector2 origin, float angle, boolean isPlayerProjectile) {
-		this(origin, angle, isPlayerProjectile, 500f);
+	public ProjectileRay(Vector2 origin, float angle, ProjectileData data,
+			boolean isPlayerProjectile) {
+		this(origin, angle, data, isPlayerProjectile, 500f, 1f);
 	}
 
 	/**
 	 * @param origin the starting point of the ray
+	 * @param data the type of projectile
 	 * @param angle the angle the ray is facing
+	 * @param isPlayerProjectile if the ray belongs to the player
+	 * @param maxDistance the maximum distance the projectile can move
+	 * @param damageMultiplier how much to multiply the damage by
 	 */
-	public ProjectileRay(Vector2 origin, float angle, boolean isPlayerProjectile,
-			float maxDistance) {
+	public ProjectileRay(Vector2 origin, float angle, ProjectileData data,
+			boolean isPlayerProjectile, float maxDistance, float damageMultiplier) {
 		this.position = origin.cpy();
 		this.rotation = angle;
+		this.pd = data;
+		this.dmgMul = damageMultiplier;
 
 		Vector2 dirVec = new Vector2(maxDistance, 0).setAngleDeg(angle);
 		this.endPoint = origin.cpy().add(dirVec);
@@ -106,6 +118,10 @@ public class ProjectileRay extends GameObject {
 	 */
 	public Vector2 getEndPoint() {
 		return endPoint;
+	}
+
+	public float getDamage() {
+		return pd.damage * dmgMul;
 	}
 
 }
