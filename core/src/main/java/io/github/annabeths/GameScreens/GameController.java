@@ -30,7 +30,7 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
-import io.github.annabeths.Projectiles.ProjectileDataHolder;
+import io.github.annabeths.Projectiles.ProjectileData;
 import io.github.annabeths.UI.HUD;
 
 public class GameController implements Screen {
@@ -106,7 +106,7 @@ public class GameController implements Screen {
 
 		// create the boss college
 		bossCollege = new EnemyCollege(collegeBoss, collegeTextures.get(1), islandTexture, this,
-				ProjectileDataHolder.boss, 200);
+				ProjectileData.BOSS, 200);
 
 		bossCollege.invulnerable = true;
 		physicsObjects.add(bossCollege);
@@ -115,7 +115,7 @@ public class GameController implements Screen {
 		// create some enemy colleges
 		for (int i = 0; i < 3; i++) {
 			EnemyCollege e = new EnemyCollege(collegePos.get(i), collegeTextures.get(i + 2),
-					islandTexture, this, ProjectileDataHolder.stock, 200);
+					islandTexture, this, ProjectileData.STOCK, 200);
 			physicsObjects.add(e);
 			colleges.add(e);
 		}

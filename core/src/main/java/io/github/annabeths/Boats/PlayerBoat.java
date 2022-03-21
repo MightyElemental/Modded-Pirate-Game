@@ -16,7 +16,6 @@ import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
-import io.github.annabeths.Projectiles.ProjectileDataHolder;
 
 public class PlayerBoat extends Boat {
 
@@ -129,7 +128,7 @@ public class PlayerBoat extends Boat {
 		// multiply by the overall damage multiplier
 		dmgMul *= projDmgMul;
 		// the projectile type to shoot
-		ProjectileData pd = ProjectileDataHolder.stock;
+		ProjectileData pd = ProjectileData.STOCK;
 
 		if (activePowerups.containsKey(PowerupType.STARBURSTFIRE)) {
 			for (int i = 0; i < 360; i += 45) {

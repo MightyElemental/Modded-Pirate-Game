@@ -4,11 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.withSettings;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -24,18 +21,7 @@ public class ProjectileTest {
 		Gdx.gl = mock(GL20.class);
 	}
 
-	ProjectileData projTestData;
-
-	@BeforeEach
-	public void setupEach() {
-		System.out.println("Resetting projectile data");
-		projTestData = mock(ProjectileData.class,
-				withSettings().useConstructor(250f, 20f, new Vector2(20, 20), null));
-		when(projTestData.getDamage()).thenReturn(20f);
-		when(projTestData.getHeight()).thenReturn(20f);
-		when(projTestData.getWidth()).thenReturn(20f);
-		when(projTestData.getSpeed()).thenReturn(250f);
-	}
+	ProjectileData projTestData = ProjectileData.STOCK;
 
 	@Test
 	@DisplayName("Test projectile sets despawn flag after max travel distance")

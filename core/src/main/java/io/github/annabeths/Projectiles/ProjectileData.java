@@ -3,7 +3,11 @@ package io.github.annabeths.Projectiles;
 import com.badlogic.gdx.math.Vector2;
 
 /** Used to define each type of projectile found in the game */
-public class ProjectileData {
+public enum ProjectileData {
+
+	STOCK(250, 20, new Vector2(20, 20), "img/entity/cannonball.png"),
+	BOSS(300, 20, new Vector2(20, 20), "img/entity/cannonball.png"),
+	ENEMY(250, 20, new Vector2(20, 20), "img/entity/cannonball.png");
 
 	/** The scalar speed of the object, not the velocity */
 	public float speed;
@@ -11,7 +15,7 @@ public class ProjectileData {
 	public Vector2 size;
 	public String texture;
 
-	public ProjectileData(float speed, float damage, Vector2 size, String texture) {
+	private ProjectileData(float speed, float damage, Vector2 size, String texture) {
 		this.speed = speed;
 		this.damage = damage;
 		this.size = size;
