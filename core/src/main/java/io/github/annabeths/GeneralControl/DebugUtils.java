@@ -31,7 +31,8 @@ public class DebugUtils {
 
 	private static List<String> generateDebugText(GameController gc) {
 		return Arrays.asList("PhysObj Count = " + gc.physicsObjects.size(),
-				"Living College Count = " + gc.colleges.stream().filter(c -> c.HP > 0).count(),
+				"Living College Count = "
+						+ gc.colleges.stream().filter(c -> c.getHealth() > 0).count(),
 				"FPS: " + Gdx.graphics.getFramesPerSecond());
 	}
 

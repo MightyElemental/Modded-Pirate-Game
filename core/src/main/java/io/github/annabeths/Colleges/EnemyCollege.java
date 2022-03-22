@@ -54,7 +54,7 @@ public class EnemyCollege extends College {
 			Projectile p = (Projectile) other;
 			if (p.isPlayerProjectile()) { // if its a player projectile
 				p.kill();
-				if (!invulnerable) {
+				if (!isInvulnerable()) {
 					damage(p.getDamage());
 					updateHpText();
 					if (HP <= 0) gc.CollegeDestroyed();
@@ -114,7 +114,7 @@ public class EnemyCollege extends College {
 	}
 
 	public void becomeVulnerable() {
-		invulnerable = false;
+		setInvulnerable(false);
 		updateHpText();
 	}
 

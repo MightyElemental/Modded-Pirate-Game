@@ -32,13 +32,13 @@ public class PlayerBoat extends Boat {
 	 * 
 	 * @see #Upgrade(Upgrades, float)
 	 */
-	float projDmgMul = 1;
+	protected float projDmgMul = 1;
 	/**
 	 * How much to multiply the projectile speed by
 	 * 
 	 * @see #Upgrade(Upgrades, float)
 	 */
-	float projSpdMul = 1;
+	protected float projSpdMul = 1;
 
 	public Map<PowerupType, Float> activePowerups = new HashMap<>();
 
@@ -46,9 +46,9 @@ public class PlayerBoat extends Boat {
 	 * The higher the defense, the stronger the player, this is subtracted from the
 	 * damage
 	 */
-	int defense = 1;
+	protected int defense = 1;
 
-	float timeSinceLastHeal = 0;
+	protected float timeSinceLastHeal = 0;
 
 	/** The type of projectile currently in use */
 	public ProjectileData activeProjectileType;
@@ -130,7 +130,7 @@ public class PlayerBoat extends Boat {
 		}
 
 		// Deal damage if player is not invincible
-		if (dmgToInflict != 0 && !isInvincible) damage(dmgToInflict - defense);
+		if (!isInvincible) damage(Math.max(dmgToInflict - defense, 0));
 	}
 
 	/** @return {@code true} if player has invincibility powerup */

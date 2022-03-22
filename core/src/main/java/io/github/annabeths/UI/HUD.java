@@ -81,8 +81,8 @@ public class HUD extends GameObject {
 
 	@Override
 	public void Update(float delta) {
-		hpTextLayout.setText(font,
-				String.format("HP: %.0f/%.0f", gc.playerBoat.HP, gc.playerBoat.maxHP));
+		hpTextLayout.setText(font, String.format("HP: %.0f/%.0f", gc.playerBoat.getHealth(),
+				gc.playerBoat.getMaxHealth()));
 		xpTextLayout.setText(font, "XP: " + Integer.toString(gc.xp));
 		timerTextLayout.setText(font, "Time: " + generateTimeString((int) gc.timer));
 		plunderTextLayout.setText(font, "Plunder: " + Integer.toString(gc.plunder));

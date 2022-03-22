@@ -114,7 +114,7 @@ public class GameController implements Screen {
 		bossCollege = new EnemyCollege(collegeBoss, collegeTextures.get(1), islandTexture, this,
 				ProjectileData.BOSS, 200);
 
-		bossCollege.invulnerable = true;
+		bossCollege.setInvulnerable(true);
 		physicsObjects.add(bossCollege);
 		colleges.add(bossCollege);
 
@@ -163,7 +163,7 @@ public class GameController implements Screen {
 		UpdateObjects(delta); // update all physicsobjects
 		ClearKilledObjects(); // clear any 'killed' objects
 
-		if (bossCollege.HP <= 0) { // if the boss college is dead, the game is won
+		if (bossCollege.getHealth() <= 0) { // if the boss college is dead, the game is won
 			game.gotoScreen(Screens.gameWinScreen);
 		}
 	}
@@ -278,7 +278,7 @@ public class GameController implements Screen {
 				.anyMatch(c -> {
 					EnemyCollege e = (EnemyCollege) c;
 					// there is still a normal college alive
-					return e.HP > 0 && !e.invulnerable;
+					return e.getHealth() > 0 && !e.isInvulnerable();
 				});
 
 		if (!foundCollege) {

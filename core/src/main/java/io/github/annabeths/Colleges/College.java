@@ -12,14 +12,14 @@ import io.github.annabeths.GameScreens.GameController;
 
 public abstract class College extends PhysicsObject implements IHealth {
 
-	public float maxHP;
-	public float HP;
-	public int range;
-	public int damage;
+	protected float maxHP;
+	protected float HP;
+	protected int range;
+	protected int damage;
 
-	public float fireRate;
+	protected float fireRate;
 
-	public boolean invulnerable;
+	protected boolean invulnerable;
 
 	public Sprite deadSprite;
 	public Sprite islandSprite;
@@ -74,5 +74,55 @@ public abstract class College extends PhysicsObject implements IHealth {
 	@Override
 	public void damage(float dmg) {
 		HP = MathUtils.clamp(HP - dmg, 0, maxHP);
+	}
+
+	public boolean isInvulnerable() {
+		return invulnerable;
+	}
+
+	public void setInvulnerable(boolean invulnerable) {
+		this.invulnerable = invulnerable;
+	}
+
+	/**
+	 * @return the range
+	 */
+	public int getRange() {
+		return range;
+	}
+
+	/**
+	 * @param range the range to set
+	 */
+	public void setRange(int range) {
+		this.range = range;
+	}
+
+	/**
+	 * @return the damage
+	 */
+	public int getDamage() {
+		return damage;
+	}
+
+	/**
+	 * @param damage the damage to set
+	 */
+	public void setDamage(int damage) {
+		this.damage = damage;
+	}
+
+	/**
+	 * @return the fireRate
+	 */
+	public float getFireRate() {
+		return fireRate;
+	}
+
+	/**
+	 * @param fireRate the fireRate to set
+	 */
+	public void setFireRate(float fireRate) {
+		this.fireRate = fireRate;
 	}
 }

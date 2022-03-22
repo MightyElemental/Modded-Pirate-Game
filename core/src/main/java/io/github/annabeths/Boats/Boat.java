@@ -18,8 +18,8 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	GameController controller;
 
 	// Boat stats
-	public float HP;
-	public float maxHP;
+	protected float HP;
+	protected float maxHP;
 	protected float speed;
 	protected float turnSpeed;
 
