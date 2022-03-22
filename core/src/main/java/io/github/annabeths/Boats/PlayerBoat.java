@@ -130,9 +130,7 @@ public class PlayerBoat extends Boat {
 		}
 
 		// Deal damage if player is not invincible
-		if (dmgToInflict != 0 && !isInvincible) HP -= dmgToInflict - defense;
-		// Ensure HP is within range
-		HP = MathUtils.clamp(HP, 0, maxHP);
+		if (dmgToInflict != 0 && !isInvincible) damage(dmgToInflict - defense);
 	}
 
 	/** @return {@code true} if player has invincibility powerup */

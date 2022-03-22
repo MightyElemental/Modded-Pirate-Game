@@ -55,7 +55,7 @@ public class EnemyCollege extends College {
 			if (p.isPlayerProjectile()) { // if its a player projectile
 				p.kill();
 				if (!invulnerable) {
-					HP -= p.getDamage();
+					damage(p.getDamage());
 					updateHpText();
 					if (HP <= 0) gc.CollegeDestroyed();
 				} else {

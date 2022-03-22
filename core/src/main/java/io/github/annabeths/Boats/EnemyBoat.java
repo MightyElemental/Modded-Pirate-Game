@@ -156,8 +156,7 @@ public class EnemyBoat extends AIBoat {
 		}
 
 		if (objWasPlayer) controller.xp += (dmgToInflict / maxHP) * xpValue;
-		HP -= dmgToInflict;
-		HP = MathUtils.clamp(HP, 0, maxHP);
+		damage(dmgToInflict);
 	}
 
 }
