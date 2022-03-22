@@ -8,6 +8,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.Colleges.College;
@@ -18,6 +19,12 @@ import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 import io.github.annabeths.Projectiles.ProjectileRay;
 
+/**
+ * @author Leif Kemp
+ * @author Anna Singleton
+ * @author James Burnell
+ * @author Ben Faulkner
+ */
 public class PlayerBoat extends Boat {
 
 	/**
@@ -151,14 +158,28 @@ public class PlayerBoat extends Boat {
 	}
 
 	private void shootRay(float dmgMul) {
-		ProjectileRay pr = new ProjectileRay(getCenter(), rotation + 90, activeProjectileType, true,
-				500f, dmgMul);
-		pr.fireRay(controller.physicsObjects);
-		controller.rays.add(pr);
-		pr = new ProjectileRay(getCenter(), rotation - 90, activeProjectileType, true, 500f,
+		float angle = getAngleBetweenMouseAndBoat();
+
+		ProjectileRay pr = new ProjectileRay(getCenter(), angle, activeProjectileType, true, 500f,
 				dmgMul);
 		pr.fireRay(controller.physicsObjects);
 		controller.rays.add(pr);
+	}
+
+	/**
+	 * Calculates the angle between the player boat and the mouse pointer. It does
+	 * this by unwrapping the cursor position with the controller camera.
+	 * 
+	 * @return The angle in degrees
+	 */
+	public float getAngleBetweenMouseAndBoat() {
+		int mouseX = Gdx.input.getX();
+		int mouseY = Gdx.input.getY();
+		Vector3 pos3 = new Vector3(mouseX, mouseY, 0);
+		controller.map.camera.unproject(pos3);
+		Vector2 pos = new Vector2(pos3.x, pos3.y);
+
+		return pos.sub(getCenter()).angleDeg();
 	}
 
 	private void shootStock(float dmgMul) {
