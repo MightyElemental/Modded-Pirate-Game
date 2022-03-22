@@ -6,14 +6,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
@@ -31,6 +34,7 @@ import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.ProjectileData;
+import io.github.annabeths.Projectiles.ProjectileRay;
 import io.github.annabeths.UI.HUD;
 
 public class GameController implements Screen {
@@ -39,6 +43,7 @@ public class GameController implements Screen {
 	public ArrayList<GameObject> gameObjects;
 	public ArrayList<PhysicsObject> physicsObjects;
 	public ArrayList<College> colleges;
+	public ArrayList<ProjectileRay> rays;
 	public GameMap map;
 	private Vector2 mapSize;
 	public PlayerBoat playerBoat;
@@ -66,6 +71,7 @@ public class GameController implements Screen {
 		gameObjects = new ArrayList<GameObject>();
 		physicsObjects = new ArrayList<PhysicsObject>();
 		colleges = new ArrayList<College>();
+		rays = new ArrayList<ProjectileRay>();
 		hud = new HUD(this);
 		mapSize = new Vector2(3000, 3000);
 		batch = new SpriteBatch();
@@ -191,11 +197,33 @@ public class GameController implements Screen {
 		// end the sprite batch
 		batch.end();
 
+		sr.setProjectionMatrix(map.camera.combined);
+
+		renderRays();
+
 		// this should be off during normal gameplay, but can be on to debug collisions
 		if (DebugUtils.DRAW_DEBUG_COLLISIONS) {
-			sr.setProjectionMatrix(map.camera.combined);
 			DebugUtils.drawDebugCollisions(this, sr);
 		}
+	}
+
+	/** Renders ProjectileRay objects */
+	private void renderRays() {
+		sr.begin(ShapeType.Filled);
+
+		Random rCol = new Random();
+
+		rays.forEach(r -> {
+			float ratio = r.getRemainShowTime() / r.getShowTime();
+			sr.setColor(Color.BLACK);
+			sr.rectLine(r.getOrigin(), r.getFarthestHitPoint(), 6 * ratio);
+
+			rCol.setSeed(r.hashCode()); // unique color for each ray
+			sr.setColor(rCol.nextFloat(), rCol.nextFloat(), rCol.nextFloat(), 1);
+			sr.rectLine(r.getOrigin(), r.getFarthestHitPoint(), 4 * ratio);
+		});
+
+		sr.end();
 	}
 
 	/**
@@ -218,6 +246,9 @@ public class GameController implements Screen {
 				}
 			}
 		}
+
+		// Update rays
+		rays.forEach(r -> r.Update(delta));
 
 		// XP is increased if player is in dangerous position
 		xpTickMultiplier = isPlayerInDanger() ? 2f : 1f;
@@ -264,8 +295,15 @@ public class GameController implements Screen {
 		Iterator<PhysicsObject> p = physicsObjects.iterator();
 		while (p.hasNext()) {
 			PhysicsObject current = p.next();
-			if (current.killOnNextTick) {
+			if (current.removeOnNextTick()) {
 				p.remove();
+			}
+		}
+		// Clean up rays
+		Iterator<ProjectileRay> ri = rays.iterator();
+		while (ri.hasNext()) {
+			if (ri.next().removeOnNextTick()) {
+				ri.remove();
 			}
 		}
 	}

@@ -18,8 +18,8 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
 public class Projectile extends PhysicsObject {
 
 	private Vector2 velocity;
-	public boolean isPlayerProjectile;
-	public float damage;
+	private boolean isPlayerProjectile;
+	private float damage;
 
 	/** How far the projectile can travel before dying */
 	public float lifeDist;
@@ -104,8 +104,8 @@ public class Projectile extends PhysicsObject {
 		if (other instanceof Projectile) {
 			Projectile p = (Projectile) other;
 			if (p.isPlayerProjectile != isPlayerProjectile) {
-				other.killOnNextTick = true;
-				killOnNextTick = true;
+				p.kill();
+				this.kill();
 			}
 		}
 	}
@@ -117,5 +117,13 @@ public class Projectile extends PhysicsObject {
 	 */
 	public float getSpeed() {
 		return velocity.len();
+	}
+
+	public boolean isPlayerProjectile() {
+		return isPlayerProjectile;
+	}
+
+	public float getDamage() {
+		return damage;
 	}
 }

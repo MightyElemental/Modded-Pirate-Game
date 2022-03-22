@@ -29,7 +29,7 @@ public class ProjectileTest {
 		Projectile p = new Projectile(Vector2.Zero, 0f, projTestData, true);
 
 		// ensure despawn flag is not set
-		assertFalse(p.killOnNextTick);
+		assertFalse(p.removeOnNextTick());
 
 		// update projectile to move it
 		for (int i = 0; i <= 10; i++) {
@@ -37,7 +37,7 @@ public class ProjectileTest {
 		}
 
 		// ensure despawn flag is set
-		assertTrue(p.killOnNextTick);
+		assertTrue(p.removeOnNextTick());
 	}
 
 	@Test

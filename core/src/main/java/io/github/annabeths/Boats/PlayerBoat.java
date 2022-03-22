@@ -16,6 +16,7 @@ import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
+import io.github.annabeths.Projectiles.ProjectileRay;
 
 public class PlayerBoat extends Boat {
 
@@ -42,6 +43,9 @@ public class PlayerBoat extends Boat {
 
 	float timeSinceLastHeal = 0;
 
+	/** The type of projectile currently in use */
+	public ProjectileData activeProjectileType;
+
 	public PlayerBoat(GameController controller, Vector2 initialPosition) {
 		super(controller, initialPosition, "img/entity/boat1.png");
 
@@ -49,6 +53,8 @@ public class PlayerBoat extends Boat {
 		this.maxHP = 100;
 		this.speed = 200;
 		this.turnSpeed = 150;
+
+		activeProjectileType = ProjectileData.STOCK;
 
 	}
 
@@ -99,22 +105,27 @@ public class PlayerBoat extends Boat {
 	public void OnCollision(PhysicsObject other) {
 		boolean isInvincible = isInvincible();
 
+		// how much damage to deal to the player
+		float dmgToInflict = 0;
+
 		if (other instanceof Projectile) { // check the type of object passed
 			Projectile p = (Projectile) other;
-			if (!p.isPlayerProjectile) {
-				p.killOnNextTick = true;
-				if (!isInvincible) {
-					HP -= (p.damage - defense);
-					HP = MathUtils.clamp(HP, 0, maxHP);
-				}
+			if (!p.isPlayerProjectile()) {
+				p.kill();
+				dmgToInflict = p.getDamage();
 			}
 		} else if (other instanceof College) {
 			// End game if player crashes into college
 			controller.gameOver();
 		} else if (other instanceof Boat) {
 			// Damage player if collides with boat
-			if (!isInvincible) HP -= 50;
+			dmgToInflict = 50;
 		}
+
+		// Deal damage if player is not invincible
+		if (dmgToInflict != 0 && !isInvincible) HP -= dmgToInflict - defense;
+		// Ensure HP is within range
+		HP = MathUtils.clamp(HP, 0, maxHP);
 	}
 
 	/** @return {@code true} if player has invincibility powerup */
@@ -124,25 +135,52 @@ public class PlayerBoat extends Boat {
 
 	@Override
 	public void Shoot() {
-		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 3 : 1;
-		// multiply by the overall damage multiplier
-		dmgMul *= projDmgMul;
-		// the projectile type to shoot
-		ProjectileData pd = ProjectileData.STOCK;
 
+		float dmgMul = getDamageMul();
+
+		switch (activeProjectileType) {
+		case RAY:
+			shootRay(dmgMul);
+			break;
+		case STOCK:
+		default:
+			shootStock(dmgMul);
+			break;
+		}
+
+	}
+
+	private void shootRay(float dmgMul) {
+		ProjectileRay pr = new ProjectileRay(getCenter(), rotation + 90, activeProjectileType, true,
+				500f, dmgMul);
+		pr.fireRay(controller.physicsObjects);
+		controller.rays.add(pr);
+		pr = new ProjectileRay(getCenter(), rotation - 90, activeProjectileType, true, 500f,
+				dmgMul);
+		pr.fireRay(controller.physicsObjects);
+		controller.rays.add(pr);
+	}
+
+	private void shootStock(float dmgMul) {
 		if (activePowerups.containsKey(PowerupType.STARBURSTFIRE)) {
 			for (int i = 0; i < 360; i += 45) {
-				Projectile burst = createProjectile(pd, i, dmgMul, projSpdMul);
+				Projectile burst = createProjectile(activeProjectileType, i, dmgMul, projSpdMul);
 				controller.NewPhysicsObject(burst);
 			}
 		} else {
-			Projectile projLeft = createProjectile(pd, -90, dmgMul, projSpdMul);
-			Projectile projRight = createProjectile(pd, 90, dmgMul, projSpdMul);
+			Projectile projLeft = createProjectile(activeProjectileType, -90, dmgMul, projSpdMul);
+			Projectile projRight = createProjectile(activeProjectileType, 90, dmgMul, projSpdMul);
 			// Add the projectile to the GameController's physics objects list so it
 			// receives updates
 			controller.NewPhysicsObject(projLeft);
 			controller.NewPhysicsObject(projRight);
 		}
+	}
+
+	private float getDamageMul() {
+		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 3 : 1;
+		// multiply by the overall damage multiplier
+		return dmgMul * projDmgMul;
 	}
 
 	@Override

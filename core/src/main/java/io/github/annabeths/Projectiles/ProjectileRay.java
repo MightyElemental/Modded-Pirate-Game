@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.annabeths.GameGenerics.GameObject;
+import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 
 /**
@@ -17,7 +17,7 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
  * 
  * @author James Burnell
  */
-public class ProjectileRay extends GameObject {
+public class ProjectileRay extends Projectile {
 
 	// TODO: Damage objects that intersect
 
@@ -25,6 +25,13 @@ public class ProjectileRay extends GameObject {
 
 	private ProjectileData pd;
 	private float dmgMul;
+
+	/** How long the ray should be drawn on screen in seconds */
+	private float showTime = 1f;
+	/** How much time is remaining to show the ray in seconds */
+	private float remainShowTime = showTime;
+
+	private Vector2 farthestHitPoint;
 
 	/**
 	 * Create a projectile ray with a default distance of 500 units.
@@ -49,6 +56,7 @@ public class ProjectileRay extends GameObject {
 	 */
 	public ProjectileRay(Vector2 origin, float angle, ProjectileData data,
 			boolean isPlayerProjectile, float maxDistance, float damageMultiplier) {
+		super(origin, angle, data, isPlayerProjectile);
 		this.position = origin.cpy();
 		this.rotation = angle;
 		this.pd = data;
@@ -56,6 +64,7 @@ public class ProjectileRay extends GameObject {
 
 		Vector2 dirVec = new Vector2(maxDistance, 0).setAngleDeg(angle);
 		this.endPoint = origin.cpy().add(dirVec);
+		this.farthestHitPoint = endPoint.cpy();
 	}
 
 	/**
@@ -69,6 +78,8 @@ public class ProjectileRay extends GameObject {
 
 		// Add all intersecting objects to result list
 		physObjs.forEach(p -> {
+			// skip if belongs to player
+			if (isPlayerProjectile() && p instanceof PlayerBoat) return;
 			if (Intersector.intersectSegmentPolygon(position, endPoint, p.collisionPolygon)) {
 				result.add(p);
 			}
@@ -106,6 +117,32 @@ public class ProjectileRay extends GameObject {
 				.collect(Collectors.toList());
 	}
 
+	public void fireRay(List<PhysicsObject> physObjs) {
+		int passThroughCount = 1;
+		List<PhysicsObject> intersection = getNClosestIntersectingObjects(physObjs,
+				passThroughCount);
+		intersection.forEach(e -> OnCollision(e));
+
+		// set the point of the ray that is closest to the farthest hit object
+		if (!intersection.isEmpty()) {
+			PhysicsObject p = intersection.get(intersection.size() - 1);
+			Intersector.nearestSegmentPoint(getOrigin(), getEndPoint(), p.getCenter(),
+					farthestHitPoint);
+		}
+	}
+
+	public void OnCollision(PhysicsObject obj) {
+		obj.OnCollision(this);
+	}
+
+	public void Update(float delta) {
+		remainShowTime -= delta;
+	}
+
+	public boolean removeOnNextTick() {
+		return remainShowTime <= 0;
+	}
+
 	/**
 	 * @return the origin
 	 */
@@ -122,6 +159,42 @@ public class ProjectileRay extends GameObject {
 
 	public float getDamage() {
 		return pd.damage * dmgMul;
+	}
+
+	/**
+	 * @return the showTime
+	 */
+	public float getShowTime() {
+		return showTime;
+	}
+
+	/**
+	 * @return the remainShowTime
+	 */
+	public float getRemainShowTime() {
+		return remainShowTime;
+	}
+
+	@Override
+	public Vector2 getCenter() {
+		return getOrigin().cpy().lerp(endPoint, 0.5f);
+	}
+
+	@Override
+	public float getCenterX() {
+		return getCenter().x;
+	}
+
+	@Override
+	public float getCenterY() {
+		return getCenter().y;
+	}
+
+	/**
+	 * @return the farthestHitPoint
+	 */
+	public Vector2 getFarthestHitPoint() {
+		return farthestHitPoint;
 	}
 
 }

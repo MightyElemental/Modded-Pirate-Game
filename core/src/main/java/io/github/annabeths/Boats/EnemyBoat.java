@@ -142,14 +142,22 @@ public class EnemyBoat extends AIBoat {
 
 	@Override
 	public void OnCollision(PhysicsObject other) {
+		float dmgToInflict = 0;
+		// whether or not the object belongs to the player
+		boolean objWasPlayer = false;
+
 		if (other instanceof Projectile) {
 			Projectile p = (Projectile) other;
-			if (p.isPlayerProjectile) {
-				other.killOnNextTick = true;
-				if (p.isPlayerProjectile) controller.xp += (p.damage / maxHP) * xpValue;
-				HP -= p.damage;
+			if (p.isPlayerProjectile()) {
+				objWasPlayer = true;
+				other.kill();
+				dmgToInflict = p.getDamage();
 			}
 		}
+
+		if (objWasPlayer) controller.xp += (dmgToInflict / maxHP) * xpValue;
+		HP -= dmgToInflict;
+		HP = MathUtils.clamp(HP, 0, maxHP);
 	}
 
 }

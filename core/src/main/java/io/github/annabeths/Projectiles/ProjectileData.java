@@ -5,6 +5,8 @@ import com.badlogic.gdx.math.Vector2;
 /** Used to define each type of projectile found in the game */
 public enum ProjectileData {
 
+	/** Rays damage entities directly without traveling */
+	RAY(0, 20, Vector2.Zero, null),
 	STOCK(250, 20, new Vector2(20, 20), "img/entity/cannonball.png"),
 	BOSS(300, 20, new Vector2(20, 20), "img/entity/cannonball.png"),
 	ENEMY(250, 20, new Vector2(20, 20), "img/entity/cannonball.png");
