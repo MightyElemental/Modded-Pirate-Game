@@ -5,20 +5,16 @@
 # This workflow will build a Java project with Gradle and cache/restore any dependencies to improve the workflow execution time
 # For more information see: https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
 
-name: Java CI with Gradle
+name: Automatically Release Tagged Commits
 
 on:
   push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+    tags:
+      - "v*"
 
 jobs:
-  test:
-    strategy:
-        matrix:
-          os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
+  build:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
     - name: Set up JDK 11
@@ -26,13 +22,22 @@ jobs:
       with:
         java-version: '11'
         distribution: 'adopt'
-    - name: Run Unit Tests
+    - name: Build with Gradle
       uses: gradle/gradle-build-action@v2
       with:
         gradle-version: 6.7.1
-        arguments: core:test
-    - name: Publish Test Report
-      uses: mikepenz/action-junit-report@v2
-      if: always()
+        arguments: desktop:dist
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+    - name: Rename jar file
+      run: |
+        cd desktop/build/libs
+        mv desktop-1.0.jar "pirategame-mario_shard-${{ steps.get_version.outputs.VERSION }}.jar"
+    - name: Automatically release
+      uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
-        report_paths: '**/build/test-results/test/TEST-*.xml'
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false
+          files: |
+            desktop/build/libs/*.jar
