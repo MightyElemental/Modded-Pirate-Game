@@ -192,7 +192,7 @@ public class GameController implements Screen {
 
 		hud.Draw(batch);
 
-		DebugUtils.drawDebugText(this, batch);
+		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawDebugText(this, batch);
 
 		// end the sprite batch
 		batch.end();
@@ -202,9 +202,7 @@ public class GameController implements Screen {
 		renderRays();
 
 		// this should be off during normal gameplay, but can be on to debug collisions
-		if (DebugUtils.DRAW_DEBUG_COLLISIONS) {
-			DebugUtils.drawDebugCollisions(this, sr);
-		}
+		if (DebugUtils.DRAW_DEBUG_COLLISIONS) DebugUtils.drawDebugCollisions(this, sr);
 	}
 
 	/** Renders ProjectileRay objects */

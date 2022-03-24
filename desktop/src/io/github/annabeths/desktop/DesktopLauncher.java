@@ -1,15 +1,26 @@
 package io.github.annabeths.desktop;
 
+import java.util.Arrays;
+import java.util.List;
+
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 
+import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.GeneralControl.eng1game;
 
 public class DesktopLauncher {
-	public static void main (String[] arg) {
+	public static void main(String[] arg) {
+		List<String> argList = Arrays.asList(arg);
+
+		if (argList.contains("--debug") || argList.contains("-d")) {
+			DebugUtils.DRAW_DEBUG_COLLISIONS = true;
+			DebugUtils.DRAW_DEBUG_TEXT = true;
+		}
+
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setResizable(false);
-		//config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
+		// config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 		config.setWindowedMode(1280, 720);
 		config.setTitle("Team Mario's Pirate Game");
 		new Lwjgl3Application(new eng1game(), config);

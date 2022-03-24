@@ -19,7 +19,7 @@ import io.github.annabeths.GameScreens.GameController;
 public class DebugUtils {
 
 	public static boolean DRAW_DEBUG_COLLISIONS = false;
-	public static boolean DRAW_DEBUG_TEXT = true;
+	public static boolean DRAW_DEBUG_TEXT = false;
 	public static boolean ENEMY_COLLEGE_FIRE = false;
 
 	public static void drawDebugText(GameController gc, SpriteBatch batch) {
