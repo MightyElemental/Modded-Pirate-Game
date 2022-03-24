@@ -157,6 +157,7 @@ public class PlayerBoat extends Boat {
 
 	private void shootRay(float dmgMul) {
 		float angle = getAngleBetweenMouseAndBoat();
+		angle += MathUtils.random(-5, 5); // randomize ray so it is not perfect
 
 		ProjectileRay pr = new ProjectileRay(getCenter(), angle, activeProjectileType, true, 500f,
 				dmgMul);
