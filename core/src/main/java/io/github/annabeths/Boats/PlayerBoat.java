@@ -161,7 +161,7 @@ public class PlayerBoat extends Boat {
 
 		ProjectileRay pr = new ProjectileRay(getCenter(), angle, activeProjectileType, true, 500f,
 				dmgMul);
-		pr.fireRay(controller.physicsObjects);
+		pr.fireRay(controller.physicsObjects, 1);
 		controller.rays.add(pr);
 	}
 

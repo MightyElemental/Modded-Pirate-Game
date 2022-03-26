@@ -117,10 +117,9 @@ public class ProjectileRay extends Projectile {
 				.collect(Collectors.toList());
 	}
 
-	public void fireRay(List<PhysicsObject> physObjs) {
-		int passThroughCount = 1;
+	public void fireRay(List<PhysicsObject> physObjs, int passThroughLimit) {
 		List<PhysicsObject> intersection = getNClosestIntersectingObjects(physObjs,
-				passThroughCount);
+				passThroughLimit);
 		intersection.forEach(e -> OnCollision(e));
 
 		// set the point of the ray that is closest to the farthest hit object
