@@ -51,4 +51,28 @@ public class ProjectileTest {
 		}
 	}
 
+	@Test
+	public void testProjectileCollision() {
+		// Two projectiles that are both non-player projectiles
+		Projectile p1 = new Projectile(Vector2.Zero, 0, projTestData, false);
+		Projectile p2 = new Projectile(Vector2.Zero, 0, projTestData, false);
+		p1.OnCollision(p2);
+		assertFalse(p1.removeOnNextTick());
+		assertFalse(p2.removeOnNextTick());
+
+		// Two projectiles where one is a player, the other is not
+		Projectile p3 = new Projectile(Vector2.Zero, 0, projTestData, true);
+		Projectile p4 = new Projectile(Vector2.Zero, 0, projTestData, false);
+		p3.OnCollision(p4);
+		assertTrue(p3.removeOnNextTick());
+		assertTrue(p4.removeOnNextTick());
+
+		// Two projectiles that are both player projectiles
+		Projectile p5 = new Projectile(Vector2.Zero, 0, projTestData, true);
+		Projectile p6 = new Projectile(Vector2.Zero, 0, projTestData, true);
+		p5.OnCollision(p6);
+		assertFalse(p5.removeOnNextTick());
+		assertFalse(p6.removeOnNextTick());
+	}
+
 }
