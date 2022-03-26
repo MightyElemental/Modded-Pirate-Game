@@ -19,8 +19,6 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
  */
 public class ProjectileRay extends Projectile {
 
-	// TODO: Damage objects that intersect
-
 	private Vector2 endPoint;
 
 	private ProjectileData pd;
