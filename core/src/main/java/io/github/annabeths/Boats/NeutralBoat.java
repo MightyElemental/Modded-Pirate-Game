@@ -14,7 +14,7 @@ public class NeutralBoat extends AIBoat {
 	public NeutralBoat(GameController controller, Vector2 initialPosition) {
 		super(controller, initialPosition, "img/entity/boat_neutral.png");
 
-		xpValue = 25;
+		xpValue = 20;
 		plunderValue = 25;
 
 		this.HP = 100;
@@ -39,16 +39,23 @@ public class NeutralBoat extends AIBoat {
 	}
 
 	public void OnCollision(PhysicsObject object) {
+		float dmgToInflict = 0;
+		// whether or not the object belongs to the player
+		boolean objWasPlayer = false;
+
 		if (object instanceof PlayerBoat) {
 			// Hit by player, destroy and add XP
 			controller.xp += xpValue;
 			controller.plunder += plunderValue;
 			Destroy();
 		} else if (object instanceof Projectile) {
-			object.killOnNextTick = true;
+			object.kill();
 			Projectile p = (Projectile) object;
-			if (p.isPlayerProjectile) controller.xp += xpValue;
-			Destroy();
+			if (p.isPlayerProjectile()) objWasPlayer = true;
+			dmgToInflict = p.getDamage();
 		}
+
+		if (objWasPlayer) controller.xp += (dmgToInflict / maxHP) * xpValue;
+		damage(dmgToInflict);
 	}
 }

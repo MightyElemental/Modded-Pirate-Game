@@ -44,7 +44,7 @@ public class EnemyCollege extends College {
 	}
 
 	public void updateHpText() {
-		hpText.setText(font, HP + "/" + maxHP);
+		hpText.setText(font, String.format("%.0f/%.0f", HP, maxHP));
 	}
 
 	@Override
@@ -52,10 +52,10 @@ public class EnemyCollege extends College {
 		// if the enemy college is hit by a projectile
 		if (other instanceof Projectile && HP > 0) {
 			Projectile p = (Projectile) other;
-			if (p.isPlayerProjectile) { // if its a player projectile
-				p.killOnNextTick = true;
-				if (!invulnerable) {
-					HP -= p.damage;
+			if (p.isPlayerProjectile()) { // if its a player projectile
+				p.kill();
+				if (!isInvulnerable()) {
+					damage(p.getDamage());
 					updateHpText();
 					if (HP <= 0) gc.CollegeDestroyed();
 				} else {
@@ -114,7 +114,7 @@ public class EnemyCollege extends College {
 	}
 
 	public void becomeVulnerable() {
-		invulnerable = false;
+		setInvulnerable(false);
 		updateHpText();
 	}
 

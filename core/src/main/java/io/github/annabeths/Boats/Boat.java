@@ -4,20 +4,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.annabeths.GameGenerics.IHealth;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
-public abstract class Boat extends PhysicsObject {
+public abstract class Boat extends PhysicsObject implements IHealth {
 	GameController controller;
 
 	// Boat stats
-	public int HP;
-	public int maxHP;
+	protected float HP;
+	protected float maxHP;
 	protected float speed;
 	protected float turnSpeed;
 
@@ -150,5 +152,25 @@ public abstract class Boat extends PhysicsObject {
 		boolean isPlayer = this instanceof PlayerBoat;
 		return new Projectile(getCenter(), rotation + rotationOffset, type, isPlayer, dmgMul,
 				spdMul);
+	}
+
+	@Override
+	public float getHealth() {
+		return HP;
+	}
+
+	@Override
+	public float getMaxHealth() {
+		return maxHP;
+	}
+
+	@Override
+	public void damage(float dmg) {
+		HP = MathUtils.clamp(HP - dmg, 0, maxHP);
+	}
+
+	@Override
+	public boolean isDead() {
+		return killOnNextTick || IHealth.super.isDead();
 	}
 }

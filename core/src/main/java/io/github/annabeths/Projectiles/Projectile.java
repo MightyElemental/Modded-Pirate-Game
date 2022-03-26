@@ -1,13 +1,11 @@
 package io.github.annabeths.Projectiles;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.GameGenerics.PhysicsObject;
-import io.github.annabeths.GeneralControl.ResourceManager;
 
 /**
  * Projectiles are fired from other game objects. For example, cannonballs from
@@ -20,8 +18,8 @@ import io.github.annabeths.GeneralControl.ResourceManager;
 public class Projectile extends PhysicsObject {
 
 	private Vector2 velocity;
-	public boolean isPlayerProjectile;
-	public float damage;
+	private boolean isPlayerProjectile;
+	private float damage;
 
 	/** How far the projectile can travel before dying */
 	public float lifeDist;
@@ -35,8 +33,8 @@ public class Projectile extends PhysicsObject {
 
 	/**
 	 * @param origin where it should start
-	 * @param originRot the rotation of the projectile
-	 * @param data the data to use
+	 * @param originRot the angle the projectile is facing
+	 * @param data the projectile data type to use
 	 * @param isPlayerProjectile true if the projectile is shot by the player
 	 * @see #Projectile(Vector2, float, ProjectileData, boolean, float, float)
 	 */
@@ -47,8 +45,8 @@ public class Projectile extends PhysicsObject {
 
 	/**
 	 * @param origin where it should start
-	 * @param originRot the rotation of the projectile
-	 * @param data the data to use
+	 * @param originRot the angle the projectile is facing
+	 * @param data the projectile data type to use
 	 * @param isPlayerProjectile true if the projectile is shot by the player
 	 * @param damageMultiplier how much to multiply the damage by
 	 * @param speedMultiplier how much to multiple the speed by
@@ -57,23 +55,22 @@ public class Projectile extends PhysicsObject {
 			boolean isPlayerProjectile, float damageMultiplier, float speedMultiplier) {
 		this.startingPos = origin.cpy();
 		position = origin;
-		damage = data.damage * damageMultiplier;
+		damage = data.getDamage() * damageMultiplier;
 		this.isPlayerProjectile = isPlayerProjectile;
 
 		// speed is only needed to initialize the velocity
-		float speed = data.speed * speedMultiplier;
+		float speed = data.getSpeed() * speedMultiplier;
 
 		// Calculate the projectile's velocity in the game space
 		velocity = new Vector2(speed, 0).setAngleDeg(originRot);
 
-		sprite = new Sprite(ResourceManager.getTexture(data.texture));
-		sprite.setSize(data.size.x, data.size.y);
-		sprite.setOrigin(data.size.x / 2, data.size.y / 2);
+		setSprite(data.texture, position, data.size);
 		sprite.setRotation(originRot);
 
-		collisionPolygon = new Polygon(new float[] { data.size.x / 2, 0, data.size.x,
-				data.size.y / 2, data.size.x / 2, data.size.y, 0, data.size.y / 2 });
-		collisionPolygon.setOrigin(data.size.x / 2, data.size.y / 2);
+		collisionPolygon = new Polygon(
+				new float[] { data.getWidth() / 2, 0, data.getWidth(), data.getHeight() / 2,
+						data.getWidth() / 2, data.getHeight(), 0, data.getHeight() / 2 });
+		collisionPolygon.setOrigin(data.getWidth() / 2, data.getHeight() / 2);
 
 		lifeDist = MathUtils.random(500 - 50, 500 + 50);
 		lifeDist2 = lifeDist * lifeDist;
@@ -81,8 +78,7 @@ public class Projectile extends PhysicsObject {
 
 	@Override
 	public void Update(float delta) {
-		position.x += velocity.x * delta;
-		position.y += velocity.y * delta;
+		position.mulAdd(velocity, delta);
 		collisionPolygon.setPosition(position.x - getLocalCenterY(),
 				position.y - getLocalCenterX());
 
@@ -108,8 +104,8 @@ public class Projectile extends PhysicsObject {
 		if (other instanceof Projectile) {
 			Projectile p = (Projectile) other;
 			if (p.isPlayerProjectile != isPlayerProjectile) {
-				other.killOnNextTick = true;
-				killOnNextTick = true;
+				p.kill();
+				this.kill();
 			}
 		}
 	}
@@ -121,5 +117,13 @@ public class Projectile extends PhysicsObject {
 	 */
 	public float getSpeed() {
 		return velocity.len();
+	}
+
+	public boolean isPlayerProjectile() {
+		return isPlayerProjectile;
+	}
+
+	public float getDamage() {
+		return damage;
 	}
 }

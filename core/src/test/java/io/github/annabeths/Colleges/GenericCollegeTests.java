@@ -43,7 +43,7 @@ public class GenericCollegeTests {
 
 	@Test
 	public void testEnemyCollegeInstantiation() {
-		ProjectileData pd = mock(ProjectileData.class);
+		ProjectileData pd = ProjectileData.STOCK;
 		assertDoesNotThrow(() -> {
 			new EnemyCollege(Vector2.Zero, "img/world/castle/castle_dead.png",
 					"img/world/castle/castle_dead.png", null, pd, 100);

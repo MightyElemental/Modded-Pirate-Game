@@ -121,7 +121,7 @@ public class EnemyBoat extends AIBoat {
 	@Override
 	void Shoot() {
 		// the projectile type to shoot
-		ProjectileData pd = controller.projectileHolder.stock;
+		ProjectileData pd = ProjectileData.STOCK;
 
 		Projectile projLeft = createProjectile(pd, -90, 1, 1);
 		Projectile projRight = createProjectile(pd, 90, 1, 1);
@@ -142,14 +142,21 @@ public class EnemyBoat extends AIBoat {
 
 	@Override
 	public void OnCollision(PhysicsObject other) {
+		float dmgToInflict = 0;
+		// whether or not the object belongs to the player
+		boolean objWasPlayer = false;
+
 		if (other instanceof Projectile) {
 			Projectile p = (Projectile) other;
-			if (p.isPlayerProjectile) {
-				other.killOnNextTick = true;
-				if (p.isPlayerProjectile) controller.xp += (p.damage / maxHP) * xpValue;
-				HP -= p.damage;
+			if (p.isPlayerProjectile()) {
+				objWasPlayer = true;
+				other.kill();
+				dmgToInflict = p.getDamage();
 			}
 		}
+
+		if (objWasPlayer) controller.xp += (dmgToInflict / maxHP) * xpValue;
+		damage(dmgToInflict);
 	}
 
 }

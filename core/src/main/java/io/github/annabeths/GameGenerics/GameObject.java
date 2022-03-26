@@ -14,7 +14,7 @@ public abstract class GameObject {
 
 	public float rotation = 0;
 	public Sprite sprite = null;
-	public boolean killOnNextTick = false;
+	protected boolean killOnNextTick = false;
 
 	/**
 	 * Update Method, define on inheritance
@@ -25,6 +25,14 @@ public abstract class GameObject {
 	}
 
 	public void Draw(SpriteBatch batch) {
+	}
+	
+	public void kill() {
+		killOnNextTick = true;
+	}
+	
+	public boolean removeOnNextTick() {
+		return killOnNextTick;
 	}
 
 	/**

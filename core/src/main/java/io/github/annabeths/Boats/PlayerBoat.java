@@ -8,6 +8,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.Colleges.College;
@@ -16,7 +17,14 @@ import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
+import io.github.annabeths.Projectiles.ProjectileRay;
 
+/**
+ * @author Leif Kemp
+ * @author Anna Singleton
+ * @author James Burnell
+ * @author Ben Faulkner
+ */
 public class PlayerBoat extends Boat {
 
 	/**
@@ -24,13 +32,13 @@ public class PlayerBoat extends Boat {
 	 * 
 	 * @see #Upgrade(Upgrades, float)
 	 */
-	float projDmgMul = 1;
+	protected float projDmgMul = 1;
 	/**
 	 * How much to multiply the projectile speed by
 	 * 
 	 * @see #Upgrade(Upgrades, float)
 	 */
-	float projSpdMul = 1;
+	protected float projSpdMul = 1;
 
 	public Map<PowerupType, Float> activePowerups = new HashMap<>();
 
@@ -38,9 +46,12 @@ public class PlayerBoat extends Boat {
 	 * The higher the defense, the stronger the player, this is subtracted from the
 	 * damage
 	 */
-	int defense = 1;
+	protected int defense = 1;
 
-	float timeSinceLastHeal = 0;
+	protected float timeSinceLastHeal = 0;
+
+	/** The type of projectile currently in use */
+	public ProjectileData activeProjectileType;
 
 	public PlayerBoat(GameController controller, Vector2 initialPosition) {
 		super(controller, initialPosition, "img/entity/boat1.png");
@@ -49,6 +60,8 @@ public class PlayerBoat extends Boat {
 		this.maxHP = 100;
 		this.speed = 200;
 		this.turnSpeed = 150;
+
+		activeProjectileType = ProjectileData.STOCK;
 
 	}
 
@@ -99,22 +112,25 @@ public class PlayerBoat extends Boat {
 	public void OnCollision(PhysicsObject other) {
 		boolean isInvincible = isInvincible();
 
+		// how much damage to deal to the player
+		float dmgToInflict = 0;
+
 		if (other instanceof Projectile) { // check the type of object passed
 			Projectile p = (Projectile) other;
-			if (!p.isPlayerProjectile) {
-				p.killOnNextTick = true;
-				if (!isInvincible) {
-					HP -= (p.damage - defense);
-					HP = MathUtils.clamp(HP, 0, maxHP);
-				}
+			if (!p.isPlayerProjectile()) {
+				p.kill();
+				dmgToInflict = p.getDamage();
 			}
 		} else if (other instanceof College) {
 			// End game if player crashes into college
 			controller.gameOver();
 		} else if (other instanceof Boat) {
 			// Damage player if collides with boat
-			if (!isInvincible) HP -= 50;
+			dmgToInflict = 50;
 		}
+
+		// Deal damage if player is not invincible
+		if (!isInvincible) damage(Math.max(dmgToInflict - defense, 0));
 	}
 
 	/** @return {@code true} if player has invincibility powerup */
@@ -124,25 +140,67 @@ public class PlayerBoat extends Boat {
 
 	@Override
 	public void Shoot() {
-		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 3 : 1;
-		// multiply by the overall damage multiplier
-		dmgMul *= projDmgMul;
-		// the projectile type to shoot
-		ProjectileData pd = controller.projectileHolder.stock;
 
+		float dmgMul = getDamageMul();
+
+		switch (activeProjectileType) {
+		case RAY:
+			shootRay(dmgMul);
+			break;
+		case STOCK:
+		default:
+			shootStock(dmgMul);
+			break;
+		}
+
+	}
+
+	private void shootRay(float dmgMul) {
+		float angle = getAngleBetweenMouseAndBoat();
+		angle += MathUtils.random(-5, 5); // randomize ray so it is not perfect
+
+		ProjectileRay pr = new ProjectileRay(getCenter(), angle, activeProjectileType, true, 500f,
+				dmgMul);
+		pr.fireRay(controller.physicsObjects, 1);
+		controller.rays.add(pr);
+	}
+
+	/**
+	 * Calculates the angle between the player boat and the mouse pointer. It does
+	 * this by unwrapping the cursor position with the controller camera.
+	 * 
+	 * @return The angle in degrees
+	 */
+	public float getAngleBetweenMouseAndBoat() {
+		int mouseX = Gdx.input.getX();
+		int mouseY = Gdx.input.getY();
+		Vector3 pos3 = new Vector3(mouseX, mouseY, 0);
+		controller.map.camera.unproject(pos3);
+		Vector2 pos = new Vector2(pos3.x, pos3.y);
+
+		return pos.sub(getCenter()).angleDeg();
+	}
+
+	private void shootStock(float dmgMul) {
 		if (activePowerups.containsKey(PowerupType.STARBURSTFIRE)) {
 			for (int i = 0; i < 360; i += 45) {
-				Projectile burst = createProjectile(pd, i, dmgMul, projSpdMul);
+				Projectile burst = createProjectile(activeProjectileType, i, dmgMul, projSpdMul);
 				controller.NewPhysicsObject(burst);
 			}
 		} else {
-			Projectile projLeft = createProjectile(pd, -90, dmgMul, projSpdMul);
-			Projectile projRight = createProjectile(pd, 90, dmgMul, projSpdMul);
+			Projectile projLeft = createProjectile(activeProjectileType, -90, dmgMul, projSpdMul);
+			Projectile projRight = createProjectile(activeProjectileType, 90, dmgMul, projSpdMul);
 			// Add the projectile to the GameController's physics objects list so it
 			// receives updates
 			controller.NewPhysicsObject(projLeft);
 			controller.NewPhysicsObject(projRight);
 		}
+	}
+
+	private float getDamageMul() {
+		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 3 : 1;
+		// multiply by the overall damage multiplier
+		return dmgMul * projDmgMul;
 	}
 
 	@Override
