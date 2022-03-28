@@ -1,12 +1,12 @@
 package io.github.annabeths.UI;
 
+import static io.github.annabeths.GeneralControl.ResourceManager.font;
 import static io.github.annabeths.GeneralControl.ResourceManager.getTexture;
 
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
@@ -47,7 +47,6 @@ public class HUD extends GameObject {
 
 	GlyphLayout powerTextLayout;
 
-	BitmapFont font;
 	GameController gc;
 
 	/** Used to disable certain player behaviors when hovering over a button */
@@ -66,7 +65,6 @@ public class HUD extends GameObject {
 		gc = gameController;
 
 		stage = new Stage(); // Lets us implement interactable UI elements
-		font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
 		hpTextLayout = new GlyphLayout();
 		timerTextLayout = new GlyphLayout();
 		xpTextLayout = new GlyphLayout();
@@ -97,7 +95,7 @@ public class HUD extends GameObject {
 		font.getData().setScale(1);
 	}
 
-	public String generateTimeString(int seconds) {
+	public static String generateTimeString(int seconds) {
 		int sec = seconds % 60;
 		int min = seconds / 60;
 		return min > 0 ? String.format("%d\'%02d\"", min, sec) : String.format("%02d seconds", sec);
