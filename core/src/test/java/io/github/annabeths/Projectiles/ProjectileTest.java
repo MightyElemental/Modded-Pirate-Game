@@ -1,5 +1,6 @@
 package io.github.annabeths.Projectiles;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -11,8 +12,14 @@ import org.junit.jupiter.api.Test;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
+/**
+ * Used to test {@link Projectile}s and {@link ProjectileData}
+ * 
+ * @author James Burnell
+ */
 public class ProjectileTest {
 
 	@BeforeAll
@@ -73,6 +80,29 @@ public class ProjectileTest {
 		p5.OnCollision(p6);
 		assertFalse(p5.removeOnNextTick());
 		assertFalse(p6.removeOnNextTick());
+	}
+
+	@Test
+	public void testDraw() {
+		Projectile p1 = new Projectile(Vector2.Zero, 0, projTestData, false);
+		SpriteBatch b = mock(SpriteBatch.class);
+		assertDoesNotThrow(() -> p1.Draw(b)); // ensure draw method doesn't throw an error
+	}
+
+	@Test
+	public void testGetDamage() {
+		Projectile p = new Projectile(Vector2.Zero, 0, projTestData, false, 5, 1);
+		assertEquals(projTestData.damage * 5, p.getDamage());
+	}
+
+	@Test
+	public void testProjDataGetTexture() {
+		assertEquals(projTestData.texture, projTestData.getTexture());
+	}
+
+	@Test
+	public void testProjDataGetSize() {
+		assertEquals(projTestData.size, projTestData.getSize());
 	}
 
 }
