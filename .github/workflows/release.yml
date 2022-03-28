@@ -10,7 +10,7 @@ name: Automatically Release Tagged Commits
 on:
   push:
     tags:
-      - "v*"
+      - '*'
 
 jobs:
   build:
