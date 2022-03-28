@@ -29,11 +29,13 @@ jobs:
         arguments: desktop:dist
     - name: Get the version
       id: get_version
-      run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
     - name: Rename jar file
       run: |
         cd desktop/build/libs
-        mv desktop-1.0.jar "pirategame-mario_shard-${{ steps.get_version.outputs.VERSION }}.jar"
+        mv desktop-1.0.jar "pirategame-mario_shard-$TAG.jar"
+      env:
+        TAG: ${{ steps.get_version.outputs.VERSION }}
     - name: Automatically release
       uses: marvinpinto/action-automatic-releases@v1.2.1
       with:
