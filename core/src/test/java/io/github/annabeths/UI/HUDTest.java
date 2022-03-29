@@ -8,6 +8,25 @@ import org.junit.jupiter.api.Test;
 
 public class HUDTest {
 
+//	public static GameController gc;
+//	public static HUD hud;
+//	public static SpriteBatch sb;
+//
+//	@BeforeAll
+//	public static void init() {
+//		Gdx.graphics = mock(Graphics.class);
+//		ResourceManager.font = mock(BitmapFont.class);
+//		gc = mock(GameController.class);
+//		gc.map = mock(GameMap.class);
+//		gc.map.camera = new OrthographicCamera();
+//		gc.colleges = new ArrayList<College>();
+//
+//		sb = mock(SpriteBatch.class);
+//		hud = mock(HUD.class);
+//		doCallRealMethod().when(hud).Draw(sb);
+//		hud.hpTextLayout = mock(GlyphLayout.class);
+//	}
+
 	@Test
 	public void testTimeStringFormatting() {
 		HashMap<Integer, String> cases = new HashMap<>();
@@ -24,5 +43,10 @@ public class HUDTest {
 			assertEquals(val, HUD.generateTimeString(key));
 		}
 	}
+
+//	@Test
+//	public void testDraw() {
+//		assertDoesNotThrow(() -> hud.Draw(sb));
+//	}
 
 }
