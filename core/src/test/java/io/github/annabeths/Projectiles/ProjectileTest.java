@@ -24,7 +24,6 @@ public class ProjectileTest {
 
 	@BeforeAll
 	public static void init() {
-		System.out.println("Setting up mock GL instance");
 		Gdx.gl = mock(GL20.class);
 	}
 
