@@ -53,7 +53,11 @@ public class EnemyCollege extends College {
 	}
 
 	public void updateHpText() {
-		hpText.setText(font, String.format("%.0f/%.0f", HP, maxHP));
+		hpText.setText(font, getHPString());
+	}
+
+	public String getHPString() {
+		return String.format("%.0f/%.0f", HP, maxHP);
 	}
 
 	@Override
@@ -65,8 +69,8 @@ public class EnemyCollege extends College {
 				p.kill();
 				if (!isInvulnerable()) {
 					damage(p.getDamage());
-					updateHpText();
 					if (isDead()) gc.CollegeDestroyed(this);
+					updateHpText();
 				} else {
 					hpText.setText(font, "RESISTED, destroy other colleges first!");
 				}

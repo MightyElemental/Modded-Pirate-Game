@@ -32,7 +32,7 @@ public class PlayerCollegeTest {
 	@BeforeEach
 	public void setup() {
 		col = new PlayerCollege(new Vector2(0, 0), "img/world/castle/castle_dead.png",
-				"img/world/castle/castle_dead.png", gc);
+				"img/world/castle/castle_dead.png", gc, false);
 	}
 
 	@Test
