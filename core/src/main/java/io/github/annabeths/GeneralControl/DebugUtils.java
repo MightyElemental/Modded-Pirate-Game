@@ -20,7 +20,7 @@ public class DebugUtils {
 
 	public static boolean DRAW_DEBUG_COLLISIONS = false;
 	public static boolean DRAW_DEBUG_TEXT = false;
-	public static boolean ENEMY_COLLEGE_FIRE = false;
+	public static boolean ENEMY_COLLEGE_FIRE = true;
 
 	public static void drawDebugText(GameController gc, SpriteBatch batch) {
 		List<String> debugText = generateDebugText(gc);

@@ -16,6 +16,7 @@ public class DesktopLauncher {
 		if (argList.contains("--debug") || argList.contains("-d")) {
 			DebugUtils.DRAW_DEBUG_COLLISIONS = true;
 			DebugUtils.DRAW_DEBUG_TEXT = true;
+			DebugUtils.ENEMY_COLLEGE_FIRE = false;
 		}
 
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
