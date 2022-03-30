@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.IHealth;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
@@ -74,6 +75,7 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 */
 	void Turn(float delta, float multiplier) {
 		rotation = (rotation + turnSpeed * delta * multiplier) % 360;
+		rotation = rotation < 0 ? rotation + 360 : rotation; // keep within 0-360
 		sprite.setRotation(rotation);
 		collisionPolygon.setRotation(rotation - 90);
 	}
@@ -90,12 +92,15 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	public void moveTowardsDesiredAngle(float desiredAngle, float delta) {
 
 		// Manipulate angle to compensate for [0-360] limitations
-		if (rotation <= 90 && desiredAngle >= 270) desiredAngle -= 360;
-		if (rotation >= 270 && desiredAngle <= 90) desiredAngle += 360;
-		if (rotation > 180 && desiredAngle < 90) desiredAngle += 360;
+//		if (rotation <= 90 && desiredAngle >= 270) desiredAngle -= 360;
+//		if (rotation >= 270 && desiredAngle <= 90) desiredAngle += 360;
+//		if (rotation > 180 && desiredAngle < 90) desiredAngle += 360;
 
-		if (Math.abs(rotation - desiredAngle) > 0.5f) {
-			Turn(delta, rotation < desiredAngle ? 1 : -1);
+		float angDiff = GameObject.getAbsDiff2Angles(rotation, desiredAngle);
+		boolean turnLeft = (rotation + angDiff) % 360 == desiredAngle;
+
+		if (angDiff > 0.5f) {
+			Turn(delta, turnLeft ? 1 : -1);
 		}
 
 		Move(delta, 1);
