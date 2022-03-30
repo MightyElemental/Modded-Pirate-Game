@@ -191,7 +191,9 @@ public class GameController implements Screen {
 			physicsObject.Draw(batch);
 		}
 
-		hud.Draw(batch);
+		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawEntityDebugText(this, batch);
+
+		hud.Draw(batch); // this resets camera projection matrix
 
 		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawDebugText(this, batch);
 

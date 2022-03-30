@@ -34,10 +34,16 @@ public abstract class AIBoat extends Boat {
 	 * @param delta time since last frame
 	 */
 	public void MoveToDestination(float delta) {
-		// Figure out the angle between the boat and the destination
-		float targetAngle = destination.cpy().sub(getCenter()).angleDeg();
+		moveTowardsDesiredAngle(getAngleToDest(), delta);
+	}
 
-		moveTowardsDesiredAngle(targetAngle, delta);
+	/**
+	 * Figure out the angle between the boat and the destination
+	 * 
+	 * @return The angle to the destination
+	 */
+	public float getAngleToDest() {
+		return destination == null ? -1 : destination.cpy().sub(getCenter()).angleDeg();
 	}
 
 	@Override
@@ -82,9 +88,11 @@ public abstract class AIBoat extends Boat {
 	public boolean isDestValid(Vector2 target) {
 		// We want to check if there is any college between the boat and its destination
 		for (College college : controller.colleges) {
-			if (Intersector.intersectSegmentPolygon(getCenter(), target, college.collisionPolygon)) {
+			if (Intersector.intersectSegmentPolygon(getCenter(), target,
+					college.collisionPolygon)) {
 				// the line has hit a college, return false and set a new destination
-				// System.out.println("hit: "+college.getCenter()+" | "+getCenter()+" <-> "+target);
+				// System.out.println("hit: "+college.getCenter()+" | "+getCenter()+" <->
+				// "+target);
 				return false;
 			}
 		}

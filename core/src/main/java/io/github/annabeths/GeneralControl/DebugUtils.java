@@ -29,6 +29,17 @@ public class DebugUtils {
 		}
 	}
 
+	public static void drawEntityDebugText(GameController gc, SpriteBatch batch) {
+		for (int i = 0; i < gc.physicsObjects.size(); i++) {
+			PhysicsObject o = gc.physicsObjects.get(i);
+			if (o instanceof AIBoat) {
+				AIBoat aib = (AIBoat) o;
+				debugFont.draw(batch, String.format("%.1f\'", aib.getAngleToDest()),
+						aib.getCenterX() + 50, aib.getCenterY() + 50);
+			}
+		}
+	}
+
 	private static List<String> generateDebugText(GameController gc) {
 		return Arrays.asList("PhysObj Count = " + gc.physicsObjects.size(),
 				"Living College Count = "
