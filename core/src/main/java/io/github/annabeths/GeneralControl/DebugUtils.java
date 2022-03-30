@@ -34,7 +34,9 @@ public class DebugUtils {
 			PhysicsObject o = gc.physicsObjects.get(i);
 			if (o instanceof AIBoat) {
 				AIBoat aib = (AIBoat) o;
-				debugFont.draw(batch, String.format("%.1f\'", aib.getAngleToDest()),
+
+				debugFont.draw(batch,
+						String.format("d%.1f\'\nr%.1f\'", aib.getAngleToDest(), aib.rotation),
 						aib.getCenterX() + 50, aib.getCenterY() + 50);
 			}
 		}
