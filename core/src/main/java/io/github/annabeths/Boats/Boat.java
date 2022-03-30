@@ -1,8 +1,5 @@
 package io.github.annabeths.Boats;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
@@ -25,18 +22,6 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 
 	protected float shotDelay = 0.5f;
 	protected float timeSinceLastShot = 0f;
-
-	@Deprecated
-	public Boat() {
-		sprite = new Sprite(new Texture(Gdx.files.internal("img/boat1.png")));
-		sprite.setSize(100, 50);
-		sprite.setOrigin(50, 25);
-		sprite.setCenter(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-
-		collisionPolygon = new Polygon(new float[] { 0, 0, 0, 68, 25, 100, 50, 68, 50, 0 });
-
-		position = new Vector2();
-	}
 
 	public Boat(GameController controller, Vector2 position, String texLoc) {
 		this.controller = controller;
