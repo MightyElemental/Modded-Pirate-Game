@@ -88,7 +88,9 @@ public class EnemyBoat extends AIBoat {
 		destination = null;
 		float adjustedAng = angToPlayer - rotation;
 		adjustedAng += adjustedAng < 0 ? 360 : 0;
-		moveTowardsDesiredAngle(angToPlayer + (adjustedAng > 180 ? 90 : -90), delta);
+		float desiredAng = (angToPlayer + (adjustedAng > 180 ? 90 : -90)) % 360;
+		desiredAng += desiredAng < 0 ? 360 : 0;
+		moveTowardsDesiredAngle(desiredAng, delta);
 
 		// Fire the cannons if delay is sufficient
 		if (shotDelay <= timeSinceLastShot) {
