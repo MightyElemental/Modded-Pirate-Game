@@ -25,7 +25,7 @@ import io.github.annabeths.Projectiles.ProjectileData;
 
 public class BoatTest {
 
-	public static GameController gc;
+	public GameController gc;
 	public Boat b;
 
 	@BeforeEach
@@ -148,28 +148,28 @@ public class BoatTest {
 	private void testAngleDir(float resetAng, float goal, boolean shouldTurnLeft) {
 		b.rotation = resetAng;
 		b.moveTowardsDesiredAngle(goal, 10f);
-		if (resetAng == goal) {
+		if (GameObject.getAbsDiff2Angles(resetAng, goal) < 0.5f) {
 			assertEquals(resetAng, b.rotation);
 			return;
 		}
 
-		float trueAng = (resetAng + (shouldTurnLeft ? 10 : -10)) % 360;
-		trueAng += trueAng < 0 ? 360 : 0;
-		assertEquals(trueAng, b.rotation);
+		float trueAng = resetAng + (shouldTurnLeft ? 10 : -10);
+		float diff = GameObject.getAbsDiff2Angles(trueAng, b.rotation);
+		assertTrue(diff < 0.05f, String.format("init: %.1f | goal: %.1f | true: %.1f | curr: %.1f",
+				resetAng, goal, trueAng, b.rotation));
 	}
 
-//	@Test
-//	public void testMoveTowardsDesiredAngle() {
-//		for (int currentAng = 20; currentAng < 360; currentAng++) {
-//			for (int desiredAng = 0; desiredAng < 360; desiredAng++) {
-//				float angDiff = GameObject.getAbsDiff2Angles(currentAng, desiredAng);
-//				float test = (currentAng + angDiff) % 360;
-//				System.out.printf("%d-%d-%.0f-%.0f\n",currentAng, desiredAng, angDiff, test);
-//				boolean turnLeft = test == desiredAng;
-//				testAngleDir(currentAng, desiredAng, turnLeft);
-//			}
-//		}
-//	}
+	@Test
+	public void testMoveTowardsDesiredAngle() {
+		for (float currentAng = 0; currentAng < 360; currentAng += 15.5f) {
+			for (float desiredAng = 0; desiredAng < 360; desiredAng += 11.511f) {
+				float angDiff = GameObject.getAbsDiff2Angles(currentAng, desiredAng);
+				float test = (currentAng + angDiff) % 360;
+				boolean turnLeft = Math.abs(test - desiredAng) < 0.05f;
+				testAngleDir(currentAng, desiredAng, turnLeft);
+			}
+		}
+	}
 
 	@Test
 	public void testMoveTowardsDesiredAngleAtZero() {
@@ -241,6 +241,9 @@ public class BoatTest {
 
 		// should turn left
 		testAngleDir(resetVal, 45, true);
+
+		// should turn right
+		testAngleDir(resetVal, 90, false);
 	}
 
 }

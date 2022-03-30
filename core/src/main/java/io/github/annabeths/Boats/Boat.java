@@ -97,7 +97,7 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 //		if (rotation > 180 && desiredAngle < 90) desiredAngle += 360;
 
 		float angDiff = GameObject.getAbsDiff2Angles(rotation, desiredAngle);
-		boolean turnLeft = (rotation + angDiff) % 360 == desiredAngle;
+		boolean turnLeft = Math.abs((rotation + angDiff) % 360 - desiredAngle) < 0.05f;
 
 		if (angDiff > 0.5f) {
 			Turn(delta, turnLeft ? 1 : -1);
