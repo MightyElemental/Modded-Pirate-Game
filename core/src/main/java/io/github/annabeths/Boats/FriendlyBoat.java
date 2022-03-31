@@ -1,41 +1,40 @@
 package io.github.annabeths.Boats;
 
-import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.annabeths.Collectables.Powerup;
-import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
 /**
- * A boat that attacks the player
- * 
- * @author James Burnell
+ * @author Hector Woods, based largely on EnemyBoat.java
  */
-public class EnemyBoat extends AIBoat {
-
+public class FriendlyBoat extends AIBoat {
 	/** The current state of the AI */
 	public AiState state;
-	/** How close it needs to be to the player before it attacks */
+	/** How close it needs to be to the enemy ship before it attacks */
 	public float attackRange = 400;
-	/** How close it needs to be to the player before it starts approaching */
+	/** How close it needs to be to the enemy ship before it starts approaching */
 	public float approachRange = 650;
 
-	public EnemyBoat(GameController controller, Vector2 position) {
-		super(controller, position, "img/entity/boat2.png");
+	/**
+	 * The EnemyBoat this boat is currently targeting. null if there is no target.
+	 */
+	public EnemyBoat target;
 
-		xpValue = 150;
-		plunderValue = 100;
+	public FriendlyBoat(GameController controller, Vector2 position) {
+		super(controller, position, "img/entity/boat1.png");
 
-		this.HP = 100;
-		this.maxHP = 100;
-		this.speed = 75;
+		xpValue = 0; // friendly ships should not reward xp or plunder
+		plunderValue = 0;
+
+		this.HP = 75; // slightly weaker than enemy ships
+		this.maxHP = 75;
+		this.speed = 65;
 		this.turnSpeed = 150;
-		// uncomment for fun
-		// this.shotDelay = 0.01f;
+		this.target = null;
+		state = AiState.IDLE;
 	}
 
 	public enum AiState {
@@ -49,12 +48,10 @@ public class EnemyBoat extends AIBoat {
 
 		updateAiState();
 
-		// if (state != AiState.IDLE) System.out.println(state);
-
 		switch (state) {
 		case APPROACH:
-			if (isDestValid(controller.playerBoat.getCenter())) {
-				destination = controller.playerBoat.getCenter();
+			if (isDestValid(target.getCenter())) {
+				destination = target.getCenter();
 			} else {
 				idle(delta);
 			}
@@ -82,17 +79,17 @@ public class EnemyBoat extends AIBoat {
 	}
 
 	private void attack(float delta) {
-		float angToPlayer = getCenter().sub(controller.playerBoat.getCenter()).angleDeg();
+		float angToTarget = getCenter().sub(target.getCenter()).angleDeg();
 
 		// Move at a 90 degree angle to the play to align the boat to shoot
 		destination = null;
-		float adjustedAng = angToPlayer - rotation;
+		float adjustedAng = angToTarget - rotation;
 		adjustedAng += adjustedAng < 0 ? 360 : 0;
-		moveTowardsDesiredAngle(angToPlayer + (adjustedAng > 180 ? 90 : -90), delta);
+		moveTowardsDesiredAngle(angToTarget + (adjustedAng > 180 ? 90 : -90), delta);
 
 		// Fire the cannons if delay is sufficient
 		if (shotDelay <= timeSinceLastShot) {
-			adjustedAng = angToPlayer - rotation + 180;
+			adjustedAng = angToTarget - rotation + 180;
 			adjustedAng = adjustedAng > 270 ? adjustedAng - 180 : adjustedAng;
 
 			// System.out.println(adjustedAng);
@@ -105,19 +102,14 @@ public class EnemyBoat extends AIBoat {
 		}
 	}
 
-	private Boat getNearestTarget() {
-
-		if (controller.playerBoat.getCenter().dst(getCenter()) < approachRange) {
-			return controller.playerBoat;
-		}
-
-		FriendlyBoat nearestTarget = null;
+	private EnemyBoat getNearestTarget() {
+		EnemyBoat nearestTarget = null;
 		float shortestDistance = 1000;
 		for (PhysicsObject obj : controller.physicsObjects) {
-			if (obj instanceof FriendlyBoat) {
+			if (obj instanceof EnemyBoat) {
 				float dst = obj.getCenter().dst(getCenter());
 				if (dst < shortestDistance) {
-					nearestTarget = (FriendlyBoat) obj;
+					nearestTarget = (EnemyBoat) obj;
 					shortestDistance = dst;
 				}
 			}
@@ -126,11 +118,12 @@ public class EnemyBoat extends AIBoat {
 	}
 
 	private void updateAiState() {
-		Boat target = getNearestTarget();
+		target = getNearestTarget();
+
 		if (target != null) {
 			float dstToTarget = target.getCenter().dst(getCenter());
-
 			if (dstToTarget < attackRange) {
+				// once close enough, rotate to attack
 				state = AiState.ATTACK;
 			} else if (dstToTarget < approachRange) {
 				// move towards player if possible
@@ -160,28 +153,19 @@ public class EnemyBoat extends AIBoat {
 	@Override
 	void Destroy() {
 		killOnNextTick = true;
-		if (MathUtils.randomBoolean(0.8f)) {
-			controller.NewPhysicsObject(new Powerup(PowerupType.randomPower(), getCenter()));
-		}
 	}
 
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		float dmgToInflict = 0;
-		// whether or not the object belongs to the player
-		boolean objWasPlayer = false;
 
 		if (other instanceof Projectile) {
 			Projectile p = (Projectile) other;
-			if (p.isPlayerProjectile()) {
-				objWasPlayer = true;
+			if (!p.isPlayerProjectile()) {
 				other.kill();
 				dmgToInflict = p.getDamage();
 			}
 		}
-
-		if (objWasPlayer) controller.xp += (dmgToInflict / maxHP) * xpValue;
 		damage(dmgToInflict);
 	}
-
 }

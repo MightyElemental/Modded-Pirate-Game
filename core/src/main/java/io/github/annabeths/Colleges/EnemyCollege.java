@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
+import io.github.annabeths.Boats.EnemyBoat;
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
@@ -25,7 +26,10 @@ public class EnemyCollege extends College {
 	public float timeSinceLastShot = 0;
 
 	public ProjectileData projectileType;
-	public GlyphLayout hpText;
+	public transient GlyphLayout hpText;
+	/** Spawn a boat every n seconds */
+	public float boatSpawnTime;
+	public float timeSinceLastSpawn;
 
 	public EnemyCollege(Vector2 position, String aliveTexture, String islandTexture,
 			GameController controller, ProjectileData projectileData, int maxHP) {
@@ -41,6 +45,11 @@ public class EnemyCollege extends College {
 		projectileType = projectileData;
 		hpText = new GlyphLayout();
 		// updateHpText();
+
+		// Randomize spawn times
+		boatSpawnTime = MathUtils.random(40, 60);
+		// Create a random spawning offset so boats don't spawn simultaneously
+		timeSinceLastSpawn = MathUtils.random(boatSpawnTime);
 	}
 
 	public void updateHpText() {
@@ -57,7 +66,7 @@ public class EnemyCollege extends College {
 				if (!isInvulnerable()) {
 					damage(p.getDamage());
 					updateHpText();
-					if (HP <= 0) gc.CollegeDestroyed();
+					if (HP <= 0) gc.CollegeDestroyed(this);
 				} else {
 					hpText.setText(font, "RESISTED, destroy other colleges first!");
 				}
@@ -67,9 +76,7 @@ public class EnemyCollege extends College {
 
 	public void Update(float delta) {
 		if (HP > 0) {
-			if (timeSinceLastShot < fireRate) {
-				timeSinceLastShot += delta;
-			} // increase the time on the timer to allow for fire rate calculation
+			timeSinceLastShot += delta;
 
 			PlayerBoat boat = gc.playerBoat;
 			// is the player boat in range
@@ -78,6 +85,10 @@ public class EnemyCollege extends College {
 					ShootAt(boat.getCenter());
 					timeSinceLastShot = 0;
 				}
+			} else {
+				// only increase spawn time if player is not in range
+				timeSinceLastSpawn += delta;
+				checkForSpawnEnemyBoat(delta);
 			}
 		}
 	}
@@ -111,6 +122,14 @@ public class EnemyCollege extends College {
 		 */
 		gc.NewPhysicsObject(new Projectile(getCenter(), shotAngle, projectileType, false));
 
+	}
+
+	public void checkForSpawnEnemyBoat(float delta) {
+		if (timeSinceLastSpawn > boatSpawnTime) {
+			gc.physicsObjects
+					.add(new EnemyBoat(gc, new Vector2(position.x + 150, position.y + 150)));
+			timeSinceLastSpawn = 0;
+		}
 	}
 
 	public void becomeVulnerable() {

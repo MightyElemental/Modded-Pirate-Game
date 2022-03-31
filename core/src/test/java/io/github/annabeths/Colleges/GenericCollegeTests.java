@@ -54,7 +54,7 @@ public class GenericCollegeTests {
 	public void testPlayerCollegeInstantiation() {
 		assertDoesNotThrow(() -> {
 			new PlayerCollege(Vector2.Zero, "img/world/castle/castle_dead.png",
-					"img/world/castle/castle_dead.png", null);
+					"img/world/castle/castle_dead.png", null,false);
 		});
 	}
 

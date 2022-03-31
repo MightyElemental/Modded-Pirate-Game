@@ -15,6 +15,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.math.MathUtils;
@@ -106,7 +107,7 @@ public class GameController implements Screen {
 		// get the texture for colleges to sit on
 		String islandTexture = "img/world/island.png";
 		PlayerCollege p = new PlayerCollege(collegePlayer, collegeTextures.get(0), islandTexture,
-				this);
+				this, false);
 		physicsObjects.add(p); // add college to physics object, for updates
 		colleges.add(p); // also add a reference to the colleges list
 
@@ -267,9 +268,10 @@ public class GameController implements Screen {
 
 	/**
 	 * Called when a college is destroyed Makes sure the boss college will be made
-	 * vulnerable after the rest of the colleges are destroyed
+	 * vulnerable after the rest of the colleges are destroyed, and spawns a
+	 * friendly college in the place of the enemy college.
 	 */
-	public void CollegeDestroyed() {
+	public void CollegeDestroyed(EnemyCollege oldCollege) {
 		AddXP(100);
 
 		boolean foundCollege = physicsObjects.stream().filter(c -> c instanceof EnemyCollege)
@@ -282,11 +284,21 @@ public class GameController implements Screen {
 		if (!foundCollege) {
 			bossCollege.becomeVulnerable();
 		}
+
+		String alivePath = ((FileTextureData) oldCollege.aliveSprite.getTexture().getTextureData())
+				.getFileHandle().path();
+		// String deadPath =
+		// ((FileTextureData)oldCollege.deadSprite.getTexture().getTextureData()).getFileHandle().path();
+		String islandPath = ((FileTextureData) oldCollege.islandSprite.getTexture()
+				.getTextureData()).getFileHandle().path();
+		PlayerCollege newFriendlyCollege = new PlayerCollege(oldCollege.position, alivePath,
+				islandPath, this, true);
+		physicsObjects.add(newFriendlyCollege);
 	}
 
 	/**
 	 * Goes through all the {@link PhysicsObject} and removes ones from the list
-	 * that have had the flag set ({@link GameObject#killOnNextTick}) in a safe
+	 * that have had the flag set ({@link GameObject#removeOnNextTick()}) in a safe
 	 * manner
 	 */
 	public void ClearKilledObjects() {
