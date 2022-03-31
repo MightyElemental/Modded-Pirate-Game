@@ -34,12 +34,12 @@ jobs:
       run: |
         cd desktop/build/libs
         mv desktop-1.0.jar "pirategame-mario_shard-$TAG.jar"
+        ls
       env:
         TAG: ${{ steps.get_version.outputs.VERSION }}
     - name: Automatically release
-      uses: marvinpinto/action-automatic-releases@v1.2.1
+      uses: softprops/action-gh-release@v0.1.14
       with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          prerelease: false
-          files: |
-            desktop/build/libs/*.jar
+        fail_on_unmatched_files: true
+        files: |
+          desktop/build/libs/*.jar
