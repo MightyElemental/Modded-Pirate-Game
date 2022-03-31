@@ -166,7 +166,7 @@ public class PlayerBoat extends Boat {
 
 	}
 
-	private void shootRay(float dmgMul) {
+	public void shootRay(float dmgMul) {
 		float angle = getAngleBetweenMouseAndBoat();
 		angle += MathUtils.random(-5, 5); // randomize ray so it is not perfect
 
@@ -192,7 +192,7 @@ public class PlayerBoat extends Boat {
 		return pos.sub(getCenter()).angleDeg();
 	}
 
-	private void shootStock(float dmgMul) {
+	public void shootStock(float dmgMul) {
 		if (activePowerups.containsKey(PowerupType.STARBURSTFIRE)) {
 			for (int i = 0; i < 360; i += 45) {
 				Projectile burst = createProjectile(activeProjectileType, i, dmgMul, projSpdMul);
@@ -208,7 +208,7 @@ public class PlayerBoat extends Boat {
 		}
 	}
 
-	private float getDamageMul() {
+	public float getDamageMul() {
 		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 3 : 1;
 		// multiply by the overall damage multiplier
 		return dmgMul * projDmgMul;
