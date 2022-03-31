@@ -28,8 +28,8 @@ public class EnemyCollege extends College {
 	public ProjectileData projectileType;
 	public transient GlyphLayout hpText;
 	/** Spawn a boat every n seconds */
-	public float boatSpawnTime = 15;
-	public float timeSinceLastSpawn = 0;
+	public float boatSpawnTime;
+	public float timeSinceLastSpawn;
 
 	public EnemyCollege(Vector2 position, String aliveTexture, String islandTexture,
 			GameController controller, ProjectileData projectileData, int maxHP) {
@@ -45,6 +45,11 @@ public class EnemyCollege extends College {
 		projectileType = projectileData;
 		hpText = new GlyphLayout();
 		// updateHpText();
+
+		// Randomize spawn times
+		boatSpawnTime = MathUtils.random(40, 60);
+		// Create a random spawning offset so boats don't spawn simultaneously
+		timeSinceLastSpawn = MathUtils.random(boatSpawnTime);
 	}
 
 	public void updateHpText() {
@@ -71,9 +76,7 @@ public class EnemyCollege extends College {
 
 	public void Update(float delta) {
 		if (HP > 0) {
-			if (timeSinceLastShot < fireRate) {
-				timeSinceLastShot += delta;
-			} // increase the time on the timer to allow for fire rate calculation
+			timeSinceLastShot += delta;
 
 			PlayerBoat boat = gc.playerBoat;
 			// is the player boat in range
@@ -83,6 +86,8 @@ public class EnemyCollege extends College {
 					timeSinceLastShot = 0;
 				}
 			} else {
+				// only increase spawn time if player is not in range
+				timeSinceLastSpawn += delta;
 				checkForSpawnEnemyBoat(delta);
 			}
 		}
@@ -120,7 +125,6 @@ public class EnemyCollege extends College {
 	}
 
 	public void checkForSpawnEnemyBoat(float delta) {
-		timeSinceLastSpawn = timeSinceLastSpawn + delta;
 		if (timeSinceLastSpawn > boatSpawnTime) {
 			gc.physicsObjects
 					.add(new EnemyBoat(gc, new Vector2(position.x + 150, position.y + 150)));
