@@ -71,11 +71,27 @@ public class PlayerBoat extends Boat {
 		boolean rapidFire = activePowerups.containsKey(PowerupType.RAPIDFIRE);
 		timeSinceLastShot += delta * (rapidFire ? 2 : 1);
 
+		updatePowerups(delta);
+
+		processInput(delta);
+
+		if (isDead()) controller.gameOver();
+
+	}
+
+	public void updatePowerups(float delta) {
 		// Subtract delta time from each active power up
 		activePowerups.replaceAll((k, v) -> v - delta);
 		// Remove active power up if it has run out
 		activePowerups.entrySet().removeIf(e -> e.getValue() <= 0);
+	}
 
+	/**
+	 * Processes keyboard and mouse inputs
+	 * 
+	 * @param delta the time since the last update in seconds
+	 */
+	public void processInput(float delta) {
 		boolean up = Gdx.input.isKeyPressed(Input.Keys.W);
 		boolean down = Gdx.input.isKeyPressed(Input.Keys.S);
 		boolean left = Gdx.input.isKeyPressed(Input.Keys.A);
@@ -96,12 +112,6 @@ public class PlayerBoat extends Boat {
 			Shoot();
 			timeSinceLastShot = 0;
 		}
-
-		if (HP <= 0) {
-			// the player is dead
-			controller.gameOver();
-		}
-
 	}
 
 	/**
