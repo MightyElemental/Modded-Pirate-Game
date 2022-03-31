@@ -23,6 +23,7 @@ import io.github.annabeths.Projectiles.ProjectileRay;
  * @author Leif Kemp
  * @author Anna Singleton
  * @author James Burnell
+ * @author Hector Woods
  * @author Ben Faulkner
  */
 public class PlayerBoat extends Boat {
