@@ -2,6 +2,10 @@
 [![Java CI with Gradle](https://github.com/ENG1-Team-29/Assessment-2/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/ENG1-Team-29/Assessment-2/actions/workflows/gradle.yml)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![GitHub all releases](https://img.shields.io/github/downloads/ENG1-Team-29/Assessment-2/total)](https://github.com/ENG1-Team-29/Assessment-2/releases)
+![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/ENG1-Team-29/Assessment-2?label=version)
+
+![GitHub repo size](https://img.shields.io/github/repo-size/ENG1-Team-29/Assessment-2)
+![Lines of code](https://img.shields.io/tokei/lines/github/ENG1-Team-29/Assessment-2)
 
 ## Description
 
