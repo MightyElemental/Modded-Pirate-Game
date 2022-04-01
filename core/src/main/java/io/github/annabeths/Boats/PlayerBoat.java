@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -121,8 +120,6 @@ public class PlayerBoat extends Boat {
 	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
-		boolean isInvincible = isInvincible();
-
 		// how much damage to deal to the player
 		float dmgToInflict = 0;
 
@@ -138,10 +135,12 @@ public class PlayerBoat extends Boat {
 		} else if (other instanceof Boat) {
 			// Damage player if collides with boat
 			dmgToInflict = 50;
+			// kill the boat so the player doesn't keep getting damaged
+			other.kill();
 		}
 
 		// Deal damage if player is not invincible
-		if (!isInvincible) damage(Math.max(dmgToInflict - defense, 0));
+		if (!isInvincible()) damage(Math.max(dmgToInflict - defense, 0));
 	}
 
 	/** @return {@code true} if player has invincibility powerup */
@@ -232,7 +231,7 @@ public class PlayerBoat extends Boat {
 			defense += amount;
 			break;
 		case health:
-			HP = MathUtils.clamp((int) (HP + amount), 0, maxHP);
+			HP = MathUtils.clamp(HP + amount, 0, maxHP);
 			break;
 		case maxhealth:
 			maxHP += amount;
@@ -251,12 +250,6 @@ public class PlayerBoat extends Boat {
 			turnSpeed += amount;
 			break;
 		}
-	}
-
-	@Override
-	public void Draw(SpriteBatch batch) {
-		sprite.draw(batch);
-
 	}
 
 	public void Heal(int amount, float delta) {

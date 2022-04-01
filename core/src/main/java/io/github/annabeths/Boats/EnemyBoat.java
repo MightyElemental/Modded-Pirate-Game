@@ -180,6 +180,11 @@ public class EnemyBoat extends AIBoat {
 				other.kill();
 				dmgToInflict = p.getDamage();
 			}
+		} else if (other instanceof PlayerBoat) {
+			// Hit by player, destroy and add XP
+			controller.xp += xpValue;
+			controller.plunder += plunderValue;
+			Destroy();
 		}
 
 		if (objWasPlayer) controller.xp += (dmgToInflict / maxHP) * xpValue;
