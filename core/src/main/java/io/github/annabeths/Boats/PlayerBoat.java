@@ -105,9 +105,9 @@ public class PlayerBoat extends Boat {
 
 		// make sure we don't fire when hovering over a button and clicking
 		// doesn't matter if we're over a button or not when pressing space
-		if (((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-				&& !controller.hud.hoveringOverButton)
-				|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+		boolean click = Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+				&& !controller.hud.hoveringOverButton;
+		if ((click || Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
 				&& shotDelay <= timeSinceLastShot) {
 			Shoot();
 			timeSinceLastShot = 0;
