@@ -283,6 +283,9 @@ public class HUD extends GameObject {
 		healthBar.setColor(gc.playerBoat.isInvincible() ? Color.ROYAL : Color.SCARLET);
 		xpBar.setRange(0, gc.getXpRequiredForNextLevel());
 		xpBar.setValue(gc.getXpInLevel());
+
+		// if gc.playerboat distance from friendly college less than x
+		shopButton.setColor(gc.isPlayerInRangeOfFriendlyCollege() ? Color.WHITE : Color.GRAY);
 	}
 
 	/**

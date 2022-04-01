@@ -418,6 +418,16 @@ public class GameController implements Screen {
 	public void dispose() {
 	}
 
+	/**
+	 * Test if the player is within any friendly college
+	 * 
+	 * @return {@code true} if player is in range, {@code false} otherwise
+	 */
+	public boolean isPlayerInRangeOfFriendlyCollege() {
+		return colleges.stream().filter(c -> c instanceof PlayerCollege)
+				.anyMatch(c -> c.isInRange(playerBoat));
+	}
+
 	public void gameOver() {
 		game.timeUp = timer <= 0;
 		game.gameScore = (int) getGameScore();
