@@ -3,6 +3,7 @@ package io.github.annabeths.Boats;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -11,7 +12,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,38 +31,47 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.Projectile;
+import io.github.annabeths.UI.HUD;
 
 public class PlayerBoatTest {
 
 	public GameController gc;
 	public PlayerBoat b;
 
-	@BeforeAll
-	public static void init() {
-		Gdx.graphics = mock(Graphics.class);
-		Gdx.input = mock(Input.class);
-		when(Gdx.graphics.getWidth()).thenReturn(1280);
-		when(Gdx.graphics.getHeight()).thenReturn(720);
-	}
-
 	@BeforeEach
 	public void setup() {
+		setupInput();
+
 		gc = mock(GameController.class);
 		gc.map = mock(GameMap.class);
 		gc.colleges = new ArrayList<College>();
 		gc.physicsObjects = new ArrayList<PhysicsObject>();
 		doCallRealMethod().when(gc).NewPhysicsObject(any(PhysicsObject.class));
-		initColleges();
+		setupColleges();
 		gc.playerBoat = new PlayerBoat(gc, new Vector2(0, 0));
 		when(gc.map.getMapHeight()).thenReturn(1000f);
 		when(gc.map.getMapWidth()).thenReturn(1000f);
 		doCallRealMethod().when(gc.map).getRandomPointInBounds();
 		gc.map.camera = new OrthographicCamera();
 
+		gc.hud = mock(HUD.class);
+
 		b = newBoat();
 	}
 
-	private void initColleges() {
+	private void setupInput() {
+		Gdx.input = mock(Input.class);
+		when(Gdx.input.isKeyPressed(Input.Keys.W)).thenReturn(false);
+		when(Gdx.input.isKeyPressed(Input.Keys.S)).thenReturn(false);
+		when(Gdx.input.isKeyPressed(Input.Keys.A)).thenReturn(false);
+		when(Gdx.input.isKeyPressed(Input.Keys.D)).thenReturn(false);
+
+		Gdx.graphics = mock(Graphics.class);
+		when(Gdx.graphics.getWidth()).thenReturn(1280);
+		when(Gdx.graphics.getHeight()).thenReturn(720);
+	}
+
+	private void setupColleges() {
 		Vector2 pos = new Vector2(10, 10);
 		EnemyCollege c = mock(EnemyCollege.class);
 
@@ -201,6 +210,105 @@ public class PlayerBoatTest {
 		b.timeSinceLastHeal = 0;
 		b.Heal(2, 0.5f);
 		assertEquals(initHp + 1, b.getHealth());
+	}
+
+	@Test
+	public void testProcessInputTurn() {
+		float rotation = 180;
+
+		// Should not rotate
+		b.rotation = rotation;
+		b.processInput(1);
+		assertEquals(rotation, b.rotation);
+
+		// Rotate right
+		when(Gdx.input.isKeyPressed(Input.Keys.D)).thenReturn(true);
+		b.rotation = rotation;
+		b.processInput(1);
+		assertTrue(b.rotation < rotation);
+
+		// Both inputs pressed
+		when(Gdx.input.isKeyPressed(Input.Keys.A)).thenReturn(true);
+		when(Gdx.input.isKeyPressed(Input.Keys.D)).thenReturn(true);
+		b.rotation = rotation;
+		b.processInput(1);
+		assertEquals(rotation, b.rotation);
+
+		// Rotate left
+		when(Gdx.input.isKeyPressed(Input.Keys.A)).thenReturn(true);
+		when(Gdx.input.isKeyPressed(Input.Keys.D)).thenReturn(false);
+		b.rotation = rotation;
+		b.processInput(1);
+		assertTrue(b.rotation > rotation);
+	}
+
+	@Test
+	public void testProcessInputMove() {
+		when(gc.map.isPointInBounds(any(Vector2.class))).thenReturn(true);
+
+		// Should not move
+		b.setCenter(new Vector2(10, 10));
+		b.rotation = 45;
+		Vector2 pos = b.getCenter();
+		b.processInput(1);
+		assertEquals(0, b.getCenter().dst(pos));
+
+		// Should move
+		when(Gdx.input.isKeyPressed(Input.Keys.W)).thenReturn(true);
+		b.setCenter(new Vector2(10, 10));
+		pos = b.getCenter();
+		b.processInput(1f);
+		float dist = b.getCenter().dst(pos);
+		assertNotEquals(0, dist);
+
+		// Assert boat is faster with speed powerup
+		b.receivePower(PowerupType.SPEED);
+		b.setCenter(new Vector2(10, 10));
+		b.processInput(1f);
+		assertTrue(b.getCenter().dst(pos) > dist);
+	}
+
+	@Test
+	public void testProcessInputClick() {
+		when(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)).thenReturn(true);
+		gc.hud.hoveringOverButton = false;
+		b.timeSinceLastShot = 10;
+		b.processInput(1f);
+		// Boat will shoot
+		assertEquals(0, b.timeSinceLastShot);
+
+		gc.hud.hoveringOverButton = true;
+		b.timeSinceLastShot = 10;
+		b.processInput(1f);
+		// Boat will not shoot
+		assertNotEquals(0, b.timeSinceLastShot);
+	}
+
+	@Test
+	public void testProcessInputSpace() {
+		when(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)).thenReturn(true);
+		b.timeSinceLastShot = 10;
+		b.processInput(1f);
+		// Boat will shoot
+		assertEquals(0, b.timeSinceLastShot);
+
+		when(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)).thenReturn(false);
+		b.timeSinceLastShot = 10;
+		b.processInput(1f);
+		// Boat will not shoot
+		assertNotEquals(0, b.timeSinceLastShot);
+
+		/* Should not shoot */
+
+		when(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)).thenReturn(true);
+		b.timeSinceLastShot = 0.05f;
+		b.processInput(1f);
+		assertNotEquals(0, b.timeSinceLastShot);
+
+		when(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)).thenReturn(false);
+		b.timeSinceLastShot = 0.05f;
+		b.processInput(1f);
+		assertNotEquals(0, b.timeSinceLastShot);
 	}
 
 }
