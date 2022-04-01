@@ -173,10 +173,34 @@ public class PlayerBoatTest {
 		// Shoot 8 projectiles
 		assertEquals(8, gc.physicsObjects.size());
 	}
-	
+
 	@Test
 	public void testHeal() {
-		
+		float initHp = 50;
+		b.HP = initHp;
+		b.timeSinceLastHeal = 0;
+		b.Heal(1, 1);
+		assertEquals(initHp + 1, b.getHealth());
+
+		b.HP = initHp;
+		b.timeSinceLastHeal = 0;
+		b.Heal(10, 1);
+		assertEquals(initHp + 10, b.getHealth());
+
+		// time since last heal has not reached >= 1 second
+		b.HP = initHp;
+		b.timeSinceLastHeal = 0;
+		b.Heal(1, 0.5f);
+		assertEquals(initHp, b.getHealth());
+		// time since last heal is now >= 1 second
+		b.Heal(1, 0.5f);
+		assertEquals(initHp + 1, b.getHealth());
+
+		// time * heal amount >= 1 health-seconds
+		b.HP = initHp;
+		b.timeSinceLastHeal = 0;
+		b.Heal(2, 0.5f);
+		assertEquals(initHp + 1, b.getHealth());
 	}
 
 }
