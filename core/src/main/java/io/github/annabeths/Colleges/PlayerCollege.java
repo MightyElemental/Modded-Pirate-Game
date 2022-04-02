@@ -73,8 +73,8 @@ public class PlayerCollege extends College {
 	public void checkForSpawnFriendlyBoat(float delta) {
 		timeSinceLastSpawn = timeSinceLastSpawn + delta;
 		if (timeSinceLastSpawn > boatSpawnTime) {
-			gc.physicsObjects
-					.add(new FriendlyBoat(gc, new Vector2(position.x + 150, position.y + 150)));
+			gc.NewPhysicsObject(
+					new FriendlyBoat(gc, new Vector2(position.x + 150, position.y + 150)));
 			timeSinceLastSpawn = 0;
 		}
 	}
