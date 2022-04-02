@@ -6,8 +6,13 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 
@@ -16,6 +21,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
@@ -53,9 +59,11 @@ public class EnemyCollegeTest {
 		doCallRealMethod().when(gc).CollegeDestroyed(any(EnemyCollege.class));
 		doCallRealMethod().when(gc).NewPhysicsObject(any(PhysicsObject.class));
 
-		col = new EnemyCollege(new Vector2(0, 0), "img/world/castle/castle_dead.png",
-				"img/world/castle/castle_dead.png", gc, ProjectileData.ENEMY, 100);
-		gc.NewPhysicsObject(col);
+		col = mock(EnemyCollege.class,
+				withSettings()
+						.useConstructor(new Vector2(0, 0), "", "", gc, ProjectileData.ENEMY, 100)
+						.defaultAnswer(CALLS_REAL_METHODS));
+		gc.physicsObjects.add(col);
 	}
 
 	@Test
@@ -139,14 +147,24 @@ public class EnemyCollegeTest {
 		assertTrue(p.removeOnNextTick());
 	}
 
-//	@Test
-//	public void testOnCollisionProjectileAlivePjKill() {
-//		Projectile p = new Projectile(new Vector2(0, 0), 0, ProjectileData.STOCK, true, 100, 1);
-//		try { // try-catch because of GlyphLayout null pointer error
-//			col.OnCollision(p);
-//		} catch (NullPointerException e) {
-//		}
-//	}
+	@Test
+	public void testOnCollisionProjectileAlivePjKill() {
+		Projectile p = new Projectile(new Vector2(0, 0), 0, ProjectileData.STOCK, true, 100, 1);
+		doNothing().when(col).updateHpText();
+		doNothing().when(gc).CollegeDestroyed(any(EnemyCollege.class));
+		col.OnCollision(p);
+		verify(gc, times(1)).CollegeDestroyed(any(EnemyCollege.class));
+	}
+
+	@Test
+	public void testOnCollisionProjectileInvulnerable() {
+		Projectile p = new Projectile(new Vector2(0, 0), 0, ProjectileData.STOCK, true, 100, 1);
+		col.setInvulnerable(true);
+		col.hpText = mock(GlyphLayout.class);
+
+		col.OnCollision(p);
+		verify(col.hpText, times(1)).setText(any(BitmapFont.class), any(CharSequence.class));
+	}
 
 	@Test
 	public void testOnCollisionProjectileDead() {
@@ -164,12 +182,25 @@ public class EnemyCollegeTest {
 	@Test
 	public void testBecomeVulnerable() {
 		col.setInvulnerable(true); // ensure college is invulnerable
+		doNothing().when(col).updateHpText();
 		assertTrue(col.isInvulnerable());
-		try { // try-catch because of GlyphLayout null pointer error
-			col.becomeVulnerable();
-		} catch (NullPointerException e) {
-		}
+		col.becomeVulnerable();
 		assertFalse(col.isInvulnerable());
+		verify(col, times(1)).updateHpText();
+	}
+
+	@Test
+	public void testUpdateHpText() {
+		col.hpText = mock(GlyphLayout.class);
+		col.updateHpText();
+		verify(col.hpText, times(1)).setText(any(BitmapFont.class), any(CharSequence.class));
+	}
+
+	@Test
+	public void testCheckForSpawnEnemyBoat() {
+		col.timeSinceLastSpawn = col.boatSpawnTime + 1;
+		col.checkForSpawnEnemyBoat(1);
+		verify(gc, times(1)).NewPhysicsObject(any(PhysicsObject.class));
 	}
 
 }

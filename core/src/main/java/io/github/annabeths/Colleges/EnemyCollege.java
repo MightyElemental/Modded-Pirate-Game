@@ -130,8 +130,7 @@ public class EnemyCollege extends College {
 
 	public void checkForSpawnEnemyBoat(float delta) {
 		if (timeSinceLastSpawn > boatSpawnTime) {
-			gc.physicsObjects
-					.add(new EnemyBoat(gc, new Vector2(position.x + 150, position.y + 150)));
+			gc.NewPhysicsObject(new EnemyBoat(gc, new Vector2(position.x + 150, position.y + 150)));
 			timeSinceLastSpawn = 0;
 		}
 	}
