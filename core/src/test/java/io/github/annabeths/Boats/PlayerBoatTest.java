@@ -1,14 +1,17 @@
 package io.github.annabeths.Boats;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 
@@ -20,7 +23,6 @@ import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
@@ -28,9 +30,12 @@ import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.Colleges.College;
 import io.github.annabeths.Colleges.EnemyCollege;
 import io.github.annabeths.GameGenerics.PhysicsObject;
+import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.Projectile;
+import io.github.annabeths.Projectiles.ProjectileData;
+import io.github.annabeths.Projectiles.ProjectileRay;
 import io.github.annabeths.UI.HUD;
 
 public class PlayerBoatTest {
@@ -46,6 +51,7 @@ public class PlayerBoatTest {
 		gc.map = mock(GameMap.class);
 		gc.colleges = new ArrayList<College>();
 		gc.physicsObjects = new ArrayList<PhysicsObject>();
+		gc.rays = new ArrayList<ProjectileRay>();
 		doCallRealMethod().when(gc).NewPhysicsObject(any(PhysicsObject.class));
 		setupColleges();
 		gc.playerBoat = new PlayerBoat(gc, new Vector2(0, 0));
@@ -90,7 +96,8 @@ public class PlayerBoatTest {
 	}
 
 	private PlayerBoat newBoat() {
-		PlayerBoat result = new PlayerBoat(gc, new Vector2(0, 0));
+		PlayerBoat result = mock(PlayerBoat.class, withSettings()
+				.useConstructor(gc, new Vector2(0, 0)).defaultAnswer(CALLS_REAL_METHODS));
 		return result;
 	}
 
@@ -142,11 +149,6 @@ public class PlayerBoatTest {
 		// Ensure damage multiplier is greater with the damage powerup
 		b.receivePower(PowerupType.DAMAGE);
 		assertTrue(b.getDamageMul() > projDmgMul);
-	}
-
-	@Test
-	public void testDraw() {
-		assertDoesNotThrow(() -> b.Draw(mock(SpriteBatch.class)));
 	}
 
 	@Test
@@ -243,20 +245,24 @@ public class PlayerBoatTest {
 	}
 
 	@Test
-	public void testProcessInputMove() {
+	public void testProcessInputMoveNoInput() {
 		when(gc.map.isPointInBounds(any(Vector2.class))).thenReturn(true);
-
-		// Should not move
+		// should not move
 		b.setCenter(new Vector2(10, 10));
 		b.rotation = 45;
 		Vector2 pos = b.getCenter();
 		b.processInput(1);
 		assertEquals(0, b.getCenter().dst(pos));
+	}
+
+	@Test
+	public void testProcessInputMove() {
+		when(gc.map.isPointInBounds(any(Vector2.class))).thenReturn(true);
+		when(Gdx.input.isKeyPressed(Input.Keys.W)).thenReturn(true);
 
 		// Should move
-		when(Gdx.input.isKeyPressed(Input.Keys.W)).thenReturn(true);
 		b.setCenter(new Vector2(10, 10));
-		pos = b.getCenter();
+		Vector2 pos = b.getCenter();
 		b.processInput(1f);
 		float dist = b.getCenter().dst(pos);
 		assertNotEquals(0, dist);
@@ -309,6 +315,146 @@ public class PlayerBoatTest {
 		b.timeSinceLastShot = 0.05f;
 		b.processInput(1f);
 		assertNotEquals(0, b.timeSinceLastShot);
+	}
+
+	@Test
+	public void testShootRay() {
+		when(Gdx.input.getX()).thenReturn(1280 / 2);
+		when(Gdx.input.getY()).thenReturn(720 / 2 - 100);
+		b.shootRay(1);
+		assertEquals(1, gc.rays.size());
+	}
+
+	@Test
+	public void testShootTypes() {
+		b.activeProjectileType = ProjectileData.STOCK;
+		b.Shoot();
+		verify(b, times(1)).shootStock(any(Float.class));
+
+		b.activeProjectileType = ProjectileData.RAY;
+		b.Shoot();
+		verify(b, times(1)).shootRay(any(Float.class));
+	}
+
+	@Test
+	public void testOnCollisionPlayerProjectile() {
+		Projectile p = new Projectile(new Vector2(0, 0), 0, ProjectileData.STOCK, true);
+		b.HP = 100;
+		b.OnCollision(p);
+		assertFalse(p.removeOnNextTick());
+		assertEquals(100, b.getHealth());
+	}
+
+	@Test
+	public void testOnCollisionProjectile() {
+		Projectile p = new Projectile(new Vector2(0, 0), 0, ProjectileData.STOCK, false);
+		b.HP = 100;
+		b.OnCollision(p);
+		assertTrue(p.removeOnNextTick());
+		assertEquals(100 - ProjectileData.STOCK.getDamage() + b.defense, b.getHealth());
+	}
+
+	@Test
+	public void testOnCollisionBoat() {
+		NeutralBoat nb = new NeutralBoat(gc, new Vector2(0, 0));
+		b.HP = 100;
+		b.OnCollision(nb);
+		assertEquals(100 - 50 + b.defense, b.getHealth());
+		assertTrue(nb.removeOnNextTick());
+	}
+
+	@Test
+	public void testOnCollisionBoatInvincible() {
+		b.receivePower(PowerupType.INVINCIBILITY);
+		NeutralBoat nb = new NeutralBoat(gc, new Vector2(0, 0));
+		b.HP = 100;
+		b.OnCollision(nb);
+		assertEquals(100, b.getHealth());
+		assertTrue(nb.removeOnNextTick());
+	}
+
+	@Test
+	public void testOnCollisionCollege() {
+		EnemyCollege c = mock(EnemyCollege.class);
+		b.OnCollision(c);
+		verify(gc, times(1)).gameOver();
+	}
+
+	@Test
+	public void testUpdate() {
+		b.Update(1f);
+
+		verify(b, times(1)).updatePowerups(any(Float.class));
+		verify(b, times(1)).processInput(any(Float.class));
+	}
+
+	@Test
+	public void testUpdateRapidFire() {
+		float t = b.timeSinceLastShot;
+		b.Update(0.05f);
+		float newTime = b.timeSinceLastShot;
+		assertTrue(newTime > t);
+
+		// ensure rapid fire results in faster shot recharging
+		b.receivePower(PowerupType.RAPIDFIRE);
+		float t2 = b.timeSinceLastShot;
+		b.Update(0.05f);
+		float newTime2 = b.timeSinceLastShot;
+		assertTrue(newTime2 - t2 > newTime - t);
+	}
+
+	@Test
+	public void testUpdateEndgameAlive() {
+		b.Update(1f);
+		// game should not end if player is alive
+		verify(gc, times(0)).gameOver();
+	}
+
+	@Test
+	public void testUpdateEndgameDead() {
+		b.HP = -1;
+		b.Update(1f);
+		// game should end if player is dead
+		verify(gc, times(1)).gameOver();
+	}
+
+	@Test
+	public void testDestroy() {
+		b.Destroy();
+		// game should end if player is destroyed
+		verify(gc, times(1)).gameOver();
+	}
+
+	@Test
+	public void testUpgrade() {
+		float upgrade = b.defense;
+		b.Upgrade(Upgrades.defense, 1);
+		assertTrue(b.defense > upgrade);
+
+		b.HP /= 2; // harm player so HP upgrade can be tested
+		upgrade = b.HP;
+		b.Upgrade(Upgrades.health, 1);
+		assertTrue(b.HP > upgrade);
+
+		upgrade = b.maxHP;
+		b.Upgrade(Upgrades.maxhealth, 1);
+		assertTrue(b.maxHP > upgrade);
+
+		upgrade = b.projDmgMul;
+		b.Upgrade(Upgrades.projectiledamage, 1);
+		assertTrue(b.projDmgMul > upgrade);
+
+		upgrade = b.projSpdMul;
+		b.Upgrade(Upgrades.projectilespeed, 1);
+		assertTrue(b.projSpdMul > upgrade);
+
+		upgrade = b.speed;
+		b.Upgrade(Upgrades.speed, 1);
+		assertTrue(b.speed > upgrade);
+
+		upgrade = b.turnSpeed;
+		b.Upgrade(Upgrades.turnspeed, 1);
+		assertTrue(b.turnSpeed > upgrade);
 	}
 
 }
