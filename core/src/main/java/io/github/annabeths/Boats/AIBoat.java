@@ -8,6 +8,9 @@ import io.github.annabeths.GameScreens.GameController;
 
 public abstract class AIBoat extends Boat {
 
+	/** The current state of the AI */
+	public AIState state;
+
 	Vector2 initialPosition;
 	Vector2 destination;
 	float plunderValue;
@@ -26,6 +29,44 @@ public abstract class AIBoat extends Boat {
 		// Force the boat to set a new destination on initialization
 		this.destination = getNewRandomValidTarget();
 		this.initialPosition = initialPosition.cpy();
+		this.state = AIState.IDLE;
+	}
+
+	public enum AIState {
+		ATTACK, APPROACH, IDLE
+	}
+
+	/** Updates the AI state */
+	public void updateAIState() {
+	}
+
+	/**
+	 * The steps to take when in {@link AIState#IDLE idle} state
+	 * 
+	 * @param delta the time since last update
+	 */
+	public void idle(float delta) {
+		if (destination == null) {
+			SetDestination(getNewRandomValidTarget());
+		} else {
+			updateDestination();
+		}
+	}
+
+	/**
+	 * The steps to take when in {@link AIState#APPROACH approach} state
+	 * 
+	 * @param delta the time since last update
+	 */
+	public void approach(float delta) {
+	}
+
+	/**
+	 * The steps to take when in {@link AIState#ATTACK attack} state
+	 * 
+	 * @param delta the time since last update
+	 */
+	public void attack(float delta) {
 	}
 
 	/**

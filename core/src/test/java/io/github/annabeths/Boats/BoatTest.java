@@ -16,9 +16,9 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Colleges.College;
-import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.MathHelper;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
@@ -148,13 +148,13 @@ public class BoatTest {
 	private void testAngleDir(float resetAng, float goal, boolean shouldTurnLeft) {
 		b.rotation = resetAng;
 		b.moveTowardsDesiredAngle(goal, 10f);
-		if (GameObject.getAbsDiff2Angles(resetAng, goal) < 0.5f) {
+		if (MathHelper.getAbsDiff2Angles(resetAng, goal) < 0.5f) {
 			assertEquals(resetAng, b.rotation);
 			return;
 		}
 
 		float trueAng = resetAng + (shouldTurnLeft ? 10 : -10);
-		float diff = GameObject.getAbsDiff2Angles(trueAng, b.rotation);
+		float diff = MathHelper.getAbsDiff2Angles(trueAng, b.rotation);
 		assertTrue(diff < 0.05f, String.format("init: %.1f | goal: %.1f | true: %.1f | curr: %.1f",
 				resetAng, goal, trueAng, b.rotation));
 	}
@@ -163,7 +163,7 @@ public class BoatTest {
 	public void testMoveTowardsDesiredAngle() {
 		for (float currentAng = 0; currentAng < 360; currentAng += 15.5f) {
 			for (float desiredAng = 0; desiredAng < 360; desiredAng += 11.511f) {
-				float angDiff = GameObject.getAbsDiff2Angles(currentAng, desiredAng);
+				float angDiff = MathHelper.getAbsDiff2Angles(currentAng, desiredAng);
 				float test = (currentAng + angDiff) % 360;
 				boolean turnLeft = Math.abs(test - desiredAng) < 0.05f;
 				testAngleDir(currentAng, desiredAng, turnLeft);

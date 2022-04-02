@@ -5,10 +5,10 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.IHealth;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.MathHelper;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
@@ -74,8 +74,8 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 * @param multiplier turn anti-clockwise if +ve, clockwise if -ve
 	 */
 	void Turn(float delta, float multiplier) {
-		rotation = (rotation + turnSpeed * delta * multiplier) % 360;
-		rotation = rotation < 0 ? rotation + 360 : rotation; // keep within 0-360
+		rotation = rotation + turnSpeed * delta * multiplier;
+		rotation = MathHelper.normalizeAngle(rotation);
 		sprite.setRotation(rotation);
 		collisionPolygon.setRotation(rotation - 90);
 	}
@@ -96,7 +96,7 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 //		if (rotation >= 270 && desiredAngle <= 90) desiredAngle += 360;
 //		if (rotation > 180 && desiredAngle < 90) desiredAngle += 360;
 
-		float angDiff = GameObject.getAbsDiff2Angles(rotation, desiredAngle);
+		float angDiff = MathHelper.getAbsDiff2Angles(rotation, desiredAngle);
 		boolean turnLeft = Math.abs((rotation + angDiff) % 360 - desiredAngle) < 0.05f;
 
 		if (angDiff > 0.5f) {

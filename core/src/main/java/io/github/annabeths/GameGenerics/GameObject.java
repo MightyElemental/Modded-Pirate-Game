@@ -129,15 +129,4 @@ public abstract class GameObject {
 		return sprite == null ? Float.NaN : sprite.getHeight() / 2;
 	}
 
-	/**
-	 * Get the absolute difference between two angles in degrees.
-	 * 
-	 * @param a1 the first angle
-	 * @param a2 the second angle
-	 * @return The absolute difference
-	 */
-	public static float getAbsDiff2Angles(float a1, float a2) {
-		float c = 180;
-		return c - Math.abs((Math.abs(a1 - a2) % (2 * c)) - c);
-	}
 }

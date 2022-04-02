@@ -14,6 +14,7 @@ import io.github.annabeths.Colleges.College;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.MathHelper;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 import io.github.annabeths.Projectiles.ProjectileRay;
@@ -168,6 +169,7 @@ public class PlayerBoat extends Boat {
 	public void shootRay(float dmgMul) {
 		float angle = getAngleBetweenMouseAndBoat();
 		angle += MathUtils.random(-5, 5); // randomize ray so it is not perfect
+		angle = MathHelper.normalizeAngle(angle);
 
 		ProjectileRay pr = new ProjectileRay(getCenter(), angle, activeProjectileType, true, 500f,
 				dmgMul);
