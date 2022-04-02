@@ -6,9 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 
@@ -22,7 +27,6 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Colleges.College;
 import io.github.annabeths.Colleges.EnemyCollege;
-import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Level.GameMap;
 
@@ -65,19 +69,8 @@ public class AIBoatTest {
 	}
 
 	private AIBoat newBoat() {
-		AIBoat result = new AIBoat(gc, new Vector2(0, 0), "") {
-			@Override
-			void Shoot() {
-			}
-
-			@Override
-			void Destroy() {
-			}
-
-			@Override
-			public void OnCollision(PhysicsObject other) {
-			}
-		};
+		AIBoat result = mock(AIBoat.class, withSettings().useConstructor(gc, new Vector2(0, 0), "")
+				.defaultAnswer(CALLS_REAL_METHODS));
 		result.maxHP = 100;
 		result.HP = result.maxHP;
 		result.turnSpeed = 1;
@@ -97,8 +90,8 @@ public class AIBoatTest {
 		b.destination = new Vector2(100, 100);
 		assertEquals(45, b.getAngleToDest());
 
-		for (int x = 0; x < 100; x++) {
-			for (int y = 0; y < 100; y++) {
+		for (int x = 0; x < 100; x += 5) {
+			for (int y = 0; y < 100; y += 5) {
 				b.destination = new Vector2(x, y);
 				float angle = (float) Math.atan2(b.destination.y, b.destination.x)
 						* MathUtils.radiansToDegrees;
@@ -187,6 +180,19 @@ public class AIBoatTest {
 		b.HP = 0;
 		b.Update(1);
 		assertTrue(b.isDead());
+	}
+
+	@Test
+	public void testIdle() {
+		b.destination = null;
+		doNothing().when(b).SetDestination(any(Vector2.class));
+		b.idle(1);
+		verify(b, times(1)).SetDestination(any(Vector2.class));
+
+		b.destination = mock(Vector2.class);
+		doNothing().when(b).updateDestination();
+		b.idle(1);
+		verify(b, times(1)).updateDestination();
 	}
 
 }
