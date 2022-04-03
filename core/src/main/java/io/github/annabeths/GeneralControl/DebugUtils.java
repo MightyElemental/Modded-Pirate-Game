@@ -93,9 +93,7 @@ public class DebugUtils {
 	 * @return the duration in milliseconds
 	 */
 	public static long timeCodeMs(Runnable r) {
-		long t = System.nanoTime();
-		r.run();
-		return (System.nanoTime() - t) / 1000000;
+		return timeCodeNano(r) / 1000000;
 	}
 
 }
