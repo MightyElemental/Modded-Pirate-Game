@@ -72,7 +72,7 @@ public class EnemyBoat extends AttackBoat {
 			}
 		} else if (other instanceof PlayerBoat) {
 			// Hit by player, destroy and add XP
-			controller.xp += xpValue;
+			controller.xp += (getHealth() / getMaxHealth()) * xpValue;
 			controller.plunder += plunderValue;
 			Destroy();
 		}
