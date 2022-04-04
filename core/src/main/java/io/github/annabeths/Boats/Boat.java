@@ -9,6 +9,7 @@ import io.github.annabeths.GameGenerics.IHealth;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.GeneralControl.MathHelper;
+import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
@@ -59,7 +60,7 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 				position.y - getLocalCenterY() / 2 - 10);
 		collisionPolygon.setOrigin(25, 50);
 
-		if (!controller.map.isPointInBounds(getCenter())) {
+		if (!GameMap.isPointInBounds(getCenter())) {
 			position = oldPos.cpy();
 		}
 	}

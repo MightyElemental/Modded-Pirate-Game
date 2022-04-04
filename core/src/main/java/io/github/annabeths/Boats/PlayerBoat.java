@@ -187,7 +187,7 @@ public class PlayerBoat extends Boat {
 		int mouseX = Gdx.input.getX();
 		int mouseY = Gdx.input.getY();
 		Vector3 pos3 = new Vector3(mouseX, mouseY, 0);
-		controller.map.camera.unproject(pos3);
+		controller.camera.unproject(pos3);
 		Vector2 pos = new Vector2(pos3.x, pos3.y);
 
 		return pos.sub(getCenter()).angleDeg();

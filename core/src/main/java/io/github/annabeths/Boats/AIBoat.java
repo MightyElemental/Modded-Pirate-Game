@@ -5,6 +5,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Colleges.College;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.Level.GameMap;
 
 public abstract class AIBoat extends Boat {
 
@@ -26,8 +27,7 @@ public abstract class AIBoat extends Boat {
 
 	public AIBoat(GameController controller, Vector2 initialPosition, String texLoc) {
 		super(controller, initialPosition, texLoc);
-		// Force the boat to set a new destination on initialization
-		this.destination = getNewRandomValidTarget();
+
 		this.initialPosition = initialPosition.cpy();
 		this.state = AIState.IDLE;
 	}
@@ -96,7 +96,7 @@ public abstract class AIBoat extends Boat {
 	}
 
 	public void updateDestination() {
-		if (getCenter().dst(destination) <= destinationThreshold) {
+		if (destination == null || getCenter().dst(destination) <= destinationThreshold) {
 			Vector2 target = getNewRandomValidTarget();
 			SetDestination(target);
 		}
@@ -110,11 +110,11 @@ public abstract class AIBoat extends Boat {
 	 * @see #isDestValid(Vector2)
 	 */
 	protected Vector2 getNewRandomValidTarget() {
-		Vector2 target = controller.map.getRandomPointInBounds();
+		Vector2 target = GameMap.getRandomPointInBounds();
 
 		// Keep going until we find a valid destination
 		while (!isDestValid(target)) { // TODO: Write more efficient algorithm
-			target = controller.map.getRandomPointInBounds();
+			target = GameMap.getRandomPointInBounds();
 		}
 		return target;
 	}
@@ -132,8 +132,8 @@ public abstract class AIBoat extends Boat {
 			if (Intersector.intersectSegmentPolygon(getCenter(), target,
 					college.collisionPolygon)) {
 				// the line has hit a college, return false and set a new destination
-				// System.out.println("hit: "+college.getCenter()+" | "+getCenter()+" <->
-				// "+target);
+//				System.out.println(
+//						"hit: " + college.getCenter() + " | " + getCenter() + " <->" + target);
 				return false;
 			}
 		}

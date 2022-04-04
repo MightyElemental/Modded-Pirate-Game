@@ -104,14 +104,13 @@ public class HUD extends GameObject {
 	@Override
 	public void Draw(SpriteBatch batch) {
 		// Draw the text showing the player's stats
-		font.draw(batch, hpTextLayout, 5, gc.map.camera.viewportHeight - 10);
-		font.draw(batch, timerTextLayout, 5, gc.map.camera.viewportHeight - 50);
-		font.draw(batch, xpTextLayout, gc.map.camera.viewportWidth - xpTextLayout.width - 5,
-				gc.map.camera.viewportHeight - 50);
-		font.draw(batch, plunderTextLayout,
-				gc.map.camera.viewportWidth - plunderTextLayout.width - 5,
-				gc.map.camera.viewportHeight - 10);
-		font.draw(batch, powerTextLayout, 5, gc.map.camera.viewportHeight - 100);
+		font.draw(batch, hpTextLayout, 5, gc.camera.viewportHeight - 10);
+		font.draw(batch, timerTextLayout, 5, gc.camera.viewportHeight - 50);
+		font.draw(batch, xpTextLayout, gc.camera.viewportWidth - xpTextLayout.width - 5,
+				gc.camera.viewportHeight - 50);
+		font.draw(batch, plunderTextLayout, gc.camera.viewportWidth - plunderTextLayout.width - 5,
+				gc.camera.viewportHeight - 10);
+		font.draw(batch, powerTextLayout, 5, gc.camera.viewportHeight - 100);
 
 		stage.draw();
 	}

@@ -46,8 +46,8 @@ public class AttackBoatTest {
 		doCallRealMethod().when(gc).NewPhysicsObject(any(PhysicsObject.class));
 		gc.playerBoat = new PlayerBoat(gc, new Vector2(0, 0));
 
-		b = mock(AttackBoat.class, withSettings().useConstructor(gc, new Vector2(0, 0), "")
-				.defaultAnswer(CALLS_REAL_METHODS));
+		b = mock(AttackBoat.class, withSettings().defaultAnswer(CALLS_REAL_METHODS)
+				.useConstructor(gc, new Vector2(0, 0), ""));
 		b.maxHP = 100;
 		b.HP = b.maxHP;
 	}
@@ -109,11 +109,17 @@ public class AttackBoatTest {
 	@Test
 	public void testUpdateHasDest() {
 		doNothing().when(b).MoveToDestination(anyFloat());
-
+		// Destination will be set by the approach state
 		b.destination = null;
 		b.Update(1);
-		verify(b, never()).MoveToDestination(anyFloat());
+		verify(b, times(1)).MoveToDestination(anyFloat());
 
+	}
+
+	@Test
+	public void testUpdateHasNoDest() {
+		doNothing().when(b).MoveToDestination(anyFloat());
+		// Destination is set so it should move
 		b.destination = mock(Vector2.class);
 		b.Update(1);
 		verify(b, times(1)).MoveToDestination(anyFloat());
@@ -122,15 +128,15 @@ public class AttackBoatTest {
 	@Test
 	public void testApproach() {
 		b.target = mock(Boat.class);
-		when(b.target.getCenter()).thenReturn(Vector2.Zero);
+		when(b.target.getCenter()).thenReturn(new Vector2(0, 0));
 
 		b.destination = null;
-		when(b.isDestValid(any(Vector2.class))).thenReturn(true);
+		when(b.isDestValid(b.target.getCenter())).thenReturn(true);
 		b.approach(1);
 		assertNotNull(b.destination);
 
 		b.destination = null;
-		when(b.isDestValid(any(Vector2.class))).thenReturn(false);
+		when(b.isDestValid(b.target.getCenter())).thenReturn(false);
 		b.approach(1);
 		verify(b, atLeast(1)).idle(anyFloat());
 	}
@@ -190,7 +196,7 @@ public class AttackBoatTest {
 		b.attack(1);
 		// boat should not shoot if it is at the wrong angle
 		verify(b, never()).Shoot();
-		
+
 		b.timeSinceLastShot = b.shotDelay + 1;
 		b.rotation = 230;
 		when(b.target.getCenter()).thenReturn(new Vector2(0, 0));

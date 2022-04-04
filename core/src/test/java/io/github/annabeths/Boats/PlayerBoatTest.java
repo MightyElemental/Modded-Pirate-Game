@@ -55,10 +55,7 @@ public class PlayerBoatTest {
 		doCallRealMethod().when(gc).NewPhysicsObject(any(PhysicsObject.class));
 		setupColleges();
 		gc.playerBoat = new PlayerBoat(gc, new Vector2(0, 0));
-		when(gc.map.getMapHeight()).thenReturn(1000f);
-		when(gc.map.getMapWidth()).thenReturn(1000f);
-		doCallRealMethod().when(gc.map).getRandomPointInBounds();
-		gc.map.camera = new OrthographicCamera();
+		gc.camera = new OrthographicCamera();
 
 		gc.hud = mock(HUD.class);
 
@@ -78,7 +75,7 @@ public class PlayerBoatTest {
 	}
 
 	private void setupColleges() {
-		Vector2 pos = new Vector2(10, 10);
+		Vector2 pos = new Vector2(500, 500);
 		EnemyCollege c = mock(EnemyCollege.class);
 
 		doCallRealMethod().when(c).getLocalCenterX();
@@ -92,7 +89,7 @@ public class PlayerBoatTest {
 		collisionPolygon.setPosition(pos.x, pos.y);
 		c.setCenter(pos);
 		c.collisionPolygon = collisionPolygon;
-		gc.colleges.add(c);
+		// gc.colleges.add(c);
 	}
 
 	private PlayerBoat newBoat() {
@@ -246,7 +243,6 @@ public class PlayerBoatTest {
 
 	@Test
 	public void testProcessInputMoveNoInput() {
-		when(gc.map.isPointInBounds(any(Vector2.class))).thenReturn(true);
 		// should not move
 		b.setCenter(new Vector2(10, 10));
 		b.rotation = 45;
@@ -257,7 +253,6 @@ public class PlayerBoatTest {
 
 	@Test
 	public void testProcessInputMove() {
-		when(gc.map.isPointInBounds(any(Vector2.class))).thenReturn(true);
 		when(Gdx.input.isKeyPressed(Input.Keys.W)).thenReturn(true);
 
 		// Should move
