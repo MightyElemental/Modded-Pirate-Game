@@ -355,6 +355,7 @@ public class PlayerBoatTest {
 		b.HP = 100;
 		b.OnCollision(nb);
 		assertEquals(100 - 50 + b.defense, b.getHealth());
+		nb.OnCollision(b);
 		assertTrue(nb.removeOnNextTick());
 	}
 
@@ -365,6 +366,7 @@ public class PlayerBoatTest {
 		b.HP = 100;
 		b.OnCollision(nb);
 		assertEquals(100, b.getHealth());
+		nb.OnCollision(b);
 		assertTrue(nb.removeOnNextTick());
 	}
 

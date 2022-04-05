@@ -51,6 +51,8 @@ public class FriendlyBoat extends AttackBoat {
 				other.kill();
 				dmgToInflict = p.getDamage();
 			}
+		} else if (other instanceof PlayerBoat) {
+			Destroy();
 		}
 		damage(dmgToInflict);
 	}

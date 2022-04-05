@@ -136,8 +136,6 @@ public class PlayerBoat extends Boat {
 		} else if (other instanceof Boat) {
 			// Damage player if collides with boat
 			dmgToInflict = 50;
-			// kill the boat so the player doesn't keep getting damaged
-			other.kill();
 		}
 
 		// Deal damage if player is not invincible
