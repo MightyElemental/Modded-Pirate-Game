@@ -213,7 +213,7 @@ public class GameController implements Screen {
 	}
 
 	/** Renders ProjectileRay objects */
-	private void renderRays() {
+	public void renderRays() {
 		sr.begin(ShapeType.Filled);
 
 		Random rCol = new Random();
@@ -261,13 +261,37 @@ public class GameController implements Screen {
 
 	/**
 	 * Tests if player is in danger. The player is in danger if it is in range of an
-	 * {@link EnemyCollege}.
+	 * {@link EnemyCollege} or an {@link EnemyBoat}.
+	 * 
+	 * @return {@code true} if within range of an enemy college or boat,
+	 *         {@code false} otherwise or player is invincible.
+	 * @author James Burnell
+	 */
+	public boolean isPlayerInDanger() {
+		return !playerBoat.isInvincible()
+				&& (isEnemyCollegeNearPlayer() || isEnemyBoatNearPlayer());
+	}
+
+	/**
+	 * Tests if player is in range of an {@link EnemyBoat}.
+	 * 
+	 * @return {@code true} if within range of an enemy boat, {@code false}
+	 *         otherwise.
+	 * @author James Burnell
+	 */
+	public boolean isEnemyBoatNearPlayer() {
+		return physicsObjects.stream().anyMatch(p -> p instanceof EnemyBoat
+				&& p.getCenter().dst2(playerBoat.getCenter()) < 500 * 500);
+	}
+
+	/**
+	 * Tests if player is in range of an {@link EnemyCollege}.
 	 * 
 	 * @return {@code true} if within range of an enemy college, {@code false}
 	 *         otherwise.
 	 * @author James Burnell
 	 */
-	public boolean isPlayerInDanger() {
+	public boolean isEnemyCollegeNearPlayer() {
 		return colleges.stream()
 				.anyMatch(c -> c instanceof EnemyCollege && c.isInRange(playerBoat));
 	}

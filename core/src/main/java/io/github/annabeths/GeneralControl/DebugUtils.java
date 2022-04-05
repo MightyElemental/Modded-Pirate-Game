@@ -46,7 +46,8 @@ public class DebugUtils {
 		return Arrays.asList("PhysObj Count = " + gc.physicsObjects.size(),
 				"Living College Count = "
 						+ gc.colleges.stream().filter(c -> c.getHealth() > 0).count(),
-				"FPS: " + Gdx.graphics.getFramesPerSecond());
+				"FPS: " + Gdx.graphics.getFramesPerSecond(),
+				"Player in danger? " + gc.isPlayerInDanger());
 	}
 
 	public static void drawDebugCollisions(GameController gc, ShapeRenderer sr) {
