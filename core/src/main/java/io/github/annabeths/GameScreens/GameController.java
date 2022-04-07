@@ -478,6 +478,15 @@ public class GameController implements Screen {
 	}
 
 	/**
+	 * Remove plunder from the player's amount.
+	 * 
+	 * @param amount the amount of plunder to remove
+	 */
+	public void subtractPlunder(float amount) {
+		plunder -= amount;
+	}
+
+	/**
 	 * Get the current XP level the player is at
 	 * 
 	 * @return the level

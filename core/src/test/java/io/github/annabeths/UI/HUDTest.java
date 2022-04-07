@@ -168,6 +168,21 @@ public class HUDTest {
 		verify(hud.upgradeButton1, times(1)).setText(anyString());
 		verify(hud.upgradeButton2, times(1)).setText(anyString());
 	}
+	
+	@Test
+	public void testUpdateShopMenuPlunder() {
+		try {
+			hud.setupStyles();
+			hud.setupShopMenu();
+		} catch (Exception e) {
+		}
+		hud.upgradeButton1 = mock(TextButton.class);
+		hud.upgradeButton2 = mock(TextButton.class);
+		hud.usePlunderShop = true;
+		assertDoesNotThrow(() -> hud.updateShopMenu());
+		verify(hud.upgradeButton1, times(1)).setText(anyString());
+		verify(hud.upgradeButton2, times(1)).setText(anyString());
+	}
 
 	@Test
 	public void testSetupPowerups() {
@@ -210,6 +225,7 @@ public class HUDTest {
 			hud.setupLabels();
 			hud.setupProgressBars();
 			hud.setupPowerups();
+			hud.setupShopButton();
 		} catch (Exception e) {
 		}
 		assertDoesNotThrow(() -> hud.Update(1f));
@@ -222,6 +238,7 @@ public class HUDTest {
 			hud.setupLabels();
 			hud.setupProgressBars();
 			hud.setupPowerups();
+			hud.setupShopButton();
 		} catch (Exception e) {
 		}
 		gc.playerBoat.activePowerups.put(PowerupType.DAMAGE, 1f);

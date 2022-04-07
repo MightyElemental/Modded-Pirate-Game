@@ -41,6 +41,7 @@ import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.GeneralControl.DebugUtils;
+import io.github.annabeths.Projectiles.ProjectileData;
 
 public class HUD extends GameObject {
 
@@ -85,6 +86,7 @@ public class HUD extends GameObject {
 	public boolean hoveringOverButton = false;
 	boolean upgradeMenuOpen = false;
 	boolean upgradeMenuInitialised = false; // Set to true once initialized
+	public boolean usePlunderShop = true;
 
 	Upgrades upgrade1;
 	int upgrade1cost;
@@ -284,8 +286,10 @@ public class HUD extends GameObject {
 		xpBar.setRange(0, gc.getXpRequiredForNextLevel());
 		xpBar.setValue(gc.getXpInLevel());
 
+		usePlunderShop = gc.isPlayerInRangeOfFriendlyCollege();
+
 		// if gc.playerboat distance from friendly college less than x
-		shopButton.setColor(gc.isPlayerInRangeOfFriendlyCollege() ? Color.WHITE : Color.GRAY);
+		shopButton.setColor(usePlunderShop ? Color.GOLD : Color.WHITE);
 	}
 
 	/**
@@ -410,11 +414,21 @@ public class HUD extends GameObject {
 		upgradeButton1.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if (gc.getXpLevel() >= upgrade1cost) {
-					gc.subtractXpLevels(upgrade1cost);
-					BuyUpgrade(1);
-					RandomiseUpgrades();
+				if (usePlunderShop) {
+					if (gc.getPlunder() >= 500
+							&& gc.playerBoat.activeProjectileType != ProjectileData.RAY) {
+						gc.subtractPlunder(500);
+						gc.playerBoat.activeProjectileType = ProjectileData.RAY;
+						updateShopMenu();
+					}
+				} else {
+					if (gc.getXpLevel() >= upgrade1cost) {
+						gc.subtractXpLevels(upgrade1cost);
+						BuyUpgrade(1);
+						RandomiseUpgrades();
+					}
 				}
+
 				return super.touchDown(event, x, y, pointer, button);
 			}
 
@@ -484,13 +498,21 @@ public class HUD extends GameObject {
 	}
 
 	public void updateShopMenu() {
-		upgradeButton1.setText(getUpgradeText(upgrade1, upgrade1amount, upgrade1cost));
+		if (usePlunderShop) {
+			// plunder upgrades
+			upgradeButton1.setText(
+					gc.playerBoat.activeProjectileType == ProjectileData.RAY ? "Already bought"
+							: "Ray bullets\nCost: 500 plunder");
+			upgradeButton2.setText("Other upgrade\nCost: 100 plunder");
+		} else {
+			upgradeButton1.setText(getUpgradeText(upgrade1, upgrade1amount, upgrade1cost));
+			upgradeButton2.setText(getUpgradeText(upgrade2, upgrade2amount, upgrade2cost));
+		}
+
 		upgradeButton1.setPosition(
 				Gdx.graphics.getWidth() / 2 - upgradeMenuBackground.getWidth() / 2 + 15,
 				Gdx.graphics.getHeight() / 2 + upgradeMenuBackground.getHeight() / 2
 						- upgradeButton1.getHeight() - 15);
-
-		upgradeButton2.setText(getUpgradeText(upgrade2, upgrade2amount, upgrade2cost));
 		upgradeButton2.setPosition(Gdx.graphics.getWidth() / 2 + 35, Gdx.graphics.getHeight() / 2
 				+ upgradeMenuBackground.getHeight() / 2 - upgradeButton2.getHeight() - 15);
 	}
