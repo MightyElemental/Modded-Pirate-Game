@@ -30,10 +30,10 @@ public class GameObjectTest {
 	public void testCenter() {
 		GameObject go = new GameObject() {
 		};
-		go.position = Vector2.Zero;
+		go.position = new Vector2(0, 0);
 		go.sprite = new Sprite();
 		go.sprite.setBounds(0, 0, 100, 100);
-		assertEquals(go.getCenter(), new Vector2(50, 50));
+		assertEquals(new Vector2(50, 50), go.getCenter());
 	}
 
 	@Test
@@ -43,7 +43,7 @@ public class GameObjectTest {
 		go.position = new Vector2(100, 100);
 		go.sprite = new Sprite();
 		go.sprite.setBounds(100, 100, 100, 100);
-		assertEquals(go.getCenter(), new Vector2(150, 150));
+		assertEquals(new Vector2(150, 150), go.getCenter());
 	}
 
 	@Test

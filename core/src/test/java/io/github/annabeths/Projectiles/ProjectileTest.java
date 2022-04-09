@@ -32,7 +32,7 @@ public class ProjectileTest {
 	@Test
 	@DisplayName("Test projectile sets despawn flag after max travel distance")
 	public void testProjectileDespawn() {
-		Projectile p = new Projectile(Vector2.Zero, 0f, projTestData, true);
+		Projectile p = new Projectile(new Vector2(0, 0), 0f, projTestData, true);
 
 		// ensure despawn flag is not set
 		assertFalse(p.removeOnNextTick());
@@ -52,7 +52,7 @@ public class ProjectileTest {
 		// various angles to test
 		float[] rotations = { 0f, 10f, 17f, 37f, 180f, 61.54f };
 		for (float r : rotations) {
-			Projectile p = new Projectile(Vector2.Zero, r, projTestData, true);
+			Projectile p = new Projectile(new Vector2(0, 0), r, projTestData, true);
 			assertEquals(projTestData.getSpeed(), Math.round(p.getSpeed() * 100) / 100f);
 		}
 	}
@@ -60,22 +60,22 @@ public class ProjectileTest {
 	@Test
 	public void testProjectileCollision() {
 		// Two projectiles that are both non-player projectiles
-		Projectile p1 = new Projectile(Vector2.Zero, 0, projTestData, false);
-		Projectile p2 = new Projectile(Vector2.Zero, 0, projTestData, false);
+		Projectile p1 = new Projectile(new Vector2(0, 0), 0, projTestData, false);
+		Projectile p2 = new Projectile(new Vector2(0, 0), 0, projTestData, false);
 		p1.OnCollision(p2);
 		assertFalse(p1.removeOnNextTick());
 		assertFalse(p2.removeOnNextTick());
 
 		// Two projectiles where one is a player, the other is not
-		Projectile p3 = new Projectile(Vector2.Zero, 0, projTestData, true);
-		Projectile p4 = new Projectile(Vector2.Zero, 0, projTestData, false);
+		Projectile p3 = new Projectile(new Vector2(0, 0), 0, projTestData, true);
+		Projectile p4 = new Projectile(new Vector2(0, 0), 0, projTestData, false);
 		p3.OnCollision(p4);
 		assertTrue(p3.removeOnNextTick());
 		assertTrue(p4.removeOnNextTick());
 
 		// Two projectiles that are both player projectiles
-		Projectile p5 = new Projectile(Vector2.Zero, 0, projTestData, true);
-		Projectile p6 = new Projectile(Vector2.Zero, 0, projTestData, true);
+		Projectile p5 = new Projectile(new Vector2(0, 0), 0, projTestData, true);
+		Projectile p6 = new Projectile(new Vector2(0, 0), 0, projTestData, true);
 		p5.OnCollision(p6);
 		assertFalse(p5.removeOnNextTick());
 		assertFalse(p6.removeOnNextTick());
@@ -83,14 +83,14 @@ public class ProjectileTest {
 
 	@Test
 	public void testDraw() {
-		Projectile p1 = new Projectile(Vector2.Zero, 0, projTestData, false);
+		Projectile p1 = new Projectile(new Vector2(0, 0), 0, projTestData, false);
 		SpriteBatch b = mock(SpriteBatch.class);
 		assertDoesNotThrow(() -> p1.Draw(b)); // ensure draw method doesn't throw an error
 	}
 
 	@Test
 	public void testGetDamage() {
-		Projectile p = new Projectile(Vector2.Zero, 0, projTestData, false, 5, 1);
+		Projectile p = new Projectile(new Vector2(0, 0), 0, projTestData, false, 5, 1);
 		assertEquals(projTestData.damage * 5, p.getDamage());
 	}
 

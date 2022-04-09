@@ -32,7 +32,7 @@ public class GeneralBoatTests {
 	@Test
 	public void testBoatInstantiation() {
 		assertDoesNotThrow(() -> {
-			new Boat(gc, Vector2.Zero, null) {
+			new Boat(gc, new Vector2(0, 0), null) {
 
 				@Override
 				public void Update(float delta) {
@@ -56,21 +56,21 @@ public class GeneralBoatTests {
 	@Test
 	public void testPlayerBoatInstantiation() {
 		assertDoesNotThrow(() -> {
-			new PlayerBoat(gc, Vector2.Zero);
+			new PlayerBoat(gc, new Vector2(0, 0));
 		});
 	}
 
 	@Test
 	public void testEnemyBoatInstantiation() {
 		assertDoesNotThrow(() -> {
-			new EnemyBoat(gc, Vector2.Zero);
+			new EnemyBoat(gc, new Vector2(0, 0));
 		});
 	}
 
 	@Test
 	public void testNeutralBoatInstantiation() {
 		assertDoesNotThrow(() -> {
-			new NeutralBoat(gc, Vector2.Zero);
+			new NeutralBoat(gc, new Vector2(0, 0));
 		});
 	}
 
