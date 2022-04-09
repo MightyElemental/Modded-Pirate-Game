@@ -63,6 +63,7 @@ public class Projectile extends PhysicsObject {
 
 		// Calculate the projectile's velocity in the game space
 		velocity = new Vector2(speed, 0).setAngleDeg(originRot);
+		this.rotation = originRot;
 
 		setSprite(data.texture, position, data.size);
 		sprite.setRotation(originRot);

@@ -126,4 +126,9 @@ public abstract class College extends PhysicsObject implements IHealth {
 	public void setFireRate(float fireRate) {
 		this.fireRate = fireRate;
 	}
+
+	@Override
+	public boolean isDead() {
+		return removeOnNextTick() || IHealth.super.isDead();
+	}
 }

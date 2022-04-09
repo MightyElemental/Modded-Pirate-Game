@@ -31,7 +31,7 @@ public class GenericCollegeTests {
 			};
 		});
 		assertDoesNotThrow(() -> {
-			new College(Vector2.Zero, "img/world/castle/castle_dead.png",
+			new College(new Vector2(0, 0), "img/world/castle/castle_dead.png",
 					"img/world/castle/castle_dead.png", null) {
 
 				@Override
@@ -45,7 +45,7 @@ public class GenericCollegeTests {
 	public void testEnemyCollegeInstantiation() {
 		ProjectileData pd = ProjectileData.STOCK;
 		assertDoesNotThrow(() -> {
-			new EnemyCollege(Vector2.Zero, "img/world/castle/castle_dead.png",
+			new EnemyCollege(new Vector2(0, 0), "img/world/castle/castle_dead.png",
 					"img/world/castle/castle_dead.png", null, pd, 100);
 		});
 	}
@@ -53,7 +53,7 @@ public class GenericCollegeTests {
 	@Test
 	public void testPlayerCollegeInstantiation() {
 		assertDoesNotThrow(() -> {
-			new PlayerCollege(Vector2.Zero, "img/world/castle/castle_dead.png",
+			new PlayerCollege(new Vector2(0, 0), "img/world/castle/castle_dead.png",
 					"img/world/castle/castle_dead.png", null,false);
 		});
 	}

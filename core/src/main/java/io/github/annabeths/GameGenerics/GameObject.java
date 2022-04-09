@@ -26,11 +26,11 @@ public abstract class GameObject {
 
 	public void Draw(SpriteBatch batch) {
 	}
-	
+
 	public void kill() {
 		killOnNextTick = true;
 	}
-	
+
 	public boolean removeOnNextTick() {
 		return killOnNextTick;
 	}
@@ -93,12 +93,22 @@ public abstract class GameObject {
 
 	/** @return The center x position */
 	public float getCenterX() {
-		return getLocalCenterX() + position.x;
+		return getLocalCenterX() + getX();
 	}
 
 	/** @return The center y position */
 	public float getCenterY() {
-		return getLocalCenterY() + position.y;
+		return getLocalCenterY() + getY();
+	}
+
+	/** @return The x position */
+	public float getX() {
+		return position == null ? Float.NaN : position.x;
+	}
+
+	/** @return The y position */
+	public float getY() {
+		return position == null ? Float.NaN : position.y;
 	}
 
 	/**
@@ -118,4 +128,5 @@ public abstract class GameObject {
 	public float getLocalCenterY() {
 		return sprite == null ? Float.NaN : sprite.getHeight() / 2;
 	}
+
 }

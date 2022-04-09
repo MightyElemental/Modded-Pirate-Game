@@ -20,7 +20,7 @@ public class DebugUtils {
 
 	public static boolean DRAW_DEBUG_COLLISIONS = false;
 	public static boolean DRAW_DEBUG_TEXT = false;
-	public static boolean ENEMY_COLLEGE_FIRE = false;
+	public static boolean ENEMY_COLLEGE_FIRE = true;
 
 	public static void drawDebugText(GameController gc, SpriteBatch batch) {
 		List<String> debugText = generateDebugText(gc);
@@ -29,11 +29,25 @@ public class DebugUtils {
 		}
 	}
 
+	public static void drawEntityDebugText(GameController gc, SpriteBatch batch) {
+		for (int i = 0; i < gc.physicsObjects.size(); i++) {
+			PhysicsObject o = gc.physicsObjects.get(i);
+			if (o instanceof AIBoat) {
+				AIBoat aib = (AIBoat) o;
+
+				debugFont.draw(batch,
+						String.format("d%.1f\'\nr%.1f\'", aib.getAngleToDest(), aib.rotation),
+						aib.getCenterX() + 50, aib.getCenterY() + 50);
+			}
+		}
+	}
+
 	private static List<String> generateDebugText(GameController gc) {
 		return Arrays.asList("PhysObj Count = " + gc.physicsObjects.size(),
 				"Living College Count = "
 						+ gc.colleges.stream().filter(c -> c.getHealth() > 0).count(),
-				"FPS: " + Gdx.graphics.getFramesPerSecond());
+				"FPS: " + Gdx.graphics.getFramesPerSecond(),
+				"Player in danger? " + gc.isPlayerInDanger());
 	}
 
 	public static void drawDebugCollisions(GameController gc, ShapeRenderer sr) {
@@ -80,9 +94,7 @@ public class DebugUtils {
 	 * @return the duration in milliseconds
 	 */
 	public static long timeCodeMs(Runnable r) {
-		long t = System.nanoTime();
-		r.run();
-		return (System.nanoTime() - t) / 1000000;
+		return timeCodeNano(r) / 1000000;
 	}
 
 }

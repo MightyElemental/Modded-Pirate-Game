@@ -23,10 +23,6 @@ public class NeutralBoat extends AIBoat {
 		this.turnSpeed = 150;
 	}
 
-	public void Update(float delta) {
-		super.Update(delta);
-	}
-
 	public void Destroy() {
 		killOnNextTick = true;
 		if (MathUtils.randomBoolean(0.2f)) {
@@ -51,7 +47,7 @@ public class NeutralBoat extends AIBoat {
 		} else if (object instanceof Projectile) {
 			object.kill();
 			Projectile p = (Projectile) object;
-			if (p.isPlayerProjectile()) objWasPlayer = true;
+			objWasPlayer = p.isPlayerProjectile();
 			dmgToInflict = p.getDamage();
 		}
 

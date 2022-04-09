@@ -13,7 +13,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.FileTextureData;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -46,17 +46,16 @@ public class GameController implements Screen {
 	public ArrayList<College> colleges;
 	public ArrayList<ProjectileRay> rays;
 	public GameMap map;
-	private Vector2 mapSize;
 	public PlayerBoat playerBoat;
-	private EnemyCollege bossCollege;
+	public EnemyCollege bossCollege;
 	public Powerup powerUp;
 
 	public float timer = 10 * 60 + 0;
 
 	// UI Related Variables
-	private SpriteBatch batch;
-	private ShapeRenderer sr;
-	BitmapFont font;
+	public OrthographicCamera camera;
+	public SpriteBatch batch;
+	public ShapeRenderer sr;
 	public HUD hud;
 
 	// Player Stats
@@ -73,20 +72,25 @@ public class GameController implements Screen {
 		physicsObjects = new ArrayList<PhysicsObject>();
 		colleges = new ArrayList<College>();
 		rays = new ArrayList<ProjectileRay>();
-		hud = new HUD(this);
-		mapSize = new Vector2(3000, 3000);
-		batch = new SpriteBatch();
-		sr = new ShapeRenderer();
+
+		camera = new OrthographicCamera();
+		camera.viewportHeight = Gdx.graphics.getHeight();
+		camera.viewportWidth = Gdx.graphics.getWidth();
 
 		// Create the player boat and place it in the center of the screen
 		playerBoat = new PlayerBoat(this, new Vector2(500, 500));
 		physicsObjects.add(playerBoat);
 
-		map = new GameMap(Gdx.graphics.getHeight(), Gdx.graphics.getWidth(),
-				(PlayerBoat) playerBoat, batch, (int) mapSize.x, (int) mapSize.y);
-
 		generateGameObjects();
 
+	}
+
+	@Override
+	public void show() {
+		hud = new HUD(this);
+		batch = new SpriteBatch();
+		sr = new ShapeRenderer();
+		map = new GameMap(this);
 	}
 
 	private void generateGameObjects() {
@@ -97,12 +101,13 @@ public class GameController implements Screen {
 				.collect(Collectors.toList());
 
 		Vector2 collegePlayer = new Vector2(BORDER_BRIM, BORDER_BRIM);
-		Vector2 college1 = new Vector2(BORDER_BRIM, mapSize.y - 100 - BORDER_BRIM);
-		Vector2 college2 = new Vector2(mapSize.x - 100 - BORDER_BRIM, BORDER_BRIM);
-		Vector2 college3 = new Vector2(mapSize.x - 100 - BORDER_BRIM,
-				mapSize.y - 100 - BORDER_BRIM);
+		Vector2 college1 = new Vector2(BORDER_BRIM, GameMap.getMapHeight() - 100 - BORDER_BRIM);
+		Vector2 college2 = new Vector2(GameMap.getMapWidth() - 100 - BORDER_BRIM, BORDER_BRIM);
+		Vector2 college3 = new Vector2(GameMap.getMapWidth() - 100 - BORDER_BRIM,
+				GameMap.getMapHeight() - 100 - BORDER_BRIM);
 		List<Vector2> collegePos = Arrays.asList(college1, college2, college3);
-		Vector2 collegeBoss = new Vector2((mapSize.x - 100) / 2, (mapSize.y - 100) / 2);
+		Vector2 collegeBoss = new Vector2((GameMap.getMapWidth() - 100) / 2,
+				(GameMap.getMapHeight() - 100) / 2);
 
 		// get the texture for colleges to sit on
 		String islandTexture = "img/world/island.png";
@@ -131,19 +136,18 @@ public class GameController implements Screen {
 		for (int i = 0; i < 5; i++) {
 			// TODO: Prevent powerups spawning on top of colleges
 			physicsObjects
-					.add(new Powerup(PowerupType.randomPower(), map.getRandomPointInBounds()));
+					.add(new Powerup(PowerupType.randomPower(), GameMap.getRandomPointInBounds()));
 		}
 
 		// create some boats
-		physicsObjects.add(new NeutralBoat(this, new Vector2(mapSize.x / 3, mapSize.y / 3)));
-		physicsObjects.add(new NeutralBoat(this, new Vector2(2 * mapSize.x / 3, mapSize.y / 3)));
-		physicsObjects.add(new NeutralBoat(this, new Vector2(mapSize.x / 3, 2 * mapSize.y / 3)));
-		physicsObjects.add(new EnemyBoat(this, new Vector2(2 * mapSize.x / 3, 2 * mapSize.y / 3)));
-	}
-
-	@Override
-	public void show() {
-
+		physicsObjects.add(new NeutralBoat(this,
+				new Vector2(GameMap.getMapWidth() / 3, GameMap.getMapHeight() / 3)));
+		physicsObjects.add(new NeutralBoat(this,
+				new Vector2(2 * GameMap.getMapWidth() / 3, GameMap.getMapHeight() / 3)));
+		physicsObjects.add(new NeutralBoat(this,
+				new Vector2(GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
+		physicsObjects.add(new EnemyBoat(this,
+				new Vector2(2 * GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
 	}
 
 	public void logic(float delta) {
@@ -164,7 +168,7 @@ public class GameController implements Screen {
 		UpdateObjects(delta); // update all physicsobjects
 		ClearKilledObjects(); // clear any 'killed' objects
 
-		if (bossCollege.getHealth() <= 0) { // if the boss college is dead, the game is won
+		if (bossCollege.isDead()) { // if the boss college is dead, the game is won
 			game.gotoScreen(Screens.gameWinScreen);
 		}
 	}
@@ -179,7 +183,7 @@ public class GameController implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
 		// set the sprite batch to use the correct camera
-		batch.setProjectionMatrix(map.camera.combined);
+		batch.setProjectionMatrix(camera.combined);
 
 		// begin the sprite batch
 		batch.begin();
@@ -191,14 +195,16 @@ public class GameController implements Screen {
 			physicsObject.Draw(batch);
 		}
 
-		hud.Draw(batch);
+		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawEntityDebugText(this, batch);
+
+		hud.Draw(batch); // this resets camera projection matrix
 
 		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawDebugText(this, batch);
 
 		// end the sprite batch
 		batch.end();
 
-		sr.setProjectionMatrix(map.camera.combined);
+		sr.setProjectionMatrix(camera.combined);
 
 		renderRays();
 
@@ -207,7 +213,7 @@ public class GameController implements Screen {
 	}
 
 	/** Renders ProjectileRay objects */
-	private void renderRays() {
+	public void renderRays() {
 		sr.begin(ShapeType.Filled);
 
 		Random rCol = new Random();
@@ -255,13 +261,37 @@ public class GameController implements Screen {
 
 	/**
 	 * Tests if player is in danger. The player is in danger if it is in range of an
-	 * {@link EnemyCollege}.
+	 * {@link EnemyCollege} or an {@link EnemyBoat}.
+	 * 
+	 * @return {@code true} if within range of an enemy college or boat,
+	 *         {@code false} otherwise or player is invincible.
+	 * @author James Burnell
+	 */
+	public boolean isPlayerInDanger() {
+		return !playerBoat.isInvincible()
+				&& (isEnemyCollegeNearPlayer() || isEnemyBoatNearPlayer());
+	}
+
+	/**
+	 * Tests if player is in range of an {@link EnemyBoat}.
+	 * 
+	 * @return {@code true} if within range of an enemy boat, {@code false}
+	 *         otherwise.
+	 * @author James Burnell
+	 */
+	public boolean isEnemyBoatNearPlayer() {
+		return physicsObjects.stream().anyMatch(p -> p instanceof EnemyBoat
+				&& p.getCenter().dst2(playerBoat.getCenter()) < 500 * 500);
+	}
+
+	/**
+	 * Tests if player is in range of an {@link EnemyCollege}.
 	 * 
 	 * @return {@code true} if within range of an enemy college, {@code false}
 	 *         otherwise.
 	 * @author James Burnell
 	 */
-	public boolean isPlayerInDanger() {
+	public boolean isEnemyCollegeNearPlayer() {
 		return colleges.stream()
 				.anyMatch(c -> c instanceof EnemyCollege && c.isInRange(playerBoat));
 	}

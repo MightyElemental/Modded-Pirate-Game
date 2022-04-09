@@ -53,20 +53,24 @@ public class EnemyCollege extends College {
 	}
 
 	public void updateHpText() {
-		hpText.setText(font, String.format("%.0f/%.0f", HP, maxHP));
+		hpText.setText(font, getHPString());
+	}
+
+	public String getHPString() {
+		return String.format("%.0f/%.0f", HP, maxHP);
 	}
 
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		// if the enemy college is hit by a projectile
-		if (other instanceof Projectile && HP > 0) {
+		if (other instanceof Projectile && !isDead()) {
 			Projectile p = (Projectile) other;
 			if (p.isPlayerProjectile()) { // if its a player projectile
 				p.kill();
 				if (!isInvulnerable()) {
 					damage(p.getDamage());
+					if (isDead()) gc.CollegeDestroyed(this);
 					updateHpText();
-					if (HP <= 0) gc.CollegeDestroyed(this);
 				} else {
 					hpText.setText(font, "RESISTED, destroy other colleges first!");
 				}
@@ -75,7 +79,8 @@ public class EnemyCollege extends College {
 	}
 
 	public void Update(float delta) {
-		if (HP > 0) {
+		if (!isDead()) {
+			// increase the time on the timer to allow for fire rate calculation
 			timeSinceLastShot += delta;
 
 			PlayerBoat boat = gc.playerBoat;
@@ -95,12 +100,11 @@ public class EnemyCollege extends College {
 
 	public void Draw(SpriteBatch batch) {
 		islandSprite.draw(batch);
-		if (HP > 0) {
-			sprite.draw(batch);
-			font.draw(batch, hpText, getCenterX() - hpText.width / 2,
-					position.y - hpText.height / 2);
-		} else {
+		if (isDead()) {
 			deadSprite.draw(batch);
+		} else {
+			sprite.draw(batch);
+			font.draw(batch, hpText, getCenterX() - hpText.width / 2, getY() - hpText.height / 2);
 		}
 	}
 
@@ -126,8 +130,7 @@ public class EnemyCollege extends College {
 
 	public void checkForSpawnEnemyBoat(float delta) {
 		if (timeSinceLastSpawn > boatSpawnTime) {
-			gc.physicsObjects
-					.add(new EnemyBoat(gc, new Vector2(position.x + 150, position.y + 150)));
+			gc.NewPhysicsObject(new EnemyBoat(gc, new Vector2(position.x + 150, position.y + 150)));
 			timeSinceLastSpawn = 0;
 		}
 	}

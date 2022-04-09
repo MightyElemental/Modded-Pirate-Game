@@ -1,8 +1,5 @@
 package io.github.annabeths.Boats;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
@@ -11,6 +8,8 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.annabeths.GameGenerics.IHealth;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.MathHelper;
+import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
@@ -25,18 +24,6 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 
 	protected float shotDelay = 0.5f;
 	protected float timeSinceLastShot = 0f;
-
-	@Deprecated
-	public Boat() {
-		sprite = new Sprite(new Texture(Gdx.files.internal("img/boat1.png")));
-		sprite.setSize(100, 50);
-		sprite.setOrigin(50, 25);
-		sprite.setCenter(Gdx.graphics.getWidth() / 2, Gdx.graphics.getHeight() / 2);
-
-		collisionPolygon = new Polygon(new float[] { 0, 0, 0, 68, 25, 100, 50, 68, 50, 0 });
-
-		position = new Vector2();
-	}
 
 	public Boat(GameController controller, Vector2 position, String texLoc) {
 		this.controller = controller;
@@ -73,7 +60,7 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 				position.y - getLocalCenterY() / 2 - 10);
 		collisionPolygon.setOrigin(25, 50);
 
-		if (!controller.map.isPointInBounds(getCenter())) {
+		if (!GameMap.isPointInBounds(getCenter())) {
 			position = oldPos.cpy();
 		}
 	}
@@ -88,7 +75,8 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 * @param multiplier turn anti-clockwise if +ve, clockwise if -ve
 	 */
 	void Turn(float delta, float multiplier) {
-		rotation = (rotation + turnSpeed * delta * multiplier) % 360;
+		rotation = rotation + turnSpeed * delta * multiplier;
+		rotation = MathHelper.normalizeAngle(rotation);
 		sprite.setRotation(rotation);
 		collisionPolygon.setRotation(rotation - 90);
 	}
@@ -105,12 +93,15 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	public void moveTowardsDesiredAngle(float desiredAngle, float delta) {
 
 		// Manipulate angle to compensate for [0-360] limitations
-		if (rotation <= 90 && desiredAngle >= 270) desiredAngle -= 360;
-		if (rotation >= 270 && desiredAngle <= 90) desiredAngle += 360;
-		if (rotation > 180 && desiredAngle < 90) desiredAngle += 360;
+//		if (rotation <= 90 && desiredAngle >= 270) desiredAngle -= 360;
+//		if (rotation >= 270 && desiredAngle <= 90) desiredAngle += 360;
+//		if (rotation > 180 && desiredAngle < 90) desiredAngle += 360;
 
-		if (Math.abs(rotation - desiredAngle) > 0.5f) {
-			Turn(delta, rotation < desiredAngle ? 1 : -1);
+		float angDiff = MathHelper.getAbsDiff2Angles(rotation, desiredAngle);
+		boolean turnLeft = Math.abs((rotation + angDiff) % 360 - desiredAngle) < 0.05f;
+
+		if (angDiff > 0.5f) {
+			Turn(delta, turnLeft ? 1 : -1);
 		}
 
 		Move(delta, 1);

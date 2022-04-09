@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -15,6 +14,7 @@ import io.github.annabeths.Colleges.College;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.MathHelper;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 import io.github.annabeths.Projectiles.ProjectileRay;
@@ -71,11 +71,27 @@ public class PlayerBoat extends Boat {
 		boolean rapidFire = activePowerups.containsKey(PowerupType.RAPIDFIRE);
 		timeSinceLastShot += delta * (rapidFire ? 2 : 1);
 
+		updatePowerups(delta);
+
+		processInput(delta);
+
+		if (isDead()) controller.gameOver();
+
+	}
+
+	public void updatePowerups(float delta) {
 		// Subtract delta time from each active power up
 		activePowerups.replaceAll((k, v) -> v - delta);
 		// Remove active power up if it has run out
 		activePowerups.entrySet().removeIf(e -> e.getValue() <= 0);
+	}
 
+	/**
+	 * Processes keyboard and mouse inputs
+	 * 
+	 * @param delta the time since the last update in seconds
+	 */
+	public void processInput(float delta) {
 		boolean up = Gdx.input.isKeyPressed(Input.Keys.W);
 		boolean down = Gdx.input.isKeyPressed(Input.Keys.S);
 		boolean left = Gdx.input.isKeyPressed(Input.Keys.A);
@@ -89,19 +105,13 @@ public class PlayerBoat extends Boat {
 
 		// make sure we don't fire when hovering over a button and clicking
 		// doesn't matter if we're over a button or not when pressing space
-		if (((Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
-				&& !controller.hud.hoveringOverButton)
-				|| Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
+		boolean click = Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+				&& !controller.hud.hoveringOverButton;
+		if ((click || Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
 				&& shotDelay <= timeSinceLastShot) {
 			Shoot();
 			timeSinceLastShot = 0;
 		}
-
-		if (HP <= 0) {
-			// the player is dead
-			controller.gameOver();
-		}
-
 	}
 
 	/**
@@ -111,8 +121,6 @@ public class PlayerBoat extends Boat {
 	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
-		boolean isInvincible = isInvincible();
-
 		// how much damage to deal to the player
 		float dmgToInflict = 0;
 
@@ -131,7 +139,7 @@ public class PlayerBoat extends Boat {
 		}
 
 		// Deal damage if player is not invincible
-		if (!isInvincible) damage(Math.max(dmgToInflict - defense, 0));
+		if (!isInvincible()) damage(Math.max(dmgToInflict - defense, 0));
 	}
 
 	/** @return {@code true} if player has invincibility powerup */
@@ -156,9 +164,10 @@ public class PlayerBoat extends Boat {
 
 	}
 
-	private void shootRay(float dmgMul) {
+	public void shootRay(float dmgMul) {
 		float angle = getAngleBetweenMouseAndBoat();
 		angle += MathUtils.random(-5, 5); // randomize ray so it is not perfect
+		angle = MathHelper.normalizeAngle(angle);
 
 		ProjectileRay pr = new ProjectileRay(getCenter(), angle, activeProjectileType, true, 500f,
 				dmgMul);
@@ -176,13 +185,13 @@ public class PlayerBoat extends Boat {
 		int mouseX = Gdx.input.getX();
 		int mouseY = Gdx.input.getY();
 		Vector3 pos3 = new Vector3(mouseX, mouseY, 0);
-		controller.map.camera.unproject(pos3);
+		controller.camera.unproject(pos3);
 		Vector2 pos = new Vector2(pos3.x, pos3.y);
 
 		return pos.sub(getCenter()).angleDeg();
 	}
 
-	private void shootStock(float dmgMul) {
+	public void shootStock(float dmgMul) {
 		if (activePowerups.containsKey(PowerupType.STARBURSTFIRE)) {
 			for (int i = 0; i < 360; i += 45) {
 				Projectile burst = createProjectile(activeProjectileType, i, dmgMul, projSpdMul);
@@ -198,7 +207,7 @@ public class PlayerBoat extends Boat {
 		}
 	}
 
-	private float getDamageMul() {
+	public float getDamageMul() {
 		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 3 : 1;
 		// multiply by the overall damage multiplier
 		return dmgMul * projDmgMul;
@@ -222,7 +231,7 @@ public class PlayerBoat extends Boat {
 			defense += amount;
 			break;
 		case health:
-			HP = MathUtils.clamp((int) (HP + amount), 0, maxHP);
+			HP = MathUtils.clamp(HP + amount, 0, maxHP);
 			break;
 		case maxhealth:
 			maxHP += amount;
@@ -241,12 +250,6 @@ public class PlayerBoat extends Boat {
 			turnSpeed += amount;
 			break;
 		}
-	}
-
-	@Override
-	public void Draw(SpriteBatch batch) {
-		sprite.draw(batch);
-
 	}
 
 	public void Heal(int amount, float delta) {

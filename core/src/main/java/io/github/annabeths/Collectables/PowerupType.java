@@ -5,9 +5,9 @@ import com.badlogic.gdx.math.MathUtils;
 /** @author James Burnell */
 public enum PowerupType {
 
-	SPEED("Speed", 10, "speed.png"), RAPIDFIRE("Rapid Fire", 10, "rapidFire.png"),
-	INVINCIBILITY("Invincibility", 10, "invincible.png"),
-	STARBURSTFIRE("Burst Fire", 10, "starBurst.png"), DAMAGE("Damage Buff", 10, "dmgBuff.png");
+	SPEED("Speed", 20, "speed.png"), RAPIDFIRE("Rapid Fire", 30, "rapidFire.png"),
+	INVINCIBILITY("Invincibility", 30, "invincible.png"),
+	STARBURSTFIRE("Burst Fire", 15, "starBurst.png"), DAMAGE("Damage Buff", 20, "dmgBuff.png");
 
 	private PowerupType(String name, float activeTime, String texture) {
 		this.name = name;

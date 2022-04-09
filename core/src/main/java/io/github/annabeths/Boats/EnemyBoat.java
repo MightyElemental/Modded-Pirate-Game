@@ -8,21 +8,13 @@ import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
-import io.github.annabeths.Projectiles.ProjectileData;
 
 /**
  * A boat that attacks the player
  * 
  * @author James Burnell
  */
-public class EnemyBoat extends AIBoat {
-
-	/** The current state of the AI */
-	public AiState state;
-	/** How close it needs to be to the player before it attacks */
-	public float attackRange = 400;
-	/** How close it needs to be to the player before it starts approaching */
-	public float approachRange = 650;
+public class EnemyBoat extends AttackBoat {
 
 	public EnemyBoat(GameController controller, Vector2 position) {
 		super(controller, position, "img/entity/boat2.png");
@@ -38,75 +30,7 @@ public class EnemyBoat extends AIBoat {
 		// this.shotDelay = 0.01f;
 	}
 
-	public enum AiState {
-		ATTACK, APPROACH, IDLE
-	}
-
-	@Override
-	public void Update(float delta) {
-		if (HP <= 0) Destroy();
-		timeSinceLastShot += delta;
-
-		updateAiState();
-
-		// if (state != AiState.IDLE) System.out.println(state);
-
-		switch (state) {
-		case APPROACH:
-			if (isDestValid(controller.playerBoat.getCenter())) {
-				destination = controller.playerBoat.getCenter();
-			} else {
-				idle(delta);
-			}
-			break;
-		case ATTACK:
-			attack(delta);
-			break;
-		case IDLE:
-			idle(delta);
-			break;
-		default:
-			break;
-		}
-
-		if (destination != null) MoveToDestination(delta);
-
-	}
-
-	private void idle(float delta) {
-		if (destination == null) {
-			SetDestination(getNewRandomValidTarget());
-		} else {
-			updateDestination();
-		}
-	}
-
-	private void attack(float delta) {
-		float angToPlayer = getCenter().sub(controller.playerBoat.getCenter()).angleDeg();
-
-		// Move at a 90 degree angle to the play to align the boat to shoot
-		destination = null;
-		float adjustedAng = angToPlayer - rotation;
-		adjustedAng += adjustedAng < 0 ? 360 : 0;
-		moveTowardsDesiredAngle(angToPlayer + (adjustedAng > 180 ? 90 : -90), delta);
-
-		// Fire the cannons if delay is sufficient
-		if (shotDelay <= timeSinceLastShot) {
-			adjustedAng = angToPlayer - rotation + 180;
-			adjustedAng = adjustedAng > 270 ? adjustedAng - 180 : adjustedAng;
-
-			// System.out.println(adjustedAng);
-
-			// If the angle to the player is within acceptable angle range, shoot
-			if (adjustedAng > 80 && adjustedAng < 100) {
-				Shoot();
-				timeSinceLastShot = 0;
-			}
-		}
-	}
-
-	private Boat getNearestTarget() {
-
+	public Boat getNearestTarget() {
 		if (controller.playerBoat.getCenter().dst(getCenter()) < approachRange) {
 			return controller.playerBoat;
 		}
@@ -125,40 +49,8 @@ public class EnemyBoat extends AIBoat {
 		return nearestTarget;
 	}
 
-	private void updateAiState() {
-		Boat target = getNearestTarget();
-		if (target != null) {
-			float dstToTarget = target.getCenter().dst(getCenter());
-
-			if (dstToTarget < attackRange) {
-				state = AiState.ATTACK;
-			} else if (dstToTarget < approachRange) {
-				// move towards player if possible
-				state = AiState.APPROACH;
-			} else {
-				state = AiState.IDLE;
-			}
-		} else {
-			state = AiState.IDLE;
-		}
-	}
-
 	@Override
-	void Shoot() {
-		// the projectile type to shoot
-		ProjectileData pd = ProjectileData.STOCK;
-
-		Projectile projLeft = createProjectile(pd, -90, 1, 1);
-		Projectile projRight = createProjectile(pd, 90, 1, 1);
-
-		// Add the projectile to the GameController's physics objects list so it
-		// receives updates
-		controller.NewPhysicsObject(projLeft);
-		controller.NewPhysicsObject(projRight);
-	}
-
-	@Override
-	void Destroy() {
+	public void Destroy() {
 		killOnNextTick = true;
 		if (MathUtils.randomBoolean(0.8f)) {
 			controller.NewPhysicsObject(new Powerup(PowerupType.randomPower(), getCenter()));
@@ -178,6 +70,11 @@ public class EnemyBoat extends AIBoat {
 				other.kill();
 				dmgToInflict = p.getDamage();
 			}
+		} else if (other instanceof PlayerBoat) {
+			// Hit by player, destroy and add XP
+			controller.xp += (getHealth() / getMaxHealth()) * xpValue;
+			controller.plunder += plunderValue;
+			Destroy();
 		}
 
 		if (objWasPlayer) controller.xp += (dmgToInflict / maxHP) * xpValue;
