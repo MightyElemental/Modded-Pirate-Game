@@ -55,6 +55,7 @@ public class ResourceManager {
 			loadEntityTexture("boat_neutral.png");
 			loadEntityTexture("boat1.png");
 			loadEntityTexture("boat2.png");
+			loadEntityTexture("kraken1.png");
 			/* UI Textures */
 			loadUITexture("button.png");
 			loadUITexture("background.png");

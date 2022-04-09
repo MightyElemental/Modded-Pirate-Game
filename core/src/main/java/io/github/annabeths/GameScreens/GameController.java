@@ -22,6 +22,7 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.EnemyBoat;
+import io.github.annabeths.Boats.Kraken;
 import io.github.annabeths.Boats.NeutralBoat;
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.Collectables.Powerup;
@@ -148,6 +149,11 @@ public class GameController implements Screen {
 				new Vector2(GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
 		physicsObjects.add(new EnemyBoat(this,
 				new Vector2(2 * GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
+
+
+		// add the KRAKEN!!
+		physicsObjects.add(new Kraken(this, new Vector2(750, 750)));
+
 	}
 
 	public void logic(float delta) {
