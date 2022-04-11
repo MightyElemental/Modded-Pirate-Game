@@ -18,7 +18,7 @@ import io.github.annabeths.GameScreens.GameController;
 /** @author James Burnell */
 public class DebugUtils {
 
-	public static boolean DRAW_DEBUG_COLLISIONS = true;
+	public static boolean DRAW_DEBUG_COLLISIONS = false;
 	public static boolean DRAW_DEBUG_TEXT = false;
 	public static boolean ENEMY_COLLEGE_FIRE = true;
 

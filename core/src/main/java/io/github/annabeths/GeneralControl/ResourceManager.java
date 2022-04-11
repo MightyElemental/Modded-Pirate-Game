@@ -52,10 +52,13 @@ public class ResourceManager {
 			loadWorldTexture("castle/castle_dead.png");
 			/* Entity Textures */
 			loadEntityTexture("cannonball.png");
+			loadEntityTexture("kraken_cannonball.png");
 			loadEntityTexture("boat_neutral.png");
 			loadEntityTexture("boat1.png");
 			loadEntityTexture("boat2.png");
 			loadEntityTexture("kraken1.png");
+			loadEntityTexture("kraken2.png");
+			loadEntityTexture("kraken3.png");
 			/* UI Textures */
 			loadUITexture("button.png");
 			loadUITexture("background.png");

@@ -9,7 +9,8 @@ public enum ProjectileData {
 	RAY(0, 20, new Vector2(0, 0), null),
 	STOCK(250, 20, new Vector2(20, 20), "img/entity/cannonball.png"),
 	BOSS(300, 20, new Vector2(20, 20), "img/entity/cannonball.png"),
-	ENEMY(250, 20, new Vector2(20, 20), "img/entity/cannonball.png");
+	ENEMY(250, 20, new Vector2(20, 20), "img/entity/cannonball.png"),
+	KRAKEN(250, 30, new Vector2(20,20), "img/entity/kraken_cannonball.png");
 
 	/** The scalar speed of the object, not the velocity */
 	public float speed;

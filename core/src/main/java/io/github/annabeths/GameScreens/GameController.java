@@ -22,7 +22,6 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.EnemyBoat;
-import io.github.annabeths.Boats.Kraken;
 import io.github.annabeths.Boats.NeutralBoat;
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.Collectables.Powerup;
@@ -35,6 +34,7 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
+import io.github.annabeths.Obstacles.Kraken;
 import io.github.annabeths.Projectiles.ProjectileData;
 import io.github.annabeths.Projectiles.ProjectileRay;
 import io.github.annabeths.UI.HUD;
@@ -150,9 +150,8 @@ public class GameController implements Screen {
 		physicsObjects.add(new EnemyBoat(this,
 				new Vector2(2 * GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
 
-
 		// add the KRAKEN!!
-		physicsObjects.add(new Kraken(this, new Vector2(750, 750)));
+		physicsObjects.add(new Kraken(this, new Vector2(1000, 1000)));
 
 	}
 
