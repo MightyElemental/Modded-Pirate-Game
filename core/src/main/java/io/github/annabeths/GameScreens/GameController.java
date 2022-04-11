@@ -1,6 +1,8 @@
 package io.github.annabeths.GameScreens;
 
 import static io.github.annabeths.Level.GameMap.BORDER_BRIM;
+import static io.github.annabeths.Level.GameMap.MAP_HEIGHT;
+import static io.github.annabeths.Level.GameMap.MAP_WIDTH;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +37,7 @@ import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Obstacles.Kraken;
+import io.github.annabeths.Obstacles.Mine;
 import io.github.annabeths.Projectiles.ProjectileData;
 import io.github.annabeths.Projectiles.ProjectileRay;
 import io.github.annabeths.UI.HUD;
@@ -150,8 +153,14 @@ public class GameController implements Screen {
 		physicsObjects.add(new EnemyBoat(this,
 				new Vector2(2 * GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
 
-		// add the KRAKEN!!
-		physicsObjects.add(new Kraken(this, new Vector2(1000, 1000)));
+		// add a kraken
+		// TODO: Make the kraken only appear on higher difficulties
+		physicsObjects.add(new Kraken(this, new Vector2(1500, 1500)));
+
+		for (int i = 0; i < 75; i++) {
+			physicsObjects.add(new Mine(this,
+					new Vector2(MathUtils.random() * MAP_WIDTH, MathUtils.random() * MAP_HEIGHT)));
+		}
 
 	}
 
