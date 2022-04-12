@@ -142,7 +142,6 @@ public class Kraken extends  ObstacleEntity implements IHealth {
         }
     }
 
-    @Override
     public void Shoot() {
         float dst = position.dst(controller.playerBoat.position);
         if(dst <= attackRange) {

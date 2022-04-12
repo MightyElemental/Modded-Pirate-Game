@@ -7,6 +7,7 @@ import io.github.annabeths.Boats.FriendlyBoat;
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.Level.GameMap;
 
 public class Mine extends ObstacleEntity{
 
@@ -31,11 +32,6 @@ public class Mine extends ObstacleEntity{
 
     @Override
     public void Update(float delta) {
-
-    }
-
-    @Override
-    public void Shoot() {
 
     }
 

@@ -38,6 +38,7 @@ import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Obstacles.Kraken;
 import io.github.annabeths.Obstacles.Mine;
+import io.github.annabeths.Obstacles.Weather;
 import io.github.annabeths.Projectiles.ProjectileData;
 import io.github.annabeths.Projectiles.ProjectileRay;
 import io.github.annabeths.UI.HUD;
@@ -95,6 +96,37 @@ public class GameController implements Screen {
 		batch = new SpriteBatch();
 		sr = new ShapeRenderer();
 		map = new GameMap(this);
+	}
+
+	final int weatherPerGeneration = 5;
+	final int timeBetweenWeatherGeneration = 5;
+	float timeSinceLastWeather = 0;
+
+	public void generateWeather() {
+
+		float width = GameMap.getMapWidth();
+		float height = GameMap.getMapHeight();
+
+		double a = Math.random();
+		Vector2 position = null;
+		int direction = 0;
+		if (a > 0.75) {
+			direction = 3;
+			position = new Vector2(width, (float) (MathUtils.random(height)));
+		} else if (a > 0.5) {
+			direction = 2;
+			position = new Vector2(0, (float) (MathUtils.random(height)));
+		} else if (a > 0.25) {
+			direction = 1;
+			position = new Vector2((float) (MathUtils.random(width)), 0);
+		} else {
+			position = new Vector2((float) (MathUtils.random(width)), height);
+		}
+
+		for (int i = 0; i < weatherPerGeneration; i++) {
+			physicsObjects.add(new Weather(this, new Vector2(position.x + MathUtils.random(500),
+					position.y + MathUtils.random(500)), direction));
+		}
 	}
 
 	private void generateGameObjects() {
@@ -184,6 +216,11 @@ public class GameController implements Screen {
 
 		if (bossCollege.isDead()) { // if the boss college is dead, the game is won
 			game.gotoScreen(Screens.gameWinScreen);
+		}
+		timeSinceLastWeather = timeSinceLastWeather + delta;
+		if (timeSinceLastWeather >= timeBetweenWeatherGeneration) {
+			generateWeather();
+			timeSinceLastWeather = 0;
 		}
 	}
 

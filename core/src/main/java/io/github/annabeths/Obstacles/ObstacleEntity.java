@@ -27,7 +27,6 @@ public abstract class ObstacleEntity extends PhysicsObject {
 
     public abstract void Update(float delta);
 
-    public abstract void Shoot();
 
     public abstract void Destroy();
 
