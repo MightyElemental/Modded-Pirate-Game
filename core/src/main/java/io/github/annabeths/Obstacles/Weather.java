@@ -97,17 +97,6 @@ public class Weather extends ObstacleEntity {
             ChangeDirection();
         }
 
-
-        position = new Vector2(position.x + (direction.x * delta * speed), position.y + (direction.y * delta * speed));
-
-        sprite.setPosition(position.x-50, position.y-70);
-        collisionPolygon.setPosition(position.x - getLocalCenterX(),
-                position.y);
-        collisionPolygon.setRotation(rotation - 90);
-        if(position.x < -650 || position.x > GameMap.getMapWidth() + 650 || position.y < -650 || position.y > GameMap.getMapHeight() + 650){
-            kill();
-        }
-
         // Update the sprite and check state of lightning
         if(damageActive){
             timeSinceStrikeStarted = timeSinceStrikeStarted + delta;
@@ -119,6 +108,16 @@ public class Weather extends ObstacleEntity {
             if(timeSinceLastStrike >= timeUntilNextLightningStrike){
                 toggleLightning();
             }
+        }
+
+        position = new Vector2(position.x + (direction.x * delta * speed), position.y + (direction.y * delta * speed));
+
+        sprite.setPosition(position.x-50, position.y-70);
+        collisionPolygon.setPosition(position.x - getLocalCenterX(),
+                position.y);
+        collisionPolygon.setRotation(rotation - 90);
+        if(position.x < -650 || position.x > GameMap.getMapWidth() + 650 || position.y < -650 || position.y > GameMap.getMapHeight() + 650){
+            kill();
         }
     }
 
