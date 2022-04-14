@@ -1,6 +1,8 @@
 package io.github.annabeths.GameScreens;
 
 import static io.github.annabeths.Level.GameMap.BORDER_BRIM;
+import static io.github.annabeths.Level.GameMap.MAP_HEIGHT;
+import static io.github.annabeths.Level.GameMap.MAP_WIDTH;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +35,9 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
+import io.github.annabeths.Obstacles.Kraken;
+import io.github.annabeths.Obstacles.Mine;
+import io.github.annabeths.Obstacles.Weather;
 import io.github.annabeths.Projectiles.ProjectileData;
 import io.github.annabeths.Projectiles.ProjectileRay;
 import io.github.annabeths.UI.HUD;
@@ -58,7 +63,7 @@ public class GameController implements Screen {
 	public HUD hud;
 
 	// Player Stats
-	public int xp = 0;
+	public float xp = 0;
 	public int plunder = 0;
 
 	float xpTick = 1f;
@@ -90,6 +95,37 @@ public class GameController implements Screen {
 		batch = new SpriteBatch();
 		sr = new ShapeRenderer();
 		map = new GameMap(this);
+	}
+
+	final int weatherPerGeneration = 5;
+	final int timeBetweenWeatherGeneration = 5;
+	float timeSinceLastWeather = 0;
+
+	public void generateWeather() {
+
+		float width = GameMap.getMapWidth();
+		float height = GameMap.getMapHeight();
+
+		double a = MathUtils.random();
+		Vector2 position = null;
+		int direction = 0;
+		if (a > 0.75) {
+			direction = 3;
+			position = new Vector2(width, (float) (MathUtils.random(height)));
+		} else if (a > 0.5) {
+			direction = 2;
+			position = new Vector2(0, (float) (MathUtils.random(height)));
+		} else if (a > 0.25) {
+			direction = 1;
+			position = new Vector2((float) (MathUtils.random(width)), 0);
+		} else {
+			position = new Vector2((float) (MathUtils.random(width)), height);
+		}
+
+		for (int i = 0; i < weatherPerGeneration; i++) {
+			physicsObjects.add(new Weather(this, new Vector2(position.x + MathUtils.random(500),
+					position.y + MathUtils.random(500)), direction));
+		}
 	}
 
 	private void generateGameObjects() {
@@ -147,6 +183,16 @@ public class GameController implements Screen {
 				new Vector2(GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
 		physicsObjects.add(new EnemyBoat(this,
 				new Vector2(2 * GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
+
+		// add a kraken
+		// TODO: Make the kraken only appear on higher difficulties
+		physicsObjects.add(new Kraken(this, new Vector2(1500, 1500)));
+
+		for (int i = 0; i < 75; i++) {
+			physicsObjects.add(new Mine(this,
+					new Vector2(MathUtils.random() * MAP_WIDTH, MathUtils.random() * MAP_HEIGHT)));
+		}
+
 	}
 
 	public void logic(float delta) {
@@ -157,7 +203,7 @@ public class GameController implements Screen {
 		xpTick -= delta * xpTickMultiplier;
 		if (xpTick <= 0) {
 			xp += 1;
-			plunder += 1;
+			// plunder += 1;
 			xpTick += 1;
 		}
 
@@ -169,6 +215,11 @@ public class GameController implements Screen {
 
 		if (bossCollege.isDead()) { // if the boss college is dead, the game is won
 			game.gotoScreen(Screens.gameWinScreen);
+		}
+		timeSinceLastWeather = timeSinceLastWeather + delta;
+		if (timeSinceLastWeather >= timeBetweenWeatherGeneration) {
+			generateWeather();
+			timeSinceLastWeather = 0;
 		}
 	}
 

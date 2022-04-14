@@ -101,7 +101,8 @@ public class PlayerBoat extends Boat {
 
 		if (left) Turn(delta, 1);
 		if (right) Turn(delta, -1);
-		if (left || right || up || down) Move(delta, movMul);
+		if (up) Move(delta, movMul);
+		if (down) Move(delta, -movMul);
 
 		// make sure we don't fire when hovering over a button and clicking
 		// doesn't matter if we're over a button or not when pressing space

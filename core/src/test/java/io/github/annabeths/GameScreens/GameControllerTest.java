@@ -122,12 +122,12 @@ public class GameControllerTest {
 	}
 
 	@Test
-	public void testLogicIncreaseXpPlunder() {
+	public void testLogicIncreaseXpNotPlunder() {
 		float xp = gc.xp;
 		float plunder = gc.plunder;
 		gc.logic(1);
 		assertTrue(gc.xp > xp);
-		assertTrue(gc.plunder > plunder);
+		assertEquals(plunder, gc.plunder);
 	}
 
 	@Test

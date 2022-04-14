@@ -14,8 +14,8 @@ public abstract class AIBoat extends Boat {
 
 	Vector2 initialPosition;
 	Vector2 destination;
-	float plunderValue;
-	float xpValue;
+	public float plunderValue;
+    public float xpValue;
 
 	/** How close should the boat be to its destination before setting a new one */
 	float destinationThreshold = 50f;
@@ -160,4 +160,6 @@ public abstract class AIBoat extends Boat {
 	public float getDestinationThreshold() {
 		return destinationThreshold;
 	}
+
+    abstract void Shoot();
 }
