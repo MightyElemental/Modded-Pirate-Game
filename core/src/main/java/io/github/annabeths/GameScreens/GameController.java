@@ -64,7 +64,7 @@ public class GameController implements Screen {
 	public HUD hud;
 
 	// Player Stats
-	public int xp = 0;
+	public float xp = 0;
 	public int plunder = 0;
 
 	float xpTick = 1f;
@@ -107,7 +107,7 @@ public class GameController implements Screen {
 		float width = GameMap.getMapWidth();
 		float height = GameMap.getMapHeight();
 
-		double a = Math.random();
+		double a = MathUtils.random();
 		Vector2 position = null;
 		int direction = 0;
 		if (a > 0.75) {
@@ -204,7 +204,7 @@ public class GameController implements Screen {
 		xpTick -= delta * xpTickMultiplier;
 		if (xpTick <= 0) {
 			xp += 1;
-			plunder += 1;
+			// plunder += 1;
 			xpTick += 1;
 		}
 

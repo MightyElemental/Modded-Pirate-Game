@@ -62,7 +62,7 @@ public class NeutralBoatTest {
 	@Test
 	public void testOnCollisionPlayerBoat() {
 		PlayerBoat pb = new PlayerBoat(gc, new Vector2(0, 0));
-		int xp = gc.xp;
+		int xp = (int) gc.xp;
 		int gold = gc.plunder;
 		nb.OnCollision(pb);
 		assertTrue(gc.xp > xp);
@@ -80,7 +80,7 @@ public class NeutralBoatTest {
 	@Test
 	public void testOnCollisionProjectilePlayer() {
 		Projectile p = new Projectile(new Vector2(), 0, ProjectileData.STOCK, true);
-		int xp = gc.xp;
+		int xp = (int) gc.xp;
 		nb.OnCollision(p);
 		assertTrue(gc.xp > xp);
 		assertEquals(nb.getMaxHealth() - p.getDamage(), nb.getHealth());
@@ -89,7 +89,7 @@ public class NeutralBoatTest {
 	@Test
 	public void testOnCollisionProjectileNotPlayer() {
 		Projectile p = new Projectile(new Vector2(), 0, ProjectileData.STOCK, false);
-		int xp = gc.xp;
+		int xp = (int) gc.xp;
 		nb.OnCollision(p);
 		assertEquals(xp, gc.xp); // no xp for non player projectiles
 		assertEquals(nb.getMaxHealth() - p.getDamage(), nb.getHealth());
