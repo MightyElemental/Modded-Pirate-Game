@@ -247,17 +247,13 @@ public class GameController implements Screen {
 
 		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawEntityDebugText(this, batch);
 
-		hud.Draw(batch); // this resets camera projection matrix
-
-		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawDebugText(this, batch);
-
 		// end the sprite batch
 		batch.end();
 
+		hud.Draw(batch);
+
 		sr.setProjectionMatrix(camera.combined);
-
 		renderRays();
-
 		// this should be off during normal gameplay, but can be on to debug collisions
 		if (DebugUtils.DRAW_DEBUG_COLLISIONS) DebugUtils.drawDebugCollisions(this, sr);
 	}
@@ -393,7 +389,8 @@ public class GameController implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-
+		camera.setToOrtho(false, 1280, 720);
+		hud.resize(width, height);
 	}
 
 	@Override
@@ -438,6 +435,48 @@ public class GameController implements Screen {
 	public void AddXP(int amount) {
 		xp += amount;
 		plunder += amount;
+	}
+
+	/**
+	 * Get the current XP level the player is at
+	 * 
+	 * @return the level
+	 */
+	public int getXpLevel() {
+		int level = (int) (Math.sqrt(xp + 9) - 3);
+		return level;
+	}
+
+	/**
+	 * Get how much XP the player has in this current level. i.e. the amount of XP
+	 * excluding the XP contributing to whole levels
+	 * 
+	 * @return the xp in the current level
+	 * @see #getXpLevel()
+	 */
+	public float getXpInLevel() {
+		int level = getXpLevel();
+		return xp - (level * (level + 6));
+	}
+
+	/**
+	 * The the XP required to go from {@code level-1} to {@code level}.
+	 * 
+	 * @param the target level
+	 * @return the XP difference between previous level and this one
+	 */
+	public static int getXpRequiredForLevel(int level) {
+		return 2 * level + 7;
+	}
+
+	/**
+	 * The total XP the needs to level up. Note this is NOT the remaining amount,
+	 * but the total amount to be able to level up.
+	 * 
+	 * @return the xp required to level up
+	 */
+	public float getXpRequiredForNextLevel() {
+		return getXpRequiredForLevel(getXpLevel());
 	}
 
 }

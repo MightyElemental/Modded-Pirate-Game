@@ -58,7 +58,7 @@ public class DebugUtils {
 	public static void drawDebugText(GameController gc, SpriteBatch batch) {
 		List<String> debugText = generateDebugText(gc);
 		for (int i = 0; i < debugText.size(); i++) {
-			debugFont.draw(batch, debugText.get(i), 10, 30 + 15 * i);
+			debugFont.draw(batch, debugText.get(i), 10, Gdx.graphics.getHeight() - 15 - 15 * i);
 		}
 	}
 

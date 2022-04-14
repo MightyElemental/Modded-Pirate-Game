@@ -6,33 +6,41 @@ import static io.github.annabeths.GeneralControl.ResourceManager.getTexture;
 import java.util.Random;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip.TextTooltipStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 
 import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
-import io.github.annabeths.Level.WaterBackground;
+import io.github.annabeths.GeneralControl.DebugUtils;
 
 public class HUD extends GameObject {
 
-	GlyphLayout hpTextLayout;
-	GlyphLayout timerTextLayout;
-	WaterBackground bg;
-
 	Stage stage;
 
-	TextButton menuButton;
-	TextButtonStyle menuButtonStyle;
+	/* Shop objects */
+
+	TextButton shopButton;
+	TextButtonStyle shopButtonStyle;
 
 	TextButton upgradeButton1;
 	TextButtonStyle upgradeButton1Style;
@@ -42,12 +50,21 @@ public class HUD extends GameObject {
 
 	Image upgradeMenuBackground;
 
-	GlyphLayout xpTextLayout;
-	GlyphLayout plunderTextLayout;
+	/* HUD objects */
 
-	GlyphLayout powerTextLayout;
+	/** The image that serves as a base for the HUD */
+	Image hudBg;
 
-	GameController gc;
+	Group hudGroup;
+
+	LabelStyle lblStyle;
+	Label hpText;
+	Label timerText;
+	Label xpText;
+	Label plunderText;
+	Label powerText;
+
+	private GameController gc;
 
 	/** Used to disable certain player behaviors when hovering over a button */
 	public boolean hoveringOverButton = false;
@@ -64,35 +81,71 @@ public class HUD extends GameObject {
 	public HUD(GameController gameController) {
 		gc = gameController;
 
-		stage = new Stage(); // Lets us implement interactable UI elements
-		hpTextLayout = new GlyphLayout();
-		timerTextLayout = new GlyphLayout();
-		xpTextLayout = new GlyphLayout();
-		plunderTextLayout = new GlyphLayout();
-		powerTextLayout = new GlyphLayout();
-		powerTextLayout.setText(font, "No power");
+		lblStyle = new LabelStyle(font, new Color(0, 0, 0, 1));
+
+		stage = new Stage(new FillViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 		Gdx.input.setInputProcessor(stage);
 
-		DrawUpgradeButton(); // put this in its own function to make this function look a bit
-								// cleaner
+		hudGroup = new Group();
+
+		hudBg = new Image(getTexture("ui/hud-ui.png"));
+		hudBg.setScaling(Scaling.fit);
+
+		hudGroup.addActor(hudBg);
+
+		hpText = new Label("#", lblStyle);
+		timerText = new Label("#", lblStyle);
+		xpText = new Label("#", lblStyle);
+		plunderText = new Label("#", lblStyle);
+		powerText = new Label("#", lblStyle);
+
+		// TODO: Fix scaling
+		timerText.setPosition(1920 - 158, 172);
+		timerText.setFontScale(1920f / stage.getViewport().getScreenWidth());
+		plunderText.setPosition(1920 - 180, 112);
+		plunderText.setFontScale(1920f / stage.getViewport().getScreenWidth());
+
+		// hudGroup.addActor(hpText);
+		hudGroup.addActor(timerText);
+		// hudGroup.addActor(xpText);
+		hudGroup.addActor(plunderText);
+		hudGroup.addActor(powerText);
+
+		hudGroup.setWidth(stage.getViewport().getScreenWidth());
+		hudGroup.setScale(stage.getViewport().getScreenWidth() / 1920f);
+		stage.addActor(hudGroup);
+
+		DrawUpgradeButton();
+	}
+
+	public void updateLabelPositions() {
+		float y = stage.getViewport().getScreenHeight();
+		hpText.setPosition(5, y -= hpText.getPrefHeight());
+		powerText.setPosition(5, y -= powerText.getPrefHeight());
+
+		y = stage.getViewport().getScreenHeight();
+		xpText.setPosition(stage.getViewport().getScreenWidth() - xpText.getPrefWidth(),
+				y -= xpText.getPrefHeight());
 	}
 
 	@Override
 	public void Update(float delta) {
-		hpTextLayout.setText(font, String.format("HP: %.0f/%.0f", gc.playerBoat.getHealth(),
+		hpText.setText(String.format("HP: %.0f/%.0f", gc.playerBoat.getHealth(),
 				gc.playerBoat.getMaxHealth()));
-		xpTextLayout.setText(font, "XP: " + Integer.toString((int) gc.xp));
-		timerTextLayout.setText(font, "Time: " + generateTimeString((int) gc.timer));
-		plunderTextLayout.setText(font, "Plunder: " + Integer.toString(gc.plunder));
+		xpText.setText("XP: " + Integer.toString((int) gc.xp));
+		timerText.setText(generateTimeString((int) gc.timer));
+		plunderText.setText("$" + Integer.toString(gc.plunder));
 
 		StringBuilder powerupText = new StringBuilder();
 		gc.playerBoat.activePowerups.forEach((k, v) -> {
 			String line = String.format("%s %.1fs\n", k.getName(), v);
 			powerupText.append(line);
 		});
-		powerTextLayout.setText(font, powerupText.toString());
+		powerText.setText(powerupText.toString());
 
-		font.getData().setScale(1);
+		updateLabelPositions();
+
+		// font.getData().setScale(1);
 	}
 
 	public static String generateTimeString(int seconds) {
@@ -103,29 +156,63 @@ public class HUD extends GameObject {
 
 	@Override
 	public void Draw(SpriteBatch batch) {
-		// Draw the text showing the player's stats
-		font.draw(batch, hpTextLayout, 5, gc.camera.viewportHeight - 10);
-		font.draw(batch, timerTextLayout, 5, gc.camera.viewportHeight - 50);
-		font.draw(batch, xpTextLayout, gc.camera.viewportWidth - xpTextLayout.width - 5,
-				gc.camera.viewportHeight - 50);
-		font.draw(batch, plunderTextLayout, gc.camera.viewportWidth - plunderTextLayout.width - 5,
-				gc.camera.viewportHeight - 10);
-		font.draw(batch, powerTextLayout, 5, gc.camera.viewportHeight - 100);
-
 		stage.draw();
+
+		Camera camera = stage.getViewport().getCamera();
+
+		gc.batch.setProjectionMatrix(camera.combined);
+		gc.batch.begin();
+		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawDebugText(gc, batch);
+		gc.batch.end();
+
+		// reset view so it doesn't move
+		gc.sr.setProjectionMatrix(camera.combined);
+		// draw
+		gc.sr.begin(ShapeType.Filled);
+
+		drawHealth();
+		drawXp();
+
+		gc.sr.end();
 	}
 
-	// UI & Upgrade Functions
+	private void drawHealth() {
+		float hr = gc.playerBoat.getHealth() / gc.playerBoat.getMaxHealth();
+		gc.sr.setColor(gc.playerBoat.isInvincible() ? Color.ROYAL : Color.SCARLET);
+		drawHudScaledBar(812, 92, 377 * hr, 35);
+	}
+
+	private void drawXp() {
+		float xpr = gc.getXpInLevel() / gc.getXpRequiredForNextLevel();
+		gc.sr.setColor(Color.LIME);
+		drawHudScaledBar(812, 24, 377 * xpr, 35);
+	}
+
+	public void drawHudScaledBar(float x, float y, float width, float height) {
+		Vector2 pos = hudBg.localToStageCoordinates(new Vector2(x, y));
+		Vector2 size = hudBg.localToStageCoordinates(new Vector2(width, height));
+		drawBar(pos.x, pos.y, size.x, size.y);
+	}
+
+	public void drawBar(float x, float y, float width, float height) {
+		gc.sr.rect(x, y, width, height);
+	}
+
+	/* UI & Upgrade Functions */
 
 	public void DrawUpgradeButton() {
+		Drawable buttonBg = new TextureRegionDrawable(getTexture("ui/button.png"));
 		// Create the upgrade button and add it to the UI stage
-		menuButtonStyle = new TextButtonStyle();
-		menuButtonStyle.font = font;
-		menuButtonStyle.fontColor = Color.BLACK;
-		menuButtonStyle.up = new TextureRegionDrawable(getTexture("ui/button.png"));
-		menuButton = new TextButton("Upgrade", menuButtonStyle);
+		shopButtonStyle = new TextButtonStyle();
+		shopButtonStyle.font = font;
+		shopButtonStyle.fontColor = Color.BLACK;
+		shopButtonStyle.up = buttonBg;
+		shopButton = new TextButton("Shop", shopButtonStyle);
 
-		menuButton.addListener(new ClickListener() {
+		shopButton.addListener(
+				new TextTooltip("This is some text", new TextTooltipStyle(lblStyle, buttonBg)));
+
+		shopButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				upgradeMenuOpen = !upgradeMenuOpen;
@@ -150,11 +237,10 @@ public class HUD extends GameObject {
 			}
 		});
 
-		menuButton.setScale(1f, 1f);
-		menuButton.setPosition(Gdx.graphics.getWidth() / 2 - menuButton.getWidth() / 2,
-				Gdx.graphics.getHeight() - menuButton.getHeight());
+		shopButton.setScale(1.5f);
+		shopButton.setPosition(1920 - 160, 10);
 
-		stage.addActor(menuButton);
+		hudGroup.addActor(shopButton);
 	}
 
 	public void ToggleMenu() {
@@ -390,5 +476,9 @@ public class HUD extends GameObject {
 		}
 
 		UpdateMenu();
+	}
+
+	public void resize(int width, int height) {
+		stage.getViewport().update(width, height, true);
 	}
 }
