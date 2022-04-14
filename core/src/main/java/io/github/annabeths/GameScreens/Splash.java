@@ -60,6 +60,8 @@ public class Splash implements Screen {
 		}, 5f);
 	}
 
+	float alpha = 1;
+
 	@Override
 	public void render(float delta) {
 		Gdx.gl.glClearColor(1, 0, 0, 0);
@@ -68,9 +70,10 @@ public class Splash implements Screen {
 		batch.begin();
 		splash.draw(batch);
 
-		if (fading && splash.getColor().a > 0)
-			splash.setAlpha(splash.getColor().a - (delta / 2));
-		else if (splash.getColor().a <= 0) {
+		if (fading && alpha > 0) {
+			alpha -= (delta / 2);
+			splash.setAlpha(alpha < 0 ? 0 : alpha);
+		} else if (alpha <= 0) {
 			game.gotoScreen(Screens.menuScreen);
 		}
 

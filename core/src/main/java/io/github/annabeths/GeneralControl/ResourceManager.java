@@ -66,6 +66,7 @@ public class ResourceManager {
 			loadUITexture("button.png");
 			loadUITexture("background.png");
 			loadUITexture("upgradebutton.png");
+			loadUITexture("hud-ui.png");
 			/* Powerup Textures */
 			for (PowerupType p : PowerupType.values()) {
 				loadTexture(p.getTexture());

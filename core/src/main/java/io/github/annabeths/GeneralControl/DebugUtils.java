@@ -21,6 +21,7 @@ import io.github.annabeths.GameScreens.GameController;
 /** @author James Burnell */
 public class DebugUtils {
 
+	public static boolean SKIP_SPLASH = false;
 	public static boolean DRAW_DEBUG_COLLISIONS = false;
 	public static boolean DRAW_DEBUG_TEXT = false;
 	public static boolean ENEMY_COLLEGE_FIRE = true;
@@ -41,6 +42,7 @@ public class DebugUtils {
 			XmlReader xReader = new XmlReader();
 			Element e = xReader.parse(file);
 
+			SKIP_SPLASH = getSavedValue(e, "SKIP_SPLASH");
 			DRAW_DEBUG_COLLISIONS = getSavedValue(e, "DRAW_DEBUG_COLLISIONS");
 			DRAW_DEBUG_TEXT = getSavedValue(e, "DRAW_DEBUG_TEXT");
 			ENEMY_COLLEGE_FIRE = getSavedValue(e, "ENEMY_COLLEGE_FIRE");

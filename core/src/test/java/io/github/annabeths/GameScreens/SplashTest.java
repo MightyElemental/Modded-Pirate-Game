@@ -91,7 +91,8 @@ public class SplashTest {
 		assertTrue(sprite.getColor().a < 1);
 
 		sprite.setColor(1, 1, 1, 0);
-		s.render(0f);
+		s.alpha = 0;
+		s.render(1f);
 		// ensure setAlpha is not called again
 		verify(sprite, times(1)).setAlpha(anyFloat());
 		// ensure the screen is changed when alpha is 0

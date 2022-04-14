@@ -1,6 +1,8 @@
 package io.github.annabeths.GeneralControl;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -41,11 +43,11 @@ public class eng1game extends Game {
 		// create a menu and game screen, then switch to a new splash screen
 		menuScreen = new Menu(this);
 		gameScreen = new GameController(this);
-		// gotoScreen(Screens.splashScreen);
-		// splash screen commented out for now, in order to make testing faster,
-		// splash will be re-added when the game is done
-		// for now go directly to the menu
-		gotoScreen(Screens.menuScreen);
+		if (DebugUtils.SKIP_SPLASH) {
+			gotoScreen(Screens.menuScreen);
+		} else {
+			gotoScreen(Screens.splashScreen);
+		}
 	}
 
 	/**
@@ -78,20 +80,10 @@ public class eng1game extends Game {
 		}
 	}
 
-	@Override
-	public void render() {
-		/*
-		 * ScreenUtils.clear(1, 0, 0, 1); batch.begin(); batch.draw(img, 0, 0);
-		 * batch.end();
-		 */
-		super.render();
+	public void setFullscreen() {
+		Graphics.DisplayMode currentMode = Gdx.graphics.getDisplayMode();
+		Gdx.graphics.setFullscreenMode(currentMode);
+		Gdx.app.log("eng1game", "Switched to Fullscreen");
 	}
 
-	@Override
-	public void dispose() {
-		/*
-		 * batch.dispose(); img.dispose();
-		 */
-		super.dispose();
-	}
 }

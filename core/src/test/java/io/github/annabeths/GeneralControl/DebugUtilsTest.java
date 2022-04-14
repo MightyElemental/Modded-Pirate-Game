@@ -94,6 +94,7 @@ public class DebugUtilsTest {
 			IllegalArgumentException, IllegalAccessException {
 		Gdx.files = new HeadlessFiles();
 		DebugUtils.initDebugSettings();
+		assertFalse(DebugUtils.SKIP_SPLASH);
 		assertFalse(DebugUtils.DRAW_DEBUG_COLLISIONS);
 		assertFalse(DebugUtils.DRAW_DEBUG_TEXT);
 		assertTrue(DebugUtils.ENEMY_COLLEGE_FIRE);

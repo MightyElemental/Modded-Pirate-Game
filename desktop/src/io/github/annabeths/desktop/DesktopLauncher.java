@@ -20,13 +20,16 @@ public class DesktopLauncher {
 			DebugUtils.DRAW_DEBUG_COLLISIONS = true;
 			DebugUtils.DRAW_DEBUG_TEXT = true;
 			DebugUtils.ENEMY_COLLEGE_FIRE = false;
+			DebugUtils.SKIP_SPLASH = true;
 		}
 
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
 		config.setResizable(false);
 		// config.setFullscreenMode(Lwjgl3ApplicationConfiguration.getDisplayMode());
 		config.setWindowedMode(1280, 720);
-		config.setTitle("Team Mario's Pirate Game");
+		// config.setWindowedMode(1920, 1080);
+		config.setTitle("Mario Shardsoft - Pirate Game");
 		new Lwjgl3Application(new eng1game(debug), config);
 	}
+
 }
