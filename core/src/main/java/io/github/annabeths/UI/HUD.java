@@ -8,9 +8,9 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -18,6 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar.ProgressBarStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
@@ -57,12 +59,15 @@ public class HUD extends GameObject {
 
 	Group hudGroup;
 
-	LabelStyle lblStyle;
+	LabelStyle lblStyleBlk, lblStyleWht;
 	Label hpText;
 	Label timerText;
 	Label xpText;
 	Label plunderText;
 	Label powerText;
+
+	ProgressBar healthBar;
+	ProgressBar xpBar;
 
 	private GameController gc;
 
@@ -81,35 +86,44 @@ public class HUD extends GameObject {
 	public HUD(GameController gameController) {
 		gc = gameController;
 
-		lblStyle = new LabelStyle(font, new Color(0, 0, 0, 1));
+		lblStyleBlk = new LabelStyle(font, Color.BLACK);
+		lblStyleWht = new LabelStyle(font, Color.WHITE);
 
 		stage = new Stage(new FillViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 		Gdx.input.setInputProcessor(stage);
 
-		hudGroup = new Group();
-
+		// Background image
 		hudBg = new Image(getTexture("ui/hud-ui.png"));
 		hudBg.setScaling(Scaling.fit);
 
+		// HUD group object
+		hudGroup = new Group();
 		hudGroup.addActor(hudBg);
 
-		hpText = new Label("#", lblStyle);
-		timerText = new Label("#", lblStyle);
-		xpText = new Label("#", lblStyle);
-		plunderText = new Label("#", lblStyle);
-		powerText = new Label("#", lblStyle);
+		// HUD text
+		hpText = new Label("#", lblStyleWht);
+		timerText = new Label("#", lblStyleBlk);
+		xpText = new Label("#", lblStyleWht);
+		plunderText = new Label("#", lblStyleBlk);
+		powerText = new Label("#", lblStyleBlk);
 
 		// TODO: Fix scaling
+		hpText.setPosition(820, 88);
+		hpText.setFontScale(0.9f);
 		timerText.setPosition(1920 - 158, 172);
-		timerText.setFontScale(1920f / stage.getViewport().getScreenWidth());
+		timerText.setFontScale(1.5f);
 		plunderText.setPosition(1920 - 180, 112);
-		plunderText.setFontScale(1920f / stage.getViewport().getScreenWidth());
+		plunderText.setFontScale(1.5f);
+		xpText.setPosition(820, 18);
+		xpText.setFontScale(0.9f);
 
-		// hudGroup.addActor(hpText);
+		setupProgressBars();
+
+		hudGroup.addActor(hpText);
 		hudGroup.addActor(timerText);
-		// hudGroup.addActor(xpText);
+		hudGroup.addActor(xpText);
 		hudGroup.addActor(plunderText);
-		hudGroup.addActor(powerText);
+		// hudGroup.addActor(powerText);
 
 		hudGroup.setWidth(stage.getViewport().getScreenWidth());
 		hudGroup.setScale(stage.getViewport().getScreenWidth() / 1920f);
@@ -118,24 +132,47 @@ public class HUD extends GameObject {
 		DrawUpgradeButton();
 	}
 
-	public void updateLabelPositions() {
-		float y = stage.getViewport().getScreenHeight();
-		hpText.setPosition(5, y -= hpText.getPrefHeight());
-		powerText.setPosition(5, y -= powerText.getPrefHeight());
+	public void setupProgressBars() {
+		ProgressBarStyle hStyle = new ProgressBarStyle();
+		hStyle.knobBefore = new TextureRegionDrawable(barKnob(Color.SCARLET));
+		hStyle.knobAfter = new TextureRegionDrawable(barKnob(Color.BLACK));
+		healthBar = new ProgressBar(0, gc.playerBoat.getMaxHealth(), 1, false, hStyle);
+		healthBar.setBounds(812, 92, 377, 35);
 
-		y = stage.getViewport().getScreenHeight();
-		xpText.setPosition(stage.getViewport().getScreenWidth() - xpText.getPrefWidth(),
-				y -= xpText.getPrefHeight());
+		ProgressBarStyle xpStyle = new ProgressBarStyle();
+		xpStyle.knobBefore = new TextureRegionDrawable(barKnob(Color.FOREST));
+		xpStyle.knobAfter = new TextureRegionDrawable(barKnob(Color.BLACK));
+		xpBar = new ProgressBar(0, gc.getXpRequiredForNextLevel(), 0.5f, false, xpStyle);
+		xpBar.setBounds(812, 24, 377, 35);
+
+		hudGroup.addActor(healthBar);
+		hudGroup.addActor(xpBar);
+	}
+
+	/**
+	 * Generates a 2x35 texture to be used by progress bars.
+	 * 
+	 * @param col the color of the knob
+	 * @return the knob texture
+	 * @see ProgressBarStyle
+	 */
+	public static Texture barKnob(Color col) {
+		Pixmap p = new Pixmap(2, 35, Pixmap.Format.RGB888);
+		p.setColor(col);
+		p.fill();
+		return new Texture(p);
 	}
 
 	@Override
 	public void Update(float delta) {
-		hpText.setText(String.format("HP: %.0f/%.0f", gc.playerBoat.getHealth(),
+		/* Update label text */
+		hpText.setText(String.format("%.0f/%.0f", gc.playerBoat.getHealth(),
 				gc.playerBoat.getMaxHealth()));
-		xpText.setText("XP: " + Integer.toString((int) gc.xp));
+		xpText.setText(String.format("Level %d + %.0fxp", gc.getXpLevel(), gc.getXpInLevel()));
 		timerText.setText(generateTimeString((int) gc.timer));
 		plunderText.setText("$" + Integer.toString(gc.plunder));
 
+		// TODO: Remove powerup text and replace with icons
 		StringBuilder powerupText = new StringBuilder();
 		gc.playerBoat.activePowerups.forEach((k, v) -> {
 			String line = String.format("%s %.1fs\n", k.getName(), v);
@@ -143,11 +180,19 @@ public class HUD extends GameObject {
 		});
 		powerText.setText(powerupText.toString());
 
-		updateLabelPositions();
-
-		// font.getData().setScale(1);
+		/* Update progress bars */
+		healthBar.setRange(0, gc.playerBoat.getMaxHealth());
+		healthBar.setValue(gc.playerBoat.getHealth());
+		xpBar.setRange(0, gc.getXpRequiredForNextLevel());
+		xpBar.setValue(gc.getXpInLevel());
 	}
 
+	/**
+	 * Converts seconds into a human readable string
+	 * 
+	 * @param seconds the number of seconds
+	 * @return The time string
+	 */
 	public static String generateTimeString(int seconds) {
 		int sec = seconds % 60;
 		int min = seconds / 60;
@@ -164,38 +209,6 @@ public class HUD extends GameObject {
 		gc.batch.begin();
 		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawDebugText(gc, batch);
 		gc.batch.end();
-
-		// reset view so it doesn't move
-		gc.sr.setProjectionMatrix(camera.combined);
-		// draw
-		gc.sr.begin(ShapeType.Filled);
-
-		drawHealth();
-		drawXp();
-
-		gc.sr.end();
-	}
-
-	private void drawHealth() {
-		float hr = gc.playerBoat.getHealth() / gc.playerBoat.getMaxHealth();
-		gc.sr.setColor(gc.playerBoat.isInvincible() ? Color.ROYAL : Color.SCARLET);
-		drawHudScaledBar(812, 92, 377 * hr, 35);
-	}
-
-	private void drawXp() {
-		float xpr = gc.getXpInLevel() / gc.getXpRequiredForNextLevel();
-		gc.sr.setColor(Color.LIME);
-		drawHudScaledBar(812, 24, 377 * xpr, 35);
-	}
-
-	public void drawHudScaledBar(float x, float y, float width, float height) {
-		Vector2 pos = hudBg.localToStageCoordinates(new Vector2(x, y));
-		Vector2 size = hudBg.localToStageCoordinates(new Vector2(width, height));
-		drawBar(pos.x, pos.y, size.x, size.y);
-	}
-
-	public void drawBar(float x, float y, float width, float height) {
-		gc.sr.rect(x, y, width, height);
 	}
 
 	/* UI & Upgrade Functions */
@@ -210,7 +223,7 @@ public class HUD extends GameObject {
 		shopButton = new TextButton("Shop", shopButtonStyle);
 
 		shopButton.addListener(
-				new TextTooltip("This is some text", new TextTooltipStyle(lblStyle, buttonBg)));
+				new TextTooltip("This is some text", new TextTooltipStyle(lblStyleBlk, buttonBg)));
 
 		shopButton.addListener(new ClickListener() {
 			@Override
