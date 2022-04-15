@@ -56,6 +56,15 @@ public class eng1game extends Game {
 	}
 
 	/**
+	 * Disposes of an old game screen so that we don't have multiple running at once
+	 */
+	public void removeGameScreen(){
+		gameScreen.dispose();
+		gameScreen = null;
+	}
+
+
+	/**
 	 * Uses the {@link Screens} enumeration to change between any screen.
 	 * 
 	 * @param s the screen to switch to
@@ -74,12 +83,14 @@ public class eng1game extends Game {
 			setScreen(gameScreen);
 			break;
 		case gameOverScreen:
+			removeGameScreen();
 			GameOverScreen gameOverScreen = new GameOverScreen(this,
 					timeUp ? "Time Up! ENTER to go to menu, R to restart"
 							: "You Died! ENTER to go to menu, R to restart");
 			setScreen(gameOverScreen);
 			break;
 		case gameWinScreen:
+			removeGameScreen();
 			GameWinScreen gameWinScreen = new GameWinScreen(this);
 			setScreen(gameWinScreen);
 			break;

@@ -25,7 +25,8 @@ public class Weather extends ObstacleEntity {
 	Vector2 direction;
 	float timeOnCurrentDirection = 0;
 	/**
-	 * The weather starts on one side of the map and "trends" to the other side.<br>
+	 * The weather starts on one side of the map and "trends" to the other
+	 * side.<br>
 	 * <ul>
 	 * <li>0 means it starts north, trends south</li>
 	 * <li>1 means south-north</li>
@@ -44,7 +45,7 @@ public class Weather extends ObstacleEntity {
 
 	public Weather(GameController controller, Vector2 position, int dir) {
 		super(controller, position, "img/entity/weather1.png", new Vector2(100, 100));
-		Polygon poly = new Polygon(new float[] { 0, 50, 50, 100, 100, 50, 50, 0 });
+		Polygon poly = new Polygon(new float[]{0, 50, 50, 100, 100, 50, 50, 0});
 		poly.setPosition(position.x - getLocalCenterX(), position.y);
 		poly.setOrigin(0, 0);
 		poly.setRotation(rotation - 90);
@@ -77,22 +78,22 @@ public class Weather extends ObstacleEntity {
 			return; // Only deal damage when lightning frames are showing
 		}
 		if (other instanceof Boat) {
-			((Boat) other).damage(1f);
+			((Boat) other).damage(1f * controller.getGameDifficulty().getEnemyDmgMul());
 		}
 	}
 
 	public void ChangeDirection() {
 		switch (directionTrend) {
-		case 0: // North -> South
+		case 0 : // North -> South
 			direction = new Vector2(Math.random() < 0.5 ? -1 : 1, -1);
 			break;
-		case 1: // South -> North
+		case 1 : // South -> North
 			direction = new Vector2(Math.random() < 0.5 ? -1 : 1, 1);
 			break;
-		case 2: // East -> West
+		case 2 : // East -> West
 			direction = new Vector2(1, Math.random() < 0.5 ? -1 : 1);
 			break;
-		case 3: // West -> East
+		case 3 : // West -> East
 			direction = new Vector2(-1, Math.random() < 0.5 ? -1 : 1);
 		}
 	}

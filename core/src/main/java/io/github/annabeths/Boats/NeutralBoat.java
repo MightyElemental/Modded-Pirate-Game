@@ -14,7 +14,7 @@ public class NeutralBoat extends AIBoat {
 	public NeutralBoat(GameController controller, Vector2 initialPosition) {
 		super(controller, initialPosition, "img/entity/boat_neutral.png");
 
-		xpValue = 20;
+		xpValue = 20  * controller.getGameDifficulty().getPlayerXpMul();
 		plunderValue = 25;
 
 		this.HP = 100;

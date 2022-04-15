@@ -1,8 +1,6 @@
 package io.github.annabeths.GameScreens;
 
 import static io.github.annabeths.Level.GameMap.BORDER_BRIM;
-import static io.github.annabeths.Level.GameMap.MAP_HEIGHT;
-import static io.github.annabeths.Level.GameMap.MAP_WIDTH;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,7 +105,7 @@ public class GameController implements Screen {
 	}
 
 	final int weatherPerGeneration = 5;
-	final int timeBetweenWeatherGeneration = 5;
+	float timeBetweenWeatherGeneration = 5;
 	float timeSinceLastWeather = 0;
 
 	public void generateWeather() {
@@ -132,8 +130,8 @@ public class GameController implements Screen {
 		}
 
 		for (int i = 0; i < weatherPerGeneration; i++) {
-			physicsObjects.add(new Weather(this,
-					new Vector2(position.x + MathUtils.random(500), position.y + MathUtils.random(500)), direction));
+			physicsObjects.add(new Weather(this, new Vector2(position.x + MathUtils.random(500),
+					position.y + MathUtils.random(500)), direction));
 		}
 	}
 
@@ -141,7 +139,8 @@ public class GameController implements Screen {
 		// Generate a list of random college textures
 		// TODO: Make textures unique
 		List<String> collegeTextures = MathUtils.random.ints(5, 0, 9)
-				.mapToObj(tn -> String.format("img/world/castle/castle%d.png", (tn + 1))).collect(Collectors.toList());
+				.mapToObj(tn -> String.format("img/world/castle/castle%d.png", (tn + 1)))
+				.collect(Collectors.toList());
 
 		Vector2 collegePlayer = new Vector2(BORDER_BRIM, BORDER_BRIM);
 		Vector2 college1 = new Vector2(BORDER_BRIM, GameMap.getMapHeight() - 100 - BORDER_BRIM);
@@ -149,17 +148,19 @@ public class GameController implements Screen {
 		Vector2 college3 = new Vector2(GameMap.getMapWidth() - 100 - BORDER_BRIM,
 				GameMap.getMapHeight() - 100 - BORDER_BRIM);
 		List<Vector2> collegePos = Arrays.asList(college1, college2, college3);
-		Vector2 collegeBoss = new Vector2((GameMap.getMapWidth() - 100) / 2, (GameMap.getMapHeight() - 100) / 2);
+		Vector2 collegeBoss = new Vector2((GameMap.getMapWidth() - 100) / 2,
+				(GameMap.getMapHeight() - 100) / 2);
 
 		// get the texture for colleges to sit on
 		String islandTexture = "img/world/island.png";
-		PlayerCollege p = new PlayerCollege(collegePlayer, collegeTextures.get(0), islandTexture, this, false);
+		PlayerCollege p = new PlayerCollege(collegePlayer, collegeTextures.get(0), islandTexture,
+				this, false);
 		physicsObjects.add(p); // add college to physics object, for updates
 		colleges.add(p); // also add a reference to the colleges list
 
 		// create the boss college
-		bossCollege = new EnemyCollege(collegeBoss, collegeTextures.get(1), islandTexture, this, ProjectileData.BOSS,
-				200);
+		bossCollege = new EnemyCollege(collegeBoss, collegeTextures.get(1), islandTexture, this,
+				ProjectileData.BOSS, 200);
 
 		bossCollege.setInvulnerable(true);
 		physicsObjects.add(bossCollege);
@@ -167,8 +168,8 @@ public class GameController implements Screen {
 
 		// create some enemy colleges
 		for (int i = 0; i < 3; i++) {
-			EnemyCollege e = new EnemyCollege(collegePos.get(i), collegeTextures.get(i + 2), islandTexture, this,
-					ProjectileData.STOCK, 200);
+			EnemyCollege e = new EnemyCollege(collegePos.get(i), collegeTextures.get(i + 2),
+					islandTexture, this, ProjectileData.STOCK, 200);
 			physicsObjects.add(e);
 			colleges.add(e);
 		}
@@ -176,25 +177,26 @@ public class GameController implements Screen {
 		// create some powerups
 		for (int i = 0; i < 5; i++) {
 			// TODO: Prevent powerups spawning on top of colleges
-			physicsObjects.add(new Powerup(PowerupType.randomPower(), GameMap.getRandomPointInBounds()));
+			physicsObjects
+					.add(new Powerup(PowerupType.randomPower(), GameMap.getRandomPointInBounds()));
 		}
 
 		// create some boats
-		physicsObjects.add(new NeutralBoat(this, new Vector2(GameMap.getMapWidth() / 3, GameMap.getMapHeight() / 3)));
-		physicsObjects
-				.add(new NeutralBoat(this, new Vector2(2 * GameMap.getMapWidth() / 3, GameMap.getMapHeight() / 3)));
-		physicsObjects
-				.add(new NeutralBoat(this, new Vector2(GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
-		physicsObjects
-				.add(new EnemyBoat(this, new Vector2(2 * GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
+		physicsObjects.add(new NeutralBoat(this,
+				new Vector2(GameMap.getMapWidth() / 3, GameMap.getMapHeight() / 3)));
+		physicsObjects.add(new NeutralBoat(this,
+				new Vector2(2 * GameMap.getMapWidth() / 3, GameMap.getMapHeight() / 3)));
+		physicsObjects.add(new NeutralBoat(this,
+				new Vector2(GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
+		physicsObjects.add(new EnemyBoat(this,
+				new Vector2(2 * GameMap.getMapWidth() / 3, 2 * GameMap.getMapHeight() / 3)));
 
 		// add a kraken
-		// TODO: Make the kraken only appear on higher difficulties
-		physicsObjects.add(new Kraken(this, new Vector2(1500, 1500)));
+		if (getGameDifficulty().doesKrakenSpawn())
+			physicsObjects.add(new Kraken(this, new Vector2(1500, 1500)));
 
-		for (int i = 0; i < 75; i++) {
-			physicsObjects
-					.add(new Mine(this, new Vector2(MathUtils.random() * MAP_WIDTH, MathUtils.random() * MAP_HEIGHT)));
+		for (int i = 0; i < getGameDifficulty().getNumMines(); i++) {
+			physicsObjects.add(new Mine(this, GameMap.getRandomPointInBounds()));
 		}
 
 	}
@@ -218,7 +220,8 @@ public class GameController implements Screen {
 		UpdateObjects(delta); // update all physicsobjects
 		ClearKilledObjects(); // clear any 'killed' objects
 
-		if (bossCollege.isDead()) { // if the boss college is dead, the game is won
+		if (bossCollege.isDead()) { // if the boss college is dead, the game is
+									// won
 			game.gameScore = (int) getGameScore();
 			game.gotoScreen(Screens.gameWinScreen);
 		}
@@ -261,7 +264,8 @@ public class GameController implements Screen {
 
 		sr.setProjectionMatrix(camera.combined);
 		renderRays();
-		// this should be off during normal gameplay, but can be on to debug collisions
+		// this should be off during normal gameplay, but can be on to debug
+		// collisions
 		if (DebugUtils.DRAW_DEBUG_COLLISIONS)
 			DebugUtils.drawDebugCollisions(this, sr);
 	}
@@ -288,7 +292,8 @@ public class GameController implements Screen {
 	/**
 	 * Updates all physics objects in the {@link #physicsObjects} list
 	 * 
-	 * @param delta time since last frame
+	 * @param delta
+	 *            time since last frame
 	 */
 	public void UpdateObjects(float delta) {
 		for (int i = 0; i < physicsObjects.size(); i++) {
@@ -315,15 +320,16 @@ public class GameController implements Screen {
 	}
 
 	/**
-	 * Tests if player is in danger. The player is in danger if it is in range of an
-	 * {@link EnemyCollege} or an {@link EnemyBoat}.
+	 * Tests if player is in danger. The player is in danger if it is in range
+	 * of an {@link EnemyCollege} or an {@link EnemyBoat}.
 	 * 
 	 * @return {@code true} if within range of an enemy college or boat,
 	 *         {@code false} otherwise or player is invincible.
 	 * @author James Burnell
 	 */
 	public boolean isPlayerInDanger() {
-		return !playerBoat.isInvincible() && (isEnemyCollegeNearPlayer() || isEnemyBoatNearPlayer());
+		return !playerBoat.isInvincible()
+				&& (isEnemyCollegeNearPlayer() || isEnemyBoatNearPlayer());
 	}
 
 	/**
@@ -346,24 +352,27 @@ public class GameController implements Screen {
 	 * @author James Burnell
 	 */
 	public boolean isEnemyCollegeNearPlayer() {
-		return colleges.stream().filter(c -> c instanceof EnemyCollege).anyMatch(c -> c.isInRange(playerBoat));
+		return colleges.stream().filter(c -> c instanceof EnemyCollege)
+				.anyMatch(c -> c.isInRange(playerBoat));
 	}
 
 	/**
-	 * Called when a college is destroyed Makes sure the boss college will be made
-	 * vulnerable after the rest of the colleges are destroyed, and spawns a
-	 * friendly college in the place of the enemy college.
+	 * Called when a college is destroyed Makes sure the boss college will be
+	 * made vulnerable after the rest of the colleges are destroyed, and spawns
+	 * a friendly college in the place of the enemy college.
 	 * 
-	 * @param oldCollege the college that was destroyed
+	 * @param oldCollege
+	 *            the college that was destroyed
 	 */
 	public void CollegeDestroyed(EnemyCollege oldCollege) {
 		addXp(100);
 
-		boolean foundCollege = physicsObjects.stream().filter(c -> c instanceof EnemyCollege).anyMatch(c -> {
-			EnemyCollege e = (EnemyCollege) c;
-			// there is still a normal college alive
-			return e.getHealth() > 0 && !e.isInvulnerable();
-		});
+		boolean foundCollege = physicsObjects.stream().filter(c -> c instanceof EnemyCollege)
+				.anyMatch(c -> {
+					EnemyCollege e = (EnemyCollege) c;
+					// there is still a normal college alive
+					return e.getHealth() > 0 && !e.isInvulnerable();
+				});
 
 		if (!foundCollege) {
 			bossCollege.becomeVulnerable();
@@ -375,8 +384,8 @@ public class GameController implements Screen {
 
 	/**
 	 * Goes through all the {@link PhysicsObject} and removes ones from the list
-	 * that have had the flag set ({@link GameObject#removeOnNextTick()}) in a safe
-	 * manner
+	 * that have had the flag set ({@link GameObject#removeOnNextTick()}) in a
+	 * safe manner
 	 */
 	public void ClearKilledObjects() {
 		Iterator<PhysicsObject> p = physicsObjects.iterator();
@@ -423,7 +432,8 @@ public class GameController implements Screen {
 	 * @return {@code true} if player is in range, {@code false} otherwise
 	 */
 	public boolean isPlayerInRangeOfFriendlyCollege() {
-		return colleges.stream().filter(c -> c instanceof PlayerCollege).anyMatch(c -> c.isInRange(playerBoat));
+		return colleges.stream().filter(c -> c instanceof PlayerCollege)
+				.anyMatch(c -> c.isInRange(playerBoat));
 	}
 
 	public void gameOver() {
@@ -433,13 +443,15 @@ public class GameController implements Screen {
 	}
 
 	/**
-	 * Calculates the overall game score to be presented to the player at the end of
-	 * the game.
+	 * Calculates the overall game score to be presented to the player at the
+	 * end of the game.
 	 */
 	public float getGameScore() {
 		float powerupScore = playerBoat.collectedPowerups.values().stream().reduce(0, Integer::sum);
-		float healthScore = playerBoat.getHealth() - 100; // penalty for losing health
-		float timeScore = (timer - PLAY_TIME); // the shorter the play, the more points
+		float healthScore = playerBoat.getHealth() - 100; // penalty for losing
+															// health
+		float timeScore = (timer - PLAY_TIME); // the shorter the play, the more
+												// points
 		return getTotalPlunder() * 5 + getTotalXp() + timeScore + healthScore + powerupScore * 25;
 	}
 
@@ -447,10 +459,12 @@ public class GameController implements Screen {
 	 * Called to give a reference to a new {@link PhysicsObject} to the
 	 * {@link #physicsObjects} list
 	 * 
-	 * @param obj the object to add
+	 * @param obj
+	 *            the object to add
 	 */
 	public void NewPhysicsObject(PhysicsObject obj) {
-		// A new PhysicsObject has been created, add it to the list so it receives
+		// A new PhysicsObject has been created, add it to the list so it
+		// receives
 		// updates
 		physicsObjects.add(obj);
 	}
@@ -458,17 +472,19 @@ public class GameController implements Screen {
 	/**
 	 * Add XP to the player's amount.
 	 * 
-	 * @param amount the amount of XP to add
+	 * @param amount
+	 *            the amount of XP to add
 	 */
 	public void addXp(float amount) {
-		xp += amount;
-		totalXp += amount;
+		xp += amount * getGameDifficulty().getPlayerXpMul();
+		totalXp += amount * getGameDifficulty().getPlayerXpMul();
 	}
 
 	/**
 	 * Add plunder to the player's amount.
 	 * 
-	 * @param amount the amount of plunder to add
+	 * @param amount
+	 *            the amount of plunder to add
 	 */
 	public void addPlunder(float amount) {
 		plunder += amount;
@@ -478,7 +494,8 @@ public class GameController implements Screen {
 	/**
 	 * Remove plunder from the player's amount.
 	 * 
-	 * @param amount the amount of plunder to remove
+	 * @param amount
+	 *            the amount of plunder to remove
 	 */
 	public void subtractPlunder(float amount) {
 		plunder -= amount;
@@ -495,8 +512,8 @@ public class GameController implements Screen {
 	}
 
 	/**
-	 * Get how much XP the player has in this current level. i.e. the amount of XP
-	 * excluding the XP contributing to whole levels
+	 * Get how much XP the player has in this current level. i.e. the amount of
+	 * XP excluding the XP contributing to whole levels
 	 * 
 	 * @return the xp in the current level
 	 * @see #getXpLevel()
@@ -509,7 +526,8 @@ public class GameController implements Screen {
 	/**
 	 * Subtract a number of levels from the xp
 	 * 
-	 * @param levels the number of levels to remove
+	 * @param levels
+	 *            the number of levels to remove
 	 */
 	public void subtractXpLevels(int levels) {
 		int curr = getXpLevel();
@@ -521,7 +539,8 @@ public class GameController implements Screen {
 	/**
 	 * The the XP required to go from {@code level-1} to {@code level}.
 	 * 
-	 * @param level the target level
+	 * @param level
+	 *            the target level
 	 * @return the XP difference between previous level and this one
 	 */
 	public static int getXpRequiredForLevel(int level) {
@@ -529,8 +548,8 @@ public class GameController implements Screen {
 	}
 
 	/**
-	 * The total XP the needs to level up. Note this is NOT the remaining amount,
-	 * but the total amount to be able to level up.
+	 * The total XP the needs to level up. Note this is NOT the remaining
+	 * amount, but the total amount to be able to level up.
 	 * 
 	 * @return the xp required to level up
 	 */
@@ -546,7 +565,8 @@ public class GameController implements Screen {
 	}
 
 	/**
-	 * @param xp the xp to set
+	 * @param xp
+	 *            the xp to set
 	 */
 	public void setXp(float xp) {
 		this.xp = xp;
@@ -560,7 +580,8 @@ public class GameController implements Screen {
 	}
 
 	/**
-	 * @param plunder the plunder to set
+	 * @param plunder
+	 *            the plunder to set
 	 */
 	public void setPlunder(int plunder) {
 		this.plunder = plunder;
@@ -581,15 +602,15 @@ public class GameController implements Screen {
 	}
 
 	/**
-	 * Returns a game controller instance with minimal data filled out to allow the
-	 * HUD to function without taking up a lot of data.
+	 * Returns a game controller instance with minimal data filled out to allow
+	 * the HUD to function without taking up a lot of data.
 	 * 
 	 * @return The new GameController instance
 	 */
 	public static GameController getMockForHUD() {
 		GameController gc = new GameController();
-//		gc.playerBoat.activePowerups.put(PowerupType.DAMAGE, 7f);
-//		gc.playerBoat.activePowerups.put(PowerupType.RAPIDFIRE, 2f);
+		// gc.playerBoat.activePowerups.put(PowerupType.DAMAGE, 7f);
+		// gc.playerBoat.activePowerups.put(PowerupType.RAPIDFIRE, 2f);
 		gc.playerBoat.damage(13);
 		gc.addXp(50);
 		return gc;
