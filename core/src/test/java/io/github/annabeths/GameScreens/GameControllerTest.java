@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.RETURNS_MOCKS;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -22,6 +23,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.badlogic.gdx.Audio;
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
@@ -57,6 +60,8 @@ public class GameControllerTest {
 	public static void init() {
 		Gdx.gl = mock(GL20.class);
 		Gdx.graphics = mock(Graphics.class);
+		Gdx.files = mock(Files.class);
+		Gdx.audio = mock(Audio.class, withSettings().defaultAnswer(RETURNS_MOCKS));
 		TestHelper.initFonts();
 	}
 
@@ -219,6 +224,7 @@ public class GameControllerTest {
 		assertTrue(gc.isPlayerInDanger());
 
 		gc.playerBoat.receivePower(PowerupType.INVINCIBILITY);
+		gc.playerBoat.activatePowerup(PowerupType.INVINCIBILITY);
 		assertFalse(gc.isPlayerInDanger());
 
 		gc.playerBoat.setCenter(new Vector2(GameMap.getMapWidth() / 2, GameMap.getMapHeight() / 2));

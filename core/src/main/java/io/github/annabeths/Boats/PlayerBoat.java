@@ -1,10 +1,13 @@
 package io.github.annabeths.Boats;
 
+import static com.badlogic.gdx.Gdx.input;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Buttons;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -14,6 +17,7 @@ import io.github.annabeths.Colleges.College;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.GeneralControl.MathHelper;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
@@ -41,6 +45,9 @@ public class PlayerBoat extends Boat {
 	 */
 	protected float projSpdMul = 1;
 
+	/** The powerups the player has collected but not activated */
+	public Map<PowerupType, Integer> collectedPowerups = new HashMap<>();
+	/** The currently active powerups */
 	public Map<PowerupType, Float> activePowerups = new HashMap<>();
 
 	/**
@@ -92,10 +99,10 @@ public class PlayerBoat extends Boat {
 	 * @param delta the time since the last update in seconds
 	 */
 	public void processInput(float delta) {
-		boolean up = Gdx.input.isKeyPressed(Input.Keys.W);
-		boolean down = Gdx.input.isKeyPressed(Input.Keys.S);
-		boolean left = Gdx.input.isKeyPressed(Input.Keys.A);
-		boolean right = Gdx.input.isKeyPressed(Input.Keys.D);
+		boolean up = input.isKeyPressed(Keys.W);
+		boolean down = input.isKeyPressed(Keys.S);
+		boolean left = input.isKeyPressed(Keys.A);
+		boolean right = input.isKeyPressed(Keys.D);
 
 		int movMul = activePowerups.containsKey(PowerupType.SPEED) ? 2 : 1;
 
@@ -106,13 +113,28 @@ public class PlayerBoat extends Boat {
 
 		// make sure we don't fire when hovering over a button and clicking
 		// doesn't matter if we're over a button or not when pressing space
-		boolean click = Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)
+		boolean click = input.isButtonJustPressed(Buttons.LEFT)
 				&& !controller.hud.hoveringOverButton;
-		if ((click || Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-				&& shotDelay <= timeSinceLastShot) {
+		if ((click || input.isKeyJustPressed(Keys.SPACE)) && shotDelay <= timeSinceLastShot) {
 			Shoot();
 			timeSinceLastShot = 0;
 		}
+
+		processPowerupInput(delta);
+	}
+
+	public void processPowerupInput(float delta) {
+		PowerupType[] powerups = PowerupType.values();
+		if (input.isKeyJustPressed(Keys.NUM_1) || input.isKeyJustPressed(Keys.NUMPAD_1))
+			activatePowerup(powerups[0]);
+		if (input.isKeyJustPressed(Keys.NUM_2) || input.isKeyJustPressed(Keys.NUMPAD_2))
+			activatePowerup(powerups[1]);
+		if (input.isKeyJustPressed(Keys.NUM_3) || input.isKeyJustPressed(Keys.NUMPAD_3))
+			activatePowerup(powerups[2]);
+		if (input.isKeyJustPressed(Keys.NUM_4) || input.isKeyJustPressed(Keys.NUMPAD_4))
+			activatePowerup(powerups[3]);
+		if (input.isKeyJustPressed(Keys.NUM_5) || input.isKeyJustPressed(Keys.NUMPAD_5))
+			activatePowerup(powerups[4]);
 	}
 
 	/**
@@ -143,7 +165,7 @@ public class PlayerBoat extends Boat {
 		if (!isInvincible()) damage(Math.max(dmgToInflict - defense, 0));
 	}
 
-	/** @return {@code true} if player has invincibility powerup */
+	/** @return {@code true} if invincibility powerup is active */
 	public boolean isInvincible() {
 		return activePowerups.containsKey(PowerupType.INVINCIBILITY);
 	}
@@ -183,8 +205,8 @@ public class PlayerBoat extends Boat {
 	 * @return The angle in degrees
 	 */
 	public float getAngleBetweenMouseAndBoat() {
-		int mouseX = Gdx.input.getX();
-		int mouseY = Gdx.input.getY();
+		int mouseX = input.getX();
+		int mouseY = input.getY();
 		Vector3 pos3 = new Vector3(mouseX, mouseY, 0);
 		controller.camera.unproject(pos3);
 		Vector2 pos = new Vector2(pos3.x, pos3.y);
@@ -262,8 +284,43 @@ public class PlayerBoat extends Boat {
 		}
 	}
 
-	public void receivePower(PowerupType powerup) {
-		activePowerups.put(powerup, powerup.getDefaultTime());
+	/**
+	 * Activate a pre-collected powerup. Powerups of the same type cannot be
+	 * activated if one is already active.
+	 * 
+	 * @param powerup the powerup to activate
+	 * @return {@code true} if powerup is in the collection and was activated,
+	 *         {@code false} otherwise
+	 */
+	public boolean activatePowerup(PowerupType powerup) {
+		boolean canActivate = collectedPowerups.containsKey(powerup)
+				&& !activePowerups.containsKey(powerup);
+		if (canActivate || DebugUtils.FORCE_POWERUP) {
+			activePowerups.put(powerup, powerup.getDefaultTime());
+
+			collectedPowerups.replace(powerup, collectedPowerups.getOrDefault(powerup, 0) - 1);
+			collectedPowerups.entrySet().removeIf(e -> e.getValue() <= 0);
+
+			// TODO: change to use resource manager
+			Gdx.audio.newSound(Gdx.files.internal(powerup.getActivationAudio())).play(1f,
+					1f + MathUtils.random(-0.1f, 0.1f), 0f);
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Place a powerup into the collected powerup collection
+	 * 
+	 * @param powerup the powerup to collect
+	 * @return {@code true} if powerup was received, {@code false} if player already
+	 *         had maximum powerups stored
+	 */
+	public boolean receivePower(PowerupType powerup) {
+		int amount = collectedPowerups.getOrDefault(powerup, 0);
+		if (amount >= 2) return false;
+		collectedPowerups.put(powerup, amount + 1);
+		return true;
 	}
 
 }

@@ -25,6 +25,7 @@ public class DebugUtils {
 	public static boolean DRAW_DEBUG_COLLISIONS = false;
 	public static boolean DRAW_DEBUG_TEXT = false;
 	public static boolean ENEMY_COLLEGE_FIRE = true;
+	public static boolean FORCE_POWERUP = false;
 
 	/**
 	 * Load the default debug settings from the xml file. This is needed in the
@@ -46,6 +47,7 @@ public class DebugUtils {
 			DRAW_DEBUG_COLLISIONS = getSavedValue(e, "DRAW_DEBUG_COLLISIONS");
 			DRAW_DEBUG_TEXT = getSavedValue(e, "DRAW_DEBUG_TEXT");
 			ENEMY_COLLEGE_FIRE = getSavedValue(e, "ENEMY_COLLEGE_FIRE");
+			FORCE_POWERUP = getSavedValue(e, "FORCE_POWERUP");
 		} catch (NullPointerException e) {
 			System.err.println("Failed to load debug values");
 		}

@@ -29,12 +29,12 @@ public class Powerup extends PhysicsObject {
 	public void OnCollision(PhysicsObject other) {
 		if (other instanceof PlayerBoat) {
 			PlayerBoat boat = (PlayerBoat) other;
-			// give powerup based on PowerID
-			// then disappear
-			boat.receivePower(powerup);
 
-			System.out.println("Collected powerup - " + powerup.getName());
-			killOnNextTick = true;
+			// remove if player successfully received powerup
+			if (boat.receivePower(powerup)) {
+				System.out.println("Collected powerup - " + powerup.getName());
+				killOnNextTick = true;
+			}
 		}
 	}
 

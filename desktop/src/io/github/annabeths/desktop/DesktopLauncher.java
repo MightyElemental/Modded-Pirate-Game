@@ -21,6 +21,7 @@ public class DesktopLauncher {
 			DebugUtils.DRAW_DEBUG_TEXT = true;
 			DebugUtils.ENEMY_COLLEGE_FIRE = false;
 			DebugUtils.SKIP_SPLASH = true;
+			DebugUtils.FORCE_POWERUP = true;
 		}
 
 		Lwjgl3ApplicationConfiguration config = new Lwjgl3ApplicationConfiguration();
