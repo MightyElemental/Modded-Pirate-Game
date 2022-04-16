@@ -326,8 +326,8 @@ public class GameController implements Screen {
 	 * @author James Burnell
 	 */
 	public boolean isEnemyBoatNearPlayer() {
-		return physicsObjects.stream().anyMatch(p -> p instanceof EnemyBoat
-				&& p.getCenter().dst2(playerBoat.getCenter()) < 500 * 500);
+		return physicsObjects.stream().filter(p -> p instanceof EnemyBoat)
+				.anyMatch(p -> p.getCenter().dst2(playerBoat.getCenter()) < 500 * 500);
 	}
 
 	/**
@@ -338,14 +338,16 @@ public class GameController implements Screen {
 	 * @author James Burnell
 	 */
 	public boolean isEnemyCollegeNearPlayer() {
-		return colleges.stream()
-				.anyMatch(c -> c instanceof EnemyCollege && c.isInRange(playerBoat));
+		return colleges.stream().filter(c -> c instanceof EnemyCollege)
+				.anyMatch(c -> c.isInRange(playerBoat));
 	}
 
 	/**
 	 * Called when a college is destroyed Makes sure the boss college will be made
 	 * vulnerable after the rest of the colleges are destroyed, and spawns a
 	 * friendly college in the place of the enemy college.
+	 * 
+	 * @param oldCollege the college that was destroyed
 	 */
 	public void CollegeDestroyed(EnemyCollege oldCollege) {
 		AddXP(100);
@@ -460,13 +462,25 @@ public class GameController implements Screen {
 	}
 
 	/**
+	 * Subtract a number of levels from the xp
+	 * 
+	 * @param levels the number of levels to remove
+	 */
+	public void subtractXpLevels(int levels) {
+		int curr = getXpLevel();
+		int diff = curr - levels;
+		// find the difference between xp levels and subtract that amount of xp
+		xp -= (curr * (curr + 6)) - (diff * (diff + 6));
+	}
+
+	/**
 	 * The the XP required to go from {@code level-1} to {@code level}.
 	 * 
-	 * @param the target level
+	 * @param level the target level
 	 * @return the XP difference between previous level and this one
 	 */
 	public static int getXpRequiredForLevel(int level) {
-		return 2 * level + 7;
+		return 2 * (level - 1) + 7;
 	}
 
 	/**
@@ -476,7 +490,7 @@ public class GameController implements Screen {
 	 * @return the xp required to level up
 	 */
 	public float getXpRequiredForNextLevel() {
-		return getXpRequiredForLevel(getXpLevel());
+		return getXpRequiredForLevel(getXpLevel() + 1);
 	}
 
 }

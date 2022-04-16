@@ -202,6 +202,7 @@ public class HUD extends GameObject {
 		hStyle.knobAfter = new TextureRegionDrawable(barKnob(Color.BLACK));
 		healthBar = new ProgressBar(0, gc.playerBoat.getMaxHealth(), 1, false, hStyle);
 		healthBar.setBounds(812, 92, 377, 35);
+		healthBar.setAnimateDuration(0.5f);
 
 		TextTooltip tip = new TextTooltip(" How much health you have ", toolTipStyle);
 		tip.setInstant(true);
@@ -212,6 +213,7 @@ public class HUD extends GameObject {
 		xpStyle.knobAfter = new TextureRegionDrawable(barKnob(Color.BLACK));
 		xpBar = new ProgressBar(0, gc.getXpRequiredForNextLevel(), 0.5f, false, xpStyle);
 		xpBar.setBounds(812, 24, 377, 35);
+		xpBar.setAnimateDuration(0.25f);
 
 		tip = new TextTooltip(" The total experience you have ", toolTipStyle);
 		tip.setInstant(true);
@@ -407,8 +409,8 @@ public class HUD extends GameObject {
 		upgradeButton1.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if (gc.xp >= upgrade1cost) {
-					gc.xp -= upgrade1cost;
+				if (gc.getXpLevel() >= upgrade1cost) {
+					gc.subtractXpLevels(upgrade1cost);
 					BuyUpgrade(1);
 					RandomiseUpgrades();
 				}
@@ -433,8 +435,8 @@ public class HUD extends GameObject {
 		upgradeButton2.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if (gc.xp >= upgrade2cost) {
-					gc.xp -= upgrade2cost;
+				if (gc.getXpLevel() >= upgrade2cost) {
+					gc.subtractXpLevels(upgrade2cost);
 					BuyUpgrade(2);
 					RandomiseUpgrades();
 				}
@@ -477,7 +479,7 @@ public class HUD extends GameObject {
 		String u1a = (upgrade == Upgrades.projectiledamage || upgrade == Upgrades.projectilespeed)
 				? (amount * 100 + "%")
 				: amount + "";
-		return String.format("Upgrade:\n%s + %s\nCost:\n%d XP", upgrade.label, u1a, cost);
+		return String.format("Upgrade:\n%s + %s\nCost:\n%d Levels", upgrade.label, u1a, cost);
 	}
 
 	public void updateShopMenu() {
@@ -509,32 +511,32 @@ public class HUD extends GameObject {
 		case 0: // Max Health
 			upgrade1 = Upgrades.maxhealth;
 			upgrade1amount = 10;
-			upgrade1cost = 25;
+			upgrade1cost = 5;
 			break;
 		case 1: // Speed
 			upgrade1 = Upgrades.speed;
 			upgrade1amount = 6.25f;
-			upgrade1cost = 25;
+			upgrade1cost = 5;
 			break;
 		case 2: // Turn Speed
 			upgrade1 = Upgrades.turnspeed;
 			upgrade1amount = 7.5f;
-			upgrade1cost = 25;
+			upgrade1cost = 5;
 			break;
 		case 3: // Damage
 			upgrade1 = Upgrades.projectiledamage;
 			upgrade1amount = 0.1f;
-			upgrade1cost = 25;
+			upgrade1cost = 5;
 			break;
 		case 4: // Speed
 			upgrade1 = Upgrades.projectilespeed;
 			upgrade1amount = 0.05f;
-			upgrade1cost = 25;
+			upgrade1cost = 5;
 			break;
 		case 5: // Defense
 			upgrade1 = Upgrades.defense;
 			upgrade1amount = 1f;
-			upgrade1cost = 35;
+			upgrade1cost = 6;
 			break;
 		}
 
@@ -542,32 +544,32 @@ public class HUD extends GameObject {
 		case 0: // Max Health
 			upgrade2 = Upgrades.maxhealth;
 			upgrade2amount = 10;
-			upgrade2cost = 25;
+			upgrade2cost = 5;
 			break;
 		case 1: // Speed
 			upgrade2 = Upgrades.speed;
 			upgrade2amount = 6.25f;
-			upgrade2cost = 25;
+			upgrade2cost = 5;
 			break;
 		case 2: // Turn Speed
 			upgrade2 = Upgrades.turnspeed;
 			upgrade2amount = 7.5f;
-			upgrade2cost = 25;
+			upgrade2cost = 5;
 			break;
 		case 3: // Damage
 			upgrade2 = Upgrades.projectiledamage;
 			upgrade2amount = 0.1f;
-			upgrade2cost = 25;
+			upgrade2cost = 5;
 			break;
 		case 4: // Speed
 			upgrade2 = Upgrades.projectilespeed;
 			upgrade2amount = 0.05f;
-			upgrade2cost = 25;
+			upgrade2cost = 5;
 			break;
 		case 5: // Defense
 			upgrade2 = Upgrades.defense;
 			upgrade2amount = 1f;
-			upgrade2cost = 35;
+			upgrade2cost = 6;
 			break;
 		}
 

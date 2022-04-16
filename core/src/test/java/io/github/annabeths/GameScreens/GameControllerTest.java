@@ -296,4 +296,52 @@ public class GameControllerTest {
 		assertEquals(1, gc.rays.size());
 	}
 
+	@Test
+	public void testGetXpLevel() {
+		gc.xp = 0;
+		assertEquals(0, gc.getXpLevel());
+		gc.xp = 100;
+		assertEquals(7, gc.getXpLevel());
+	}
+
+	@Test
+	public void testGetXpInLevel() {
+		gc.xp = 0;
+		assertEquals(0, gc.getXpInLevel());
+		gc.xp = 91;
+		assertEquals(0, gc.getXpInLevel());
+		gc.xp = 100;
+		assertEquals(9, gc.getXpInLevel());
+	}
+
+	@Test
+	public void testSubtractXPLevels() {
+		gc.xp = 91;
+		gc.subtractXpLevels(1);
+		assertEquals(72, gc.xp);
+		gc.subtractXpLevels(2);
+		assertEquals(40, gc.xp);
+	}
+
+	@Test
+	public void getXpRequiredForLevel() {
+		assertEquals(7, GameController.getXpRequiredForLevel(1));
+		assertEquals(9, GameController.getXpRequiredForLevel(2));
+		assertEquals(11, GameController.getXpRequiredForLevel(3));
+	}
+
+	@Test
+	public void testGetXpRequiredForNextLevel() {
+		gc.xp = 0;
+		assertEquals(7, gc.getXpRequiredForNextLevel());
+		gc.xp = 7;
+		assertEquals(9, gc.getXpRequiredForNextLevel());
+		gc.xp = 8;
+		assertEquals(9, gc.getXpRequiredForNextLevel());
+		gc.xp = 9;
+		assertEquals(9, gc.getXpRequiredForNextLevel());
+		gc.xp = 16;
+		assertEquals(11, gc.getXpRequiredForNextLevel());
+	}
+
 }
