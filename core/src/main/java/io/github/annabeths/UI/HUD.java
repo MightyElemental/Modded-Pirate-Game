@@ -3,7 +3,12 @@ package io.github.annabeths.UI;
 import static io.github.annabeths.GeneralControl.ResourceManager.font;
 import static io.github.annabeths.GeneralControl.ResourceManager.getTexture;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.Random;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
@@ -27,9 +32,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip.TextTooltipStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 
+import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
@@ -54,6 +61,8 @@ public class HUD extends GameObject {
 
 	/* HUD objects */
 
+	TextTooltipStyle toolTipStyle;
+
 	/** The image that serves as a base for the HUD */
 	Image hudBg;
 
@@ -64,7 +73,10 @@ public class HUD extends GameObject {
 	Label timerText;
 	Label xpText;
 	Label plunderText;
-	Label powerText;
+
+	Map<PowerupType, Image> powerupIcons;
+	Map<PowerupType, Label> powerupQuanityLabels;
+	Map<PowerupType, Label> powerupTimeLabels;
 
 	ProgressBar healthBar;
 	ProgressBar xpBar;
@@ -88,6 +100,8 @@ public class HUD extends GameObject {
 
 		lblStyleBlk = new LabelStyle(font, Color.BLACK);
 		lblStyleWht = new LabelStyle(font, Color.WHITE);
+		toolTipStyle = new TextTooltipStyle(lblStyleBlk,
+				new TextureRegionDrawable(getTexture("ui/button.png")));
 
 		stage = new Stage(new FillViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 		Gdx.input.setInputProcessor(stage);
@@ -105,9 +119,7 @@ public class HUD extends GameObject {
 		timerText = new Label("#", lblStyleBlk);
 		xpText = new Label("#", lblStyleWht);
 		plunderText = new Label("#", lblStyleBlk);
-		powerText = new Label("#", lblStyleBlk);
 
-		// TODO: Fix scaling
 		hpText.setPosition(820, 88);
 		hpText.setFontScale(0.9f);
 		timerText.setPosition(1920 - 158, 172);
@@ -118,32 +130,92 @@ public class HUD extends GameObject {
 		xpText.setFontScale(0.9f);
 
 		setupProgressBars();
+		setupPowerups();
+		setupShopButton();
 
 		hudGroup.addActor(hpText);
 		hudGroup.addActor(timerText);
 		hudGroup.addActor(xpText);
 		hudGroup.addActor(plunderText);
-		// hudGroup.addActor(powerText);
 
 		hudGroup.setWidth(stage.getViewport().getScreenWidth());
 		hudGroup.setScale(stage.getViewport().getScreenWidth() / 1920f);
 		stage.addActor(hudGroup);
-
-		DrawUpgradeButton();
 	}
 
+	/** Set up the powerup section of the HUD */
+	public void setupPowerups() {
+		List<PowerupType> powerups = Arrays.asList(PowerupType.values());
+		// initialize icon images
+		powerupIcons = powerups.stream().collect(
+				Collectors.toMap(Function.identity(), p -> new Image(getTexture(p.getTexture()))));
+		powerupQuanityLabels = powerups.stream()
+				.collect(Collectors.toMap(Function.identity(), p -> new Label("", lblStyleBlk)));
+		powerupTimeLabels = powerups.stream()
+				.collect(Collectors.toMap(Function.identity(), p -> new Label("", lblStyleWht)));
+
+		int startX = 50;
+		int startY = 190;
+		int gap = 68;
+
+		// place the powerupIcons on the HUD
+		powerupIcons.values().forEach(p -> p.setSize(50, 50));
+		// adjust font size for quantity labels
+		powerupQuanityLabels.values().forEach(p -> p.setFontScale(1.5f));
+		int i = 0;
+		for (int y = 0; y < 3; y++) {
+			PowerupType pt = powerups.get(i++);
+			powerupIcons.get(pt).setPosition(startX, startY - gap * y, Align.center);
+			powerupQuanityLabels.get(pt).setPosition(startX + 30, startY - gap * y - 10,
+					Align.bottomLeft);
+			powerupTimeLabels.get(pt).setBounds(startX - 25, startY - 25 - gap * y, 50, 50);
+		}
+		for (int y = 0; y < 2; y++) {
+			PowerupType pt = powerups.get(i++);
+			powerupIcons.get(pt).setPosition(startX + 125, startY - gap * (y + 1), Align.center);
+			powerupQuanityLabels.get(pt).setPosition(startX + 30 + 125, startY - gap * (y + 1) - 10,
+					Align.bottomLeft);
+			powerupTimeLabels.get(pt).setBounds(startX - 25 + 125, startY - 25 - gap * (y + 1), 50,
+					50);
+		}
+		powerupTimeLabels.values().forEach(l -> l.setAlignment(Align.center));
+
+		// create tool tips
+		for (i = 0; i < powerupIcons.size(); i++) {
+			PowerupType p = PowerupType.values()[i];
+			TextTooltip tip = new TextTooltip(
+					String.format(" %s\n Press %d to activate ", p.getName(), i + 1), toolTipStyle);
+			tip.setInstant(true);
+			powerupIcons.get(p).addListener(tip);
+		}
+
+		// add icons to HUD
+		powerupIcons.values().forEach(p -> hudGroup.addActor(p));
+		// add labels to HUD
+		powerupQuanityLabels.values().forEach(l -> hudGroup.addActor(l));
+	}
+
+	/** Set up the display bars such as health and XP */
 	public void setupProgressBars() {
 		ProgressBarStyle hStyle = new ProgressBarStyle();
-		hStyle.knobBefore = new TextureRegionDrawable(barKnob(Color.SCARLET));
+		hStyle.knobBefore = new TextureRegionDrawable(barKnob(Color.WHITE));
 		hStyle.knobAfter = new TextureRegionDrawable(barKnob(Color.BLACK));
 		healthBar = new ProgressBar(0, gc.playerBoat.getMaxHealth(), 1, false, hStyle);
 		healthBar.setBounds(812, 92, 377, 35);
+
+		TextTooltip tip = new TextTooltip(" How much health you have ", toolTipStyle);
+		tip.setInstant(true);
+		healthBar.addListener(tip);
 
 		ProgressBarStyle xpStyle = new ProgressBarStyle();
 		xpStyle.knobBefore = new TextureRegionDrawable(barKnob(Color.FOREST));
 		xpStyle.knobAfter = new TextureRegionDrawable(barKnob(Color.BLACK));
 		xpBar = new ProgressBar(0, gc.getXpRequiredForNextLevel(), 0.5f, false, xpStyle);
 		xpBar.setBounds(812, 24, 377, 35);
+
+		tip = new TextTooltip(" The total experience you have ", toolTipStyle);
+		tip.setInstant(true);
+		xpBar.addListener(tip);
 
 		hudGroup.addActor(healthBar);
 		hudGroup.addActor(xpBar);
@@ -172,17 +244,27 @@ public class HUD extends GameObject {
 		timerText.setText(generateTimeString((int) gc.timer));
 		plunderText.setText("$" + Integer.toString(gc.plunder));
 
-		// TODO: Remove powerup text and replace with icons
-		StringBuilder powerupText = new StringBuilder();
-		gc.playerBoat.activePowerups.forEach((k, v) -> {
-			String line = String.format("%s %.1fs\n", k.getName(), v);
-			powerupText.append(line);
+		powerupIcons.forEach((p, i) -> {
+			boolean f = gc.playerBoat.activePowerups.containsKey(p);
+			i.setColor(f ? Color.DARK_GRAY : Color.WHITE);
 		});
-		powerText.setText(powerupText.toString());
+		powerupQuanityLabels.forEach((p, l) -> {
+			l.setText("x" + gc.playerBoat.collectedPowerups.getOrDefault(p, 0));
+		});
+		powerupTimeLabels.forEach((p, l) -> {
+			float t = gc.playerBoat.activePowerups.getOrDefault(p, 0f);
+			if (t > 0) {// add label if powerup is active
+				l.setText((int) t + "s");
+				if (!l.hasParent()) hudGroup.addActor(l);
+			} else {// remove powerup if powerup is inactive
+				l.remove();
+			}
+		});
 
 		/* Update progress bars */
 		healthBar.setRange(0, gc.playerBoat.getMaxHealth());
 		healthBar.setValue(gc.playerBoat.getHealth());
+		healthBar.setColor(gc.playerBoat.isInvincible() ? Color.ROYAL : Color.SCARLET);
 		xpBar.setRange(0, gc.getXpRequiredForNextLevel());
 		xpBar.setValue(gc.getXpInLevel());
 	}
@@ -201,6 +283,7 @@ public class HUD extends GameObject {
 
 	@Override
 	public void Draw(SpriteBatch batch) {
+		stage.act();
 		stage.draw();
 
 		Camera camera = stage.getViewport().getCamera();
@@ -211,9 +294,8 @@ public class HUD extends GameObject {
 		gc.batch.end();
 	}
 
-	/* UI & Upgrade Functions */
-
-	public void DrawUpgradeButton() {
+	/** Set up the shop button on the HUD */
+	public void setupShopButton() {
 		Drawable buttonBg = new TextureRegionDrawable(getTexture("ui/button.png"));
 		// Create the upgrade button and add it to the UI stage
 		shopButtonStyle = new TextButtonStyle();
@@ -222,8 +304,10 @@ public class HUD extends GameObject {
 		shopButtonStyle.up = buttonBg;
 		shopButton = new TextButton("Shop", shopButtonStyle);
 
-		shopButton.addListener(
-				new TextTooltip("This is some text", new TextTooltipStyle(lblStyleBlk, buttonBg)));
+		TextTooltip tip = new TextTooltip(" Buy upgrades with plunder and experience! ",
+				toolTipStyle);
+		tip.setInstant(true);
+		shopButton.addListener(tip);
 
 		shopButton.addListener(new ClickListener() {
 			@Override
@@ -250,8 +334,8 @@ public class HUD extends GameObject {
 			}
 		});
 
-		shopButton.setScale(1.5f);
-		shopButton.setPosition(1920 - 160, 10);
+		// shopButton.setPosition(1655, 16);
+		shopButton.setBounds(1658, 15, 250, 75);
 
 		hudGroup.addActor(shopButton);
 	}
@@ -262,11 +346,11 @@ public class HUD extends GameObject {
 
 		// Initialize the menu if it hasn't been, this avoids repeatedly creating new
 		// buttons.
-		if (!upgradeMenuInitialised) InitialiseMenu();
+		if (!upgradeMenuInitialised) initialiseShopMenu();
 
 		// Add/re-add the UI elements back to the stage
 		if (upgradeMenuOpen) {
-			UpdateMenu();
+			updateShopMenu();
 			stage.addActor(upgradeMenuBackground);
 			stage.addActor(upgradeButton1);
 			stage.addActor(upgradeButton2);
@@ -282,7 +366,7 @@ public class HUD extends GameObject {
 	 * Creates the menu for the first time, and also generates the first set of
 	 * upgrades.
 	 */
-	public void InitialiseMenu() {
+	public void initialiseShopMenu() {
 		// Create the background
 		upgradeMenuBackground = new Image(getTexture("ui/background.png"));
 		upgradeMenuBackground.setPosition(
@@ -381,30 +465,29 @@ public class HUD extends GameObject {
 		stage.addActor(upgradeButton2);
 	}
 
-	public void UpdateMenu() {
-		// Update the upgrade buttons
+	/**
+	 * Generates a string to present upgrade purchase information to the user.
+	 * 
+	 * @param upgrade the type of upgrade to buy
+	 * @param amount how much the upgrade will increase
+	 * @param cost how much the upgrade will cost
+	 * @return The upgrade purchase information
+	 */
+	public static String getUpgradeText(Upgrades upgrade, float amount, int cost) {
+		String u1a = (upgrade == Upgrades.projectiledamage || upgrade == Upgrades.projectilespeed)
+				? (amount * 100 + "%")
+				: amount + "";
+		return String.format("Upgrade:\n%s + %s\nCost:\n%d XP", upgrade.label, u1a, cost);
+	}
 
-		upgradeButton1.setText(
-				!(upgrade1 == Upgrades.projectiledamage || upgrade1 == Upgrades.projectilespeed)
-						? "Upgrade:\n" + upgrade1.label + " + " + upgrade1amount + "\nCost:\n"
-								+ upgrade1cost + " XP"
-						: "Upgrade:\n" + upgrade1.label + " + " + upgrade1amount * 100
-								+ "%\nCost:\n" + upgrade1cost + " XP");
-
-		upgradeButton1.setScale(1f, 1f);
+	public void updateShopMenu() {
+		upgradeButton1.setText(getUpgradeText(upgrade1, upgrade1amount, upgrade1cost));
 		upgradeButton1.setPosition(
 				Gdx.graphics.getWidth() / 2 - upgradeMenuBackground.getWidth() / 2 + 15,
 				Gdx.graphics.getHeight() / 2 + upgradeMenuBackground.getHeight() / 2
 						- upgradeButton1.getHeight() - 15);
 
-		upgradeButton2.setText(
-				!(upgrade2 == Upgrades.projectiledamage || upgrade2 == Upgrades.projectilespeed)
-						? "Upgrade:\n" + upgrade2.label + " + " + upgrade2amount + "\nCost:\n"
-								+ upgrade2cost + " XP"
-						: "Upgrade:\n" + upgrade2.label + " + " + upgrade2amount * 100
-								+ "%\nCost:\n" + upgrade2cost + " XP");
-
-		upgradeButton2.setScale(1f, 1f);
+		upgradeButton2.setText(getUpgradeText(upgrade2, upgrade2amount, upgrade2cost));
 		upgradeButton2.setPosition(Gdx.graphics.getWidth() / 2 + 35, Gdx.graphics.getHeight() / 2
 				+ upgradeMenuBackground.getHeight() / 2 - upgradeButton2.getHeight() - 15);
 	}
@@ -488,7 +571,7 @@ public class HUD extends GameObject {
 			break;
 		}
 
-		UpdateMenu();
+		updateShopMenu();
 	}
 
 	public void resize(int width, int height) {
