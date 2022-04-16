@@ -6,7 +6,7 @@ public class MathHelper {
 	/**
 	 * Normalize an angle between 0-360 degrees
 	 * 
-	 * @param the angle
+	 * @param angle the angle to normalize
 	 * @return the normalized angle
 	 */
 	public static float normalizeAngle(float angle) {
