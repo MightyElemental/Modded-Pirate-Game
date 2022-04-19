@@ -2,8 +2,11 @@ package io.github.annabeths.GeneralControl;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 
 import io.github.annabeths.Collectables.PowerupType;
 
@@ -19,6 +22,8 @@ public class ResourceManager {
 	public static BitmapFont font;
 	public static BitmapFont debugFont;
 
+	public static Texture nullTex;
+
 	// Prevent instantiation
 	private ResourceManager() {
 	}
@@ -32,14 +37,18 @@ public class ResourceManager {
 		assets = assetMan;
 
 		long time = DebugUtils.timeCodeMs(() -> {
-			font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
-			debugFont = new BitmapFont(Gdx.files.internal("fonts/cozette.fnt"), false);
-			debugFont.getData().setScale(0.5f);
+			try {
+				font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
+				debugFont = new BitmapFont(Gdx.files.internal("fonts/cozette.fnt"), false);
+				debugFont.getData().setScale(0.5f);
+			} catch (GdxRuntimeException e) {
+			}
 		});
 
 		System.out.printf("Loaded fonts in %dms\n", time);
 
 		time = DebugUtils.timeCodeMs(() -> {
+			nullTex = genNullTex();
 			/* World Textures */
 			loadWorldTexture("island.png");
 			loadWorldTexture("grass.png");
@@ -107,13 +116,30 @@ public class ResourceManager {
 	 * Get a pre-loaded texture from a location
 	 * 
 	 * @param location the location of the texture
-	 * @return The Texture object, or {@code null} if the location is null
+	 * @return The Texture object, or {@link #nullTex} if the location is null or
+	 *         file is missing
 	 * 
 	 */
 	public static Texture getTexture(String location) {
-		if (location == null || assets == null) return null;
+		if (location == null || assets == null) return nullTex;
 		if (assets.contains(location)) return assets.get(location);
-		return assets.get(location);
+		return nullTex;
+	}
+
+	/**
+	 * Generates a 2x2 texture to be used when a texture is not loaded.
+	 * 
+	 * @return the null texture
+	 */
+	public static Texture genNullTex() {
+		Pixmap p = new Pixmap(2, 2, Pixmap.Format.RGB888);
+		p.setColor(Color.PURPLE);
+		p.drawPixel(0, 0);
+		p.drawPixel(1, 1);
+		p.setColor(Color.BLACK);
+		p.drawPixel(1, 0);
+		p.drawPixel(0, 1);
+		return new Texture(p);
 	}
 
 }
