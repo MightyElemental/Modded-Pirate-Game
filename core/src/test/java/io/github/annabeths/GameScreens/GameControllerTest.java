@@ -6,9 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.RETURNS_MOCKS;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -23,12 +24,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.badlogic.gdx.Audio;
-import com.badlogic.gdx.Files;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -58,11 +56,7 @@ public class GameControllerTest {
 
 	@BeforeAll
 	public static void init() {
-		Gdx.gl = mock(GL20.class);
-		Gdx.graphics = mock(Graphics.class);
-		Gdx.files = mock(Files.class);
-		Gdx.audio = mock(Audio.class, withSettings().defaultAnswer(RETURNS_MOCKS));
-		TestHelper.initFonts();
+		TestHelper.setupEnv();
 	}
 
 	@BeforeEach
@@ -342,6 +336,15 @@ public class GameControllerTest {
 		assertEquals(9, gc.getXpRequiredForNextLevel());
 		gc.xp = 16;
 		assertEquals(11, gc.getXpRequiredForNextLevel());
+	}
+
+	@Test
+	public void testResize() {
+		gc.camera = mock(OrthographicCamera.class);
+		gc.hud = mock(HUD.class);
+		gc.resize(100, 100);
+		verify(gc.camera, times(1)).setToOrtho(anyBoolean(), anyFloat(), anyFloat());
+		verify(gc.hud, times(1)).resize(anyInt(), anyInt());
 	}
 
 }

@@ -6,7 +6,6 @@ import static io.github.annabeths.GeneralControl.ResourceManager.getTexture;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -16,6 +15,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -51,11 +51,9 @@ public class HUD extends GameObject {
 	TextButton shopButton;
 	TextButtonStyle shopButtonStyle;
 
+	TextButtonStyle upgradeButtonStyle;
 	TextButton upgradeButton1;
-	TextButtonStyle upgradeButton1Style;
-
 	TextButton upgradeButton2;
-	TextButtonStyle upgradeButton2Style;
 
 	Image upgradeMenuBackground;
 
@@ -98,10 +96,7 @@ public class HUD extends GameObject {
 	public HUD(GameController gameController) {
 		gc = gameController;
 
-		lblStyleBlk = new LabelStyle(font, Color.BLACK);
-		lblStyleWht = new LabelStyle(font, Color.WHITE);
-		toolTipStyle = new TextTooltipStyle(lblStyleBlk,
-				new TextureRegionDrawable(getTexture("ui/button.png")));
+		setupStyles();
 
 		stage = new Stage(new FillViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 		Gdx.input.setInputProcessor(stage);
@@ -114,7 +109,17 @@ public class HUD extends GameObject {
 		hudGroup = new Group();
 		hudGroup.addActor(hudBg);
 
-		// HUD text
+		setupProgressBars(); // health and xp bars
+		setupPowerups(); // powerup display
+		setupShopButton(); // button to open shop
+		setupLabels(); // hud text
+
+		hudGroup.setWidth(stage.getViewport().getScreenWidth());
+		hudGroup.setScale(stage.getViewport().getScreenWidth() / 1920f);
+		stage.addActor(hudGroup);
+	}
+
+	public void setupLabels() {
 		hpText = new Label("#", lblStyleWht);
 		timerText = new Label("#", lblStyleBlk);
 		xpText = new Label("#", lblStyleWht);
@@ -129,18 +134,27 @@ public class HUD extends GameObject {
 		xpText.setPosition(820, 18);
 		xpText.setFontScale(0.9f);
 
-		setupProgressBars();
-		setupPowerups();
-		setupShopButton();
-
 		hudGroup.addActor(hpText);
 		hudGroup.addActor(timerText);
 		hudGroup.addActor(xpText);
 		hudGroup.addActor(plunderText);
+	}
 
-		hudGroup.setWidth(stage.getViewport().getScreenWidth());
-		hudGroup.setScale(stage.getViewport().getScreenWidth() / 1920f);
-		stage.addActor(hudGroup);
+	public void setupStyles() {
+		Drawable buttonBg = new TextureRegionDrawable(getTexture("ui/button.png"));
+		lblStyleBlk = new LabelStyle(font, Color.BLACK);
+		lblStyleWht = new LabelStyle(font, Color.WHITE);
+		toolTipStyle = new TextTooltipStyle(lblStyleBlk, buttonBg);
+
+		shopButtonStyle = new TextButtonStyle();
+		shopButtonStyle.font = font;
+		shopButtonStyle.fontColor = Color.BLACK;
+		shopButtonStyle.up = buttonBg;
+
+		upgradeButtonStyle = new TextButtonStyle();
+		upgradeButtonStyle.font = font;
+		upgradeButtonStyle.fontColor = Color.BLACK;
+		upgradeButtonStyle.up = new TextureRegionDrawable(getTexture("ui/upgradebutton.png"));
 	}
 
 	/** Set up the powerup section of the HUD */
@@ -290,20 +304,14 @@ public class HUD extends GameObject {
 
 		Camera camera = stage.getViewport().getCamera();
 
-		gc.batch.setProjectionMatrix(camera.combined);
-		gc.batch.begin();
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
 		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawDebugText(gc, batch);
-		gc.batch.end();
+		batch.end();
 	}
 
 	/** Set up the shop button on the HUD */
 	public void setupShopButton() {
-		Drawable buttonBg = new TextureRegionDrawable(getTexture("ui/button.png"));
-		// Create the upgrade button and add it to the UI stage
-		shopButtonStyle = new TextButtonStyle();
-		shopButtonStyle.font = font;
-		shopButtonStyle.fontColor = Color.BLACK;
-		shopButtonStyle.up = buttonBg;
 		shopButton = new TextButton("Shop", shopButtonStyle);
 
 		TextTooltip tip = new TextTooltip(" Buy upgrades with plunder and experience! ",
@@ -324,7 +332,7 @@ public class HUD extends GameObject {
 			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
 				if (pointer == -1) {
 					hoveringOverButton = true;
-					System.out.println("Hovering over");
+					// System.out.println("Hovering over");
 				}
 			}
 
@@ -348,7 +356,7 @@ public class HUD extends GameObject {
 
 		// Initialize the menu if it hasn't been, this avoids repeatedly creating new
 		// buttons.
-		if (!upgradeMenuInitialised) initialiseShopMenu();
+		if (!upgradeMenuInitialised) setupShopMenu();
 
 		// Add/re-add the UI elements back to the stage
 		if (upgradeMenuOpen) {
@@ -368,7 +376,7 @@ public class HUD extends GameObject {
 	 * Creates the menu for the first time, and also generates the first set of
 	 * upgrades.
 	 */
-	public void initialiseShopMenu() {
+	public void setupShopMenu() {
 		// Create the background
 		upgradeMenuBackground = new Image(getTexture("ui/background.png"));
 		upgradeMenuBackground.setPosition(
@@ -393,18 +401,8 @@ public class HUD extends GameObject {
 		});
 
 		// Create the upgrade buttons
-		upgradeButton1Style = new TextButtonStyle();
-		upgradeButton1Style.font = font;
-		upgradeButton1Style.fontColor = Color.BLACK;
-		upgradeButton1Style.up = new TextureRegionDrawable(getTexture("ui/upgradebutton.png"));
-
-		upgradeButton2Style = new TextButtonStyle();
-		upgradeButton2Style.font = font;
-		upgradeButton2Style.fontColor = Color.BLACK;
-		upgradeButton2Style.up = new TextureRegionDrawable(getTexture("ui/upgradebutton.png"));
-
-		upgradeButton1 = new TextButton("", upgradeButton1Style);
-		upgradeButton2 = new TextButton("", upgradeButton2Style);
+		upgradeButton1 = new TextButton("", upgradeButtonStyle);
+		upgradeButton2 = new TextButton("", upgradeButtonStyle);
 
 		upgradeButton1.addListener(new ClickListener() {
 			@Override
@@ -414,7 +412,7 @@ public class HUD extends GameObject {
 					BuyUpgrade(1);
 					RandomiseUpgrades();
 				}
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
@@ -440,7 +438,7 @@ public class HUD extends GameObject {
 					BuyUpgrade(2);
 					RandomiseUpgrades();
 				}
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
@@ -477,8 +475,8 @@ public class HUD extends GameObject {
 	 */
 	public static String getUpgradeText(Upgrades upgrade, float amount, int cost) {
 		String u1a = (upgrade == Upgrades.projectiledamage || upgrade == Upgrades.projectilespeed)
-				? (amount * 100 + "%")
-				: amount + "";
+				? ((int) (amount * 100) + "%")
+				: (int) amount + "";
 		return String.format("Upgrade:\n%s + %s\nCost:\n%d Levels", upgrade.label, u1a, cost);
 	}
 
@@ -506,8 +504,7 @@ public class HUD extends GameObject {
 	}
 
 	void RandomiseUpgrades() {
-		Random r = new Random();
-		switch (r.nextInt(6)) {
+		switch (MathUtils.random(5)) {
 		case 0: // Max Health
 			upgrade1 = Upgrades.maxhealth;
 			upgrade1amount = 10;
@@ -540,7 +537,7 @@ public class HUD extends GameObject {
 			break;
 		}
 
-		switch (r.nextInt(6)) {
+		switch (MathUtils.random(5)) {
 		case 0: // Max Health
 			upgrade2 = Upgrades.maxhealth;
 			upgrade2amount = 10;

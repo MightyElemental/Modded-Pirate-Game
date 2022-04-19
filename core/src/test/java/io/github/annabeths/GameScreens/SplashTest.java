@@ -19,16 +19,10 @@ import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.badlogic.gdx.Application;
-import com.badlogic.gdx.Audio;
-import com.badlogic.gdx.Files;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import io.github.annabeths.GeneralControl.TestHelper;
 import io.github.annabeths.GeneralControl.eng1game;
 
 public class SplashTest {
@@ -41,8 +35,7 @@ public class SplashTest {
 	@BeforeEach
 	public void setup() throws NoSuchFieldException, SecurityException, IllegalArgumentException,
 			IllegalAccessException {
-		Gdx.audio = mock(Audio.class);
-		Gdx.files = mock(Files.class);
+		TestHelper.setupEnv();
 
 		game = mock(eng1game.class);
 		s = mock(Splash.class,
@@ -68,10 +61,6 @@ public class SplashTest {
 		f3.setAccessible(true);
 		f3.set(s, true);
 
-		Gdx.input = mock(Input.class);
-		Gdx.gl = mock(GL20.class);
-		Gdx.graphics = mock(Graphics.class);
-		Gdx.app = mock(Application.class);
 	}
 
 	@Test

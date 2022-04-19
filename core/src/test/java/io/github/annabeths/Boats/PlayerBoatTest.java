@@ -1,10 +1,12 @@
 package io.github.annabeths.Boats;
 
+import static com.badlogic.gdx.Gdx.input;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Polygon;
@@ -460,6 +463,62 @@ public class PlayerBoatTest {
 		upgrade = b.turnSpeed;
 		b.Upgrade(Upgrades.turnspeed, 1);
 		assertTrue(b.turnSpeed > upgrade);
+	}
+
+	@Test
+	public void testProcessPowerupInput() {
+		PowerupType[] powerups = PowerupType.values();
+		when(input.isKeyJustPressed(Keys.NUM_1)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[0]));
+
+		when(input.isKeyJustPressed(Keys.NUM_1)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUM_2)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[1]));
+
+		when(input.isKeyJustPressed(Keys.NUM_2)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUM_3)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[2]));
+
+		when(input.isKeyJustPressed(Keys.NUM_3)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUM_4)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[3]));
+
+		when(input.isKeyJustPressed(Keys.NUM_4)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUM_5)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[4]));
+	}
+
+	@Test
+	public void testProcessPowerupInputNumPad() {
+		PowerupType[] powerups = PowerupType.values();
+		when(input.isKeyJustPressed(Keys.NUMPAD_1)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[0]));
+
+		when(input.isKeyJustPressed(Keys.NUMPAD_1)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUMPAD_2)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[1]));
+
+		when(input.isKeyJustPressed(Keys.NUMPAD_2)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUMPAD_3)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[2]));
+
+		when(input.isKeyJustPressed(Keys.NUMPAD_3)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUMPAD_4)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[3]));
+
+		when(input.isKeyJustPressed(Keys.NUMPAD_4)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUMPAD_5)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[4]));
 	}
 
 }
