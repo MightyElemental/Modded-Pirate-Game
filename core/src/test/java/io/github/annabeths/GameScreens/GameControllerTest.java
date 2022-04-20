@@ -122,20 +122,20 @@ public class GameControllerTest {
 
 	@Test
 	public void testLogicIncreaseXpNotPlunder() {
-		float xp = gc.xp;
-		float plunder = gc.plunder;
+		float xp = gc.getXp();
+		float plunder = gc.getPlunder();
 		gc.logic(1);
-		assertTrue(gc.xp > xp);
-		assertEquals(plunder, gc.plunder);
+		assertTrue(gc.getXp() > xp);
+		assertEquals(plunder, gc.getPlunder());
 	}
 
 	@Test
 	public void testLogicNotIncreaseXpPlunderUnderTime() {
-		float xp = gc.xp;
-		float plunder = gc.plunder;
+		float xp = gc.getXp();
+		float plunder = gc.getPlunder();
 		gc.logic(0);
-		assertEquals(xp, gc.xp);
-		assertEquals(plunder, gc.plunder);
+		assertEquals(xp, gc.getXp());
+		assertEquals(plunder, gc.getPlunder());
 	}
 
 	@Test
@@ -255,9 +255,10 @@ public class GameControllerTest {
 
 	@Test
 	public void testAddXP() {
-		gc.AddXP(10);
-		assertEquals(10, gc.plunder);
-		assertEquals(10, gc.xp);
+		gc.addXp(10);
+		gc.addPlunder(10);
+		assertEquals(10, gc.getPlunder());
+		assertEquals(10, gc.getXp());
 	}
 
 	@Test
@@ -292,29 +293,29 @@ public class GameControllerTest {
 
 	@Test
 	public void testGetXpLevel() {
-		gc.xp = 0;
+		gc.setXp(0);
 		assertEquals(0, gc.getXpLevel());
-		gc.xp = 100;
+		gc.setXp(100);
 		assertEquals(7, gc.getXpLevel());
 	}
 
 	@Test
 	public void testGetXpInLevel() {
-		gc.xp = 0;
+		gc.setXp(0);
 		assertEquals(0, gc.getXpInLevel());
-		gc.xp = 91;
+		gc.setXp(91);
 		assertEquals(0, gc.getXpInLevel());
-		gc.xp = 100;
+		gc.setXp(100);
 		assertEquals(9, gc.getXpInLevel());
 	}
 
 	@Test
 	public void testSubtractXPLevels() {
-		gc.xp = 91;
+		gc.setXp(91);
 		gc.subtractXpLevels(1);
-		assertEquals(72, gc.xp);
+		assertEquals(72, gc.getXp());
 		gc.subtractXpLevels(2);
-		assertEquals(40, gc.xp);
+		assertEquals(40, gc.getXp());
 	}
 
 	@Test
@@ -326,15 +327,15 @@ public class GameControllerTest {
 
 	@Test
 	public void testGetXpRequiredForNextLevel() {
-		gc.xp = 0;
+		gc.setXp(0);
 		assertEquals(7, gc.getXpRequiredForNextLevel());
-		gc.xp = 7;
+		gc.setXp(7);
 		assertEquals(9, gc.getXpRequiredForNextLevel());
-		gc.xp = 8;
+		gc.setXp(8);
 		assertEquals(9, gc.getXpRequiredForNextLevel());
-		gc.xp = 9;
+		gc.setXp(9);
 		assertEquals(9, gc.getXpRequiredForNextLevel());
-		gc.xp = 16;
+		gc.setXp(16);
 		assertEquals(11, gc.getXpRequiredForNextLevel());
 	}
 

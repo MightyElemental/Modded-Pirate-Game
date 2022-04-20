@@ -54,7 +54,8 @@ public class GameController implements Screen {
 	public EnemyCollege bossCollege;
 	public Powerup powerUp;
 
-	public float timer = 10 * 60 + 0;
+	public static final float PLAY_TIME = 10 * 60 + 0;
+	public float timer = PLAY_TIME;
 
 	// UI Related Variables
 	public OrthographicCamera camera;
@@ -63,8 +64,10 @@ public class GameController implements Screen {
 	public HUD hud;
 
 	// Player Stats
-	public float xp = 0;
-	public int plunder = 0;
+	private float xp = 0;
+	private float totalXp = 0;
+	private int plunder = 0;
+	private int totalPlunder = 0;
 
 	float xpTick = 1f;
 	float xpTickMultiplier = 1f;
@@ -202,7 +205,7 @@ public class GameController implements Screen {
 		// give the player XP and Plunder each frame, normalized using delta
 		xpTick -= delta * xpTickMultiplier;
 		if (xpTick <= 0) {
-			xp += 1;
+			addXp(1);
 			// plunder += 1;
 			xpTick += 1;
 		}
@@ -214,6 +217,7 @@ public class GameController implements Screen {
 		ClearKilledObjects(); // clear any 'killed' objects
 
 		if (bossCollege.isDead()) { // if the boss college is dead, the game is won
+			game.gameScore = (int) getGameScore();
 			game.gotoScreen(Screens.gameWinScreen);
 		}
 		timeSinceLastWeather = timeSinceLastWeather + delta;
@@ -350,7 +354,7 @@ public class GameController implements Screen {
 	 * @param oldCollege the college that was destroyed
 	 */
 	public void CollegeDestroyed(EnemyCollege oldCollege) {
-		AddXP(100);
+		addXp(100);
 
 		boolean foundCollege = physicsObjects.stream().filter(c -> c instanceof EnemyCollege)
 				.anyMatch(c -> {
@@ -413,7 +417,19 @@ public class GameController implements Screen {
 
 	public void gameOver() {
 		game.timeUp = timer <= 0;
+		game.gameScore = (int) getGameScore();
 		game.gotoScreen(Screens.gameOverScreen);
+	}
+
+	/**
+	 * Calculates the overall game score to be presented to the player at the end of
+	 * the game.
+	 */
+	public float getGameScore() {
+		float powerupScore = playerBoat.collectedPowerups.values().stream().reduce(0, Integer::sum);
+		float healthScore = playerBoat.getHealth() - 100; // penalty for losing health
+		float timeScore = (timer - PLAY_TIME); // the shorter the play, the more points
+		return getTotalPlunder() * 10 + getTotalXp() + timeScore + healthScore + powerupScore * 25;
 	}
 
 	/**
@@ -429,14 +445,23 @@ public class GameController implements Screen {
 	}
 
 	/**
-	 * Add XP to the player's amount. Gives the player an equal amount of gold and
-	 * XP
+	 * Add XP to the player's amount.
 	 * 
 	 * @param amount the amount of XP to add
 	 */
-	public void AddXP(int amount) {
+	public void addXp(float amount) {
 		xp += amount;
+		totalXp += amount;
+	}
+
+	/**
+	 * Add plunder to the player's amount.
+	 * 
+	 * @param amount the amount of plunder to add
+	 */
+	public void addPlunder(float amount) {
 		plunder += amount;
+		totalPlunder += amount;
 	}
 
 	/**
@@ -491,6 +516,48 @@ public class GameController implements Screen {
 	 */
 	public float getXpRequiredForNextLevel() {
 		return getXpRequiredForLevel(getXpLevel() + 1);
+	}
+
+	/**
+	 * @return the xp
+	 */
+	public float getXp() {
+		return xp;
+	}
+
+	/**
+	 * @param xp the xp to set
+	 */
+	public void setXp(float xp) {
+		this.xp = xp;
+	}
+
+	/**
+	 * @return the plunder
+	 */
+	public int getPlunder() {
+		return plunder;
+	}
+
+	/**
+	 * @param plunder the plunder to set
+	 */
+	public void setPlunder(int plunder) {
+		this.plunder = plunder;
+	}
+
+	/**
+	 * @return the totalXp
+	 */
+	public float getTotalXp() {
+		return totalXp;
+	}
+
+	/**
+	 * @return the totalPlunder
+	 */
+	public int getTotalPlunder() {
+		return totalPlunder;
 	}
 
 }

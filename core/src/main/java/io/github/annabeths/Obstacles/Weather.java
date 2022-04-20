@@ -1,5 +1,6 @@
 package io.github.annabeths.Obstacles;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
@@ -69,8 +70,8 @@ public class Weather extends ObstacleEntity {
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		if (other instanceof PlayerBoat) {
-			controller.xp = controller.xp + 0.1f; // The player gets xp for sailing through bad
-													// weather
+			// The player gets xp for sailing through bad weather
+			controller.addXp(5 * Gdx.graphics.getDeltaTime());
 		}
 		if (!damageActive) {
 			return; // Only deal damage when lightning frames are showing

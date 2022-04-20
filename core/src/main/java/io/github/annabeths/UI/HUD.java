@@ -258,7 +258,7 @@ public class HUD extends GameObject {
 				gc.playerBoat.getMaxHealth()));
 		xpText.setText(String.format("Level %d + %.0fxp", gc.getXpLevel(), gc.getXpInLevel()));
 		timerText.setText(generateTimeString((int) gc.timer));
-		plunderText.setText("$" + Integer.toString(gc.plunder));
+		plunderText.setText("$" + Integer.toString(gc.getPlunder()));
 
 		powerupIcons.forEach((p, i) -> {
 			boolean f = gc.playerBoat.activePowerups.containsKey(p);

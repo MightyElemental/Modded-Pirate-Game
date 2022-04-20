@@ -23,6 +23,9 @@ public class eng1game extends Game {
 
 	public boolean timeUp = false;
 
+	/** @see GameController#getGameScore() */
+	public int gameScore = 0;
+
 	/**
 	 * This debug value is controlled by arguments passed to the game. This value
 	 * must NOT be changed manually from FALSE.

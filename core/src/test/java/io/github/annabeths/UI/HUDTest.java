@@ -297,7 +297,7 @@ public class HUDTest {
 		try {
 			hud.setupStyles();
 			hud.setupShopMenu();
-			gc.xp = 100000;
+			gc.setXp(100000);
 		} catch (Exception e) {
 		}
 		ClickListener cl1 = (ClickListener) hud.upgradeButton1.getListeners().get(1);
@@ -311,7 +311,7 @@ public class HUDTest {
 		try {
 			hud.setupStyles();
 			hud.setupShopMenu();
-			gc.xp = 100000;
+			gc.setXp(100000);
 		} catch (Exception e) {
 		}
 		ClickListener cl2 = (ClickListener) hud.upgradeButton2.getListeners().get(1);

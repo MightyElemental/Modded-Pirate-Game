@@ -5,8 +5,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 
@@ -30,7 +32,7 @@ public class NeutralBoatTest {
 
 	@BeforeAll
 	public static void init() {
-		gc = mock(GameController.class);
+		gc = mock(GameController.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
 		gc.map = mock(GameMap.class);
 		gc.colleges = new ArrayList<College>();
 		gc.physicsObjects = new ArrayList<PhysicsObject>();
@@ -62,11 +64,11 @@ public class NeutralBoatTest {
 	@Test
 	public void testOnCollisionPlayerBoat() {
 		PlayerBoat pb = new PlayerBoat(gc, new Vector2(0, 0));
-		int xp = (int) gc.xp;
-		int gold = gc.plunder;
+		float xp = gc.getXp();
+		int gold = gc.getPlunder();
 		nb.OnCollision(pb);
-		assertTrue(gc.xp > xp);
-		assertTrue(gc.plunder > gold);
+		assertTrue(gc.getXp() > xp, "XP should increase after collision");
+		assertTrue(gc.getPlunder() > gold, "Plunder should increase after collision");
 		assertTrue(nb.removeOnNextTick());
 	}
 
@@ -80,18 +82,19 @@ public class NeutralBoatTest {
 	@Test
 	public void testOnCollisionProjectilePlayer() {
 		Projectile p = new Projectile(new Vector2(), 0, ProjectileData.STOCK, true);
-		int xp = (int) gc.xp;
+		float xp = gc.getXp();
 		nb.OnCollision(p);
-		assertTrue(gc.xp > xp);
+		assertTrue(gc.getXp() > xp, "XP should increase after collision");
 		assertEquals(nb.getMaxHealth() - p.getDamage(), nb.getHealth());
 	}
 
 	@Test
 	public void testOnCollisionProjectileNotPlayer() {
 		Projectile p = new Projectile(new Vector2(), 0, ProjectileData.STOCK, false);
-		int xp = (int) gc.xp;
+		float xp = gc.getXp();
 		nb.OnCollision(p);
-		assertEquals(xp, gc.xp); // no xp for non player projectiles
+		// no xp for non player projectiles
+		assertEquals(xp, gc.getXp(), "XP should be the same after collision");
 		assertEquals(nb.getMaxHealth() - p.getDamage(), nb.getHealth());
 	}
 
