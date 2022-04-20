@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <debugsettings>
+	<SKIP_SPLASH enabled="false" />
 	<DRAW_DEBUG_COLLISIONS enabled="false" />
 	<DRAW_DEBUG_TEXT enabled="false" />
 	<ENEMY_COLLEGE_FIRE enabled="true" />
+	<FORCE_POWERUP enabled="false" />
 </debugsettings>

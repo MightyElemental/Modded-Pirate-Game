@@ -41,8 +41,8 @@ public class NeutralBoat extends AIBoat {
 
 		if (object instanceof PlayerBoat) {
 			// Hit by player, destroy and add XP
-			controller.xp += xpValue;
-			controller.plunder += plunderValue;
+			controller.addXp(xpValue);
+			controller.addPlunder(plunderValue);
 			Destroy();
 		} else if (object instanceof Projectile) {
 			object.kill();
@@ -51,7 +51,7 @@ public class NeutralBoat extends AIBoat {
 			dmgToInflict = p.getDamage();
 		}
 
-		if (objWasPlayer) controller.xp += (dmgToInflict / maxHP) * xpValue;
+		if (objWasPlayer) controller.addXp((dmgToInflict / maxHP) * xpValue);
 		damage(dmgToInflict);
 	}
 }

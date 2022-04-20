@@ -37,7 +37,7 @@ public class EnemyBoatTest {
 
 	@BeforeEach
 	public void setup() {
-		gc = mock(GameController.class);
+		gc = mock(GameController.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
 		gc.map = mock(GameMap.class);
 		gc.colleges = new ArrayList<College>();
 		gc.physicsObjects = new ArrayList<PhysicsObject>();
@@ -62,23 +62,23 @@ public class EnemyBoatTest {
 
 	@Test
 	public void testOnCollisionPlayer() {
-		float xp = gc.xp;
-		float plunder = gc.plunder;
+		float xp = gc.getXp();
+		float plunder = gc.getPlunder();
 		b.OnCollision(gc.playerBoat);
 		verify(b, times(1)).Destroy();
-		assertTrue(gc.xp > xp);
-		assertTrue(gc.plunder > plunder);
+		assertTrue(gc.getXp() > xp, "XP should increase after collision");
+		assertTrue(gc.getPlunder() > plunder, "Plunder should increase after collision");
 	}
 
 	@Test
 	public void testOnCollisionProjectilePlayer() {
 		Projectile p = new Projectile(new Vector2(0, 0), 0, ProjectileData.STOCK, true);
 		float health = b.getHealth();
-		float xp = gc.xp;
+		float xp = gc.getXp();
 		b.OnCollision(p);
 		assertTrue(p.removeOnNextTick());
 		assertTrue(b.getHealth() < health);
-		assertTrue(gc.xp > xp);
+		assertTrue(gc.getXp() > xp);
 	}
 
 	@Test

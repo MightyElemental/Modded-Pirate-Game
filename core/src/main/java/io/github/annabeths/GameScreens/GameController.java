@@ -54,7 +54,8 @@ public class GameController implements Screen {
 	public EnemyCollege bossCollege;
 	public Powerup powerUp;
 
-	public float timer = 10 * 60 + 0;
+	public static final float PLAY_TIME = 10 * 60 + 0;
+	public float timer = PLAY_TIME;
 
 	// UI Related Variables
 	public OrthographicCamera camera;
@@ -63,15 +64,23 @@ public class GameController implements Screen {
 	public HUD hud;
 
 	// Player Stats
-	public float xp = 0;
-	public int plunder = 0;
+	private float xp = 0;
+	private float totalXp = 0;
+	private int plunder = 0;
+	private int totalPlunder = 0;
 
 	float xpTick = 1f;
 	float xpTickMultiplier = 1f;
 
 	// passes the game class so that we can change scene back later
 	public GameController(eng1game game) {
+		this();
 		this.game = game;
+
+		generateGameObjects();
+	}
+
+	private GameController() {
 		gameObjects = new ArrayList<GameObject>();
 		physicsObjects = new ArrayList<PhysicsObject>();
 		colleges = new ArrayList<College>();
@@ -84,9 +93,6 @@ public class GameController implements Screen {
 		// Create the player boat and place it in the center of the screen
 		playerBoat = new PlayerBoat(this, new Vector2(500, 500));
 		physicsObjects.add(playerBoat);
-
-		generateGameObjects();
-
 	}
 
 	@Override
@@ -202,7 +208,7 @@ public class GameController implements Screen {
 		// give the player XP and Plunder each frame, normalized using delta
 		xpTick -= delta * xpTickMultiplier;
 		if (xpTick <= 0) {
-			xp += 1;
+			addXp(1);
 			// plunder += 1;
 			xpTick += 1;
 		}
@@ -214,6 +220,7 @@ public class GameController implements Screen {
 		ClearKilledObjects(); // clear any 'killed' objects
 
 		if (bossCollege.isDead()) { // if the boss college is dead, the game is won
+			game.gameScore = (int) getGameScore();
 			game.gotoScreen(Screens.gameWinScreen);
 		}
 		timeSinceLastWeather = timeSinceLastWeather + delta;
@@ -247,17 +254,13 @@ public class GameController implements Screen {
 
 		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawEntityDebugText(this, batch);
 
-		hud.Draw(batch); // this resets camera projection matrix
-
-		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawDebugText(this, batch);
-
 		// end the sprite batch
 		batch.end();
 
+		hud.Draw(batch);
+
 		sr.setProjectionMatrix(camera.combined);
-
 		renderRays();
-
 		// this should be off during normal gameplay, but can be on to debug collisions
 		if (DebugUtils.DRAW_DEBUG_COLLISIONS) DebugUtils.drawDebugCollisions(this, sr);
 	}
@@ -330,8 +333,8 @@ public class GameController implements Screen {
 	 * @author James Burnell
 	 */
 	public boolean isEnemyBoatNearPlayer() {
-		return physicsObjects.stream().anyMatch(p -> p instanceof EnemyBoat
-				&& p.getCenter().dst2(playerBoat.getCenter()) < 500 * 500);
+		return physicsObjects.stream().filter(p -> p instanceof EnemyBoat)
+				.anyMatch(p -> p.getCenter().dst2(playerBoat.getCenter()) < 500 * 500);
 	}
 
 	/**
@@ -342,17 +345,19 @@ public class GameController implements Screen {
 	 * @author James Burnell
 	 */
 	public boolean isEnemyCollegeNearPlayer() {
-		return colleges.stream()
-				.anyMatch(c -> c instanceof EnemyCollege && c.isInRange(playerBoat));
+		return colleges.stream().filter(c -> c instanceof EnemyCollege)
+				.anyMatch(c -> c.isInRange(playerBoat));
 	}
 
 	/**
 	 * Called when a college is destroyed Makes sure the boss college will be made
 	 * vulnerable after the rest of the colleges are destroyed, and spawns a
 	 * friendly college in the place of the enemy college.
+	 * 
+	 * @param oldCollege the college that was destroyed
 	 */
 	public void CollegeDestroyed(EnemyCollege oldCollege) {
-		AddXP(100);
+		addXp(100);
 
 		boolean foundCollege = physicsObjects.stream().filter(c -> c instanceof EnemyCollege)
 				.anyMatch(c -> {
@@ -393,7 +398,8 @@ public class GameController implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-
+		camera.setToOrtho(false, 1280, 720);
+		hud.resize(width, height);
 	}
 
 	@Override
@@ -414,7 +420,19 @@ public class GameController implements Screen {
 
 	public void gameOver() {
 		game.timeUp = timer <= 0;
+		game.gameScore = (int) getGameScore();
 		game.gotoScreen(Screens.gameOverScreen);
+	}
+
+	/**
+	 * Calculates the overall game score to be presented to the player at the end of
+	 * the game.
+	 */
+	public float getGameScore() {
+		float powerupScore = playerBoat.collectedPowerups.values().stream().reduce(0, Integer::sum);
+		float healthScore = playerBoat.getHealth() - 100; // penalty for losing health
+		float timeScore = (timer - PLAY_TIME); // the shorter the play, the more points
+		return getTotalPlunder() * 10 + getTotalXp() + timeScore + healthScore + powerupScore * 25;
 	}
 
 	/**
@@ -430,14 +448,134 @@ public class GameController implements Screen {
 	}
 
 	/**
-	 * Add XP to the player's amount. Gives the player an equal amount of gold and
-	 * XP
+	 * Add XP to the player's amount.
 	 * 
 	 * @param amount the amount of XP to add
 	 */
-	public void AddXP(int amount) {
+	public void addXp(float amount) {
 		xp += amount;
+		totalXp += amount;
+	}
+
+	/**
+	 * Add plunder to the player's amount.
+	 * 
+	 * @param amount the amount of plunder to add
+	 */
+	public void addPlunder(float amount) {
 		plunder += amount;
+		totalPlunder += amount;
+	}
+
+	/**
+	 * Get the current XP level the player is at
+	 * 
+	 * @return the level
+	 */
+	public int getXpLevel() {
+		int level = (int) (Math.sqrt(xp + 9) - 3);
+		return level;
+	}
+
+	/**
+	 * Get how much XP the player has in this current level. i.e. the amount of XP
+	 * excluding the XP contributing to whole levels
+	 * 
+	 * @return the xp in the current level
+	 * @see #getXpLevel()
+	 */
+	public float getXpInLevel() {
+		int level = getXpLevel();
+		return xp - (level * (level + 6));
+	}
+
+	/**
+	 * Subtract a number of levels from the xp
+	 * 
+	 * @param levels the number of levels to remove
+	 */
+	public void subtractXpLevels(int levels) {
+		int curr = getXpLevel();
+		int diff = curr - levels;
+		// find the difference between xp levels and subtract that amount of xp
+		xp -= (curr * (curr + 6)) - (diff * (diff + 6));
+	}
+
+	/**
+	 * The the XP required to go from {@code level-1} to {@code level}.
+	 * 
+	 * @param level the target level
+	 * @return the XP difference between previous level and this one
+	 */
+	public static int getXpRequiredForLevel(int level) {
+		return 2 * (level - 1) + 7;
+	}
+
+	/**
+	 * The total XP the needs to level up. Note this is NOT the remaining amount,
+	 * but the total amount to be able to level up.
+	 * 
+	 * @return the xp required to level up
+	 */
+	public float getXpRequiredForNextLevel() {
+		return getXpRequiredForLevel(getXpLevel() + 1);
+	}
+
+	/**
+	 * @return the xp
+	 */
+	public float getXp() {
+		return xp;
+	}
+
+	/**
+	 * @param xp the xp to set
+	 */
+	public void setXp(float xp) {
+		this.xp = xp;
+	}
+
+	/**
+	 * @return the plunder
+	 */
+	public int getPlunder() {
+		return plunder;
+	}
+
+	/**
+	 * @param plunder the plunder to set
+	 */
+	public void setPlunder(int plunder) {
+		this.plunder = plunder;
+	}
+
+	/**
+	 * @return the totalXp
+	 */
+	public float getTotalXp() {
+		return totalXp;
+	}
+
+	/**
+	 * @return the totalPlunder
+	 */
+	public int getTotalPlunder() {
+		return totalPlunder;
+	}
+
+	/**
+	 * Returns a game controller instance with minimal data filled out to allow the
+	 * HUD to function without taking up a lot of data.
+	 * 
+	 * @return The new GameController instance
+	 */
+	public static GameController getMockForHUD() {
+		GameController gc = new GameController();
+//		gc.playerBoat.activePowerups.put(PowerupType.DAMAGE, 7f);
+//		gc.playerBoat.activePowerups.put(PowerupType.RAPIDFIRE, 2f);
+		gc.playerBoat.damage(13);
+		gc.addXp(50);
+		return gc;
 	}
 
 }

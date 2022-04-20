@@ -1,11 +1,12 @@
 package io.github.annabeths.GameScreens;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -18,18 +19,15 @@ import java.lang.reflect.Field;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.annabeths.GeneralControl.ResourceManager;
+import io.github.annabeths.GeneralControl.TestHelper;
 import io.github.annabeths.GeneralControl.eng1game;
+import io.github.annabeths.UI.HUD;
 
 public class MenuTest {
 
@@ -41,18 +39,18 @@ public class MenuTest {
 			NoSuchFieldException, SecurityException {
 		game = mock(eng1game.class);
 
+		TestHelper.setupEnv();
+
 		m = mock(Menu.class, withSettings().useConstructor(game).defaultAnswer(CALLS_REAL_METHODS));
-		m.menuTextLayout = mock(GlyphLayout.class);
+		m.menuTextLayout = mock(GlyphLayout.class, withSettings().useConstructor());
+
 		Field f = Menu.class.getDeclaredField("batch");
 		f.setAccessible(true);
 		f.set(m, mock(SpriteBatch.class));
 
-		ResourceManager.font = mock(BitmapFont.class,
-				withSettings().defaultAnswer(RETURNS_DEEP_STUBS));
-		Gdx.input = mock(Input.class);
-		Gdx.gl = mock(GL20.class);
-		Gdx.graphics = mock(Graphics.class);
-		Gdx.app = mock(Application.class);
+		Field fh = Menu.class.getDeclaredField("hud");
+		fh.setAccessible(true);
+		fh.set(m, mock(HUD.class));
 	}
 
 	@Test
@@ -69,14 +67,46 @@ public class MenuTest {
 	}
 
 	@Test
-	public void testEnterPressed() {
+	public void testEnterPressedBeforeInstruction() {
 		when(Gdx.input.isKeyJustPressed(Keys.ENTER)).thenReturn(false);
 		m.render(1f);
 		verify(game, never()).gotoScreen(any());
 
 		when(Gdx.input.isKeyJustPressed(Keys.ENTER)).thenReturn(true);
 		m.render(1f);
+		verify(m, times(1)).toggleInstructions();
+	}
+
+	@Test
+	public void testEnterPressedAfterInstruction() {
+		m.instructionsBeenShown = true;
+
+		when(Gdx.input.isKeyJustPressed(Keys.ENTER)).thenReturn(true);
+		m.render(1f);
 		verify(game, times(1)).gotoScreen(any());
+	}
+
+	@Test
+	public void testToggleInstructions() {
+		assertFalse(m.instructionsBeenShown);
+		assertFalse(m.showInstructions);
+		m.toggleInstructions();
+		assertTrue(m.instructionsBeenShown);
+		assertTrue(m.showInstructions);
+		m.toggleInstructions();
+		assertTrue(m.instructionsBeenShown);
+		assertFalse(m.showInstructions);
+	}
+
+	@Test
+	public void testToggleInstructionButton() {
+		when(Gdx.input.isKeyJustPressed(Keys.I)).thenReturn(false);
+		m.render(1f);
+		verify(m, times(0)).toggleInstructions();
+
+		when(Gdx.input.isKeyJustPressed(Keys.I)).thenReturn(true);
+		m.render(1f);
+		verify(m, times(1)).toggleInstructions();
 	}
 
 	@Test

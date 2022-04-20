@@ -48,6 +48,7 @@ public abstract class ObstacleEntity extends PhysicsObject {
 	 * @param rotationOffset the angle to fire the projectile relative to the boat
 	 * @param dmgMul the damage multiplier
 	 * @param spdMul the speed multiplier
+	 * @param pos the position to spawn the projectile
 	 *
 	 * @return A new projectile object
 	 */

@@ -19,10 +19,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.annabeths.GeneralControl.ResourceManager;
@@ -37,9 +35,7 @@ public class GameWinScreenTest {
 
 	@BeforeAll
 	public static void init() {
-		Gdx.gl = mock(GL20.class);
-		Gdx.graphics = mock(Graphics.class);
-		TestHelper.initFonts();
+		TestHelper.setupEnv();
 	}
 
 	@BeforeEach
@@ -60,7 +56,7 @@ public class GameWinScreenTest {
 	@Test
 	public void testRender() {
 		assertDoesNotThrow(() -> gws.render(1f));
-		verify(ResourceManager.font, times(1)).draw(any(), eq(gws.winTextLayout), anyFloat(),
+		verify(ResourceManager.font, times(1)).draw(any(), eq(gws.gameOverText), anyFloat(),
 				anyFloat());
 	}
 

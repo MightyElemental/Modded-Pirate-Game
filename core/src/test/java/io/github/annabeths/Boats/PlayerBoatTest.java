@@ -1,10 +1,12 @@
 package io.github.annabeths.Boats;
 
+import static com.badlogic.gdx.Gdx.input;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
@@ -21,6 +23,7 @@ import org.junit.jupiter.api.Test;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Polygon;
@@ -32,6 +35,7 @@ import io.github.annabeths.Colleges.EnemyCollege;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.TestHelper;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
@@ -45,6 +49,7 @@ public class PlayerBoatTest {
 
 	@BeforeEach
 	public void setup() {
+		TestHelper.setupEnv();
 		setupInput();
 
 		gc = mock(GameController.class);
@@ -102,8 +107,8 @@ public class PlayerBoatTest {
 	public void testReceivePowerup() {
 		for (PowerupType p : PowerupType.values()) {
 			b.receivePower(p);
-			assertTrue(b.activePowerups.containsKey(p));
-			assertEquals(p.getDefaultTime(), b.activePowerups.getOrDefault(p, -1f));
+			assertTrue(b.collectedPowerups.containsKey(p));
+			assertEquals(1, b.collectedPowerups.getOrDefault(p, -1));
 		}
 	}
 
@@ -112,6 +117,7 @@ public class PlayerBoatTest {
 		// give all powerups
 		for (PowerupType p : PowerupType.values()) {
 			b.receivePower(p);
+			b.activatePowerup(p);
 		}
 		b.updatePowerups(1.5f); // should remove 1.5 seconds from all powerups
 
@@ -124,6 +130,7 @@ public class PlayerBoatTest {
 	public void testUpdatePowerupRemove() {
 		PowerupType p = PowerupType.DAMAGE;
 		b.receivePower(p);
+		b.activatePowerup(p);
 		assertFalse(b.activePowerups.isEmpty());
 		b.updatePowerups(p.getDefaultTime() / 2f); // skip half way through powerup
 		assertFalse(b.activePowerups.isEmpty()); // powerup should still be present
@@ -135,6 +142,7 @@ public class PlayerBoatTest {
 	public void testIsInvincible() {
 		assertFalse(b.isInvincible());
 		b.receivePower(PowerupType.INVINCIBILITY);
+		b.activatePowerup(PowerupType.INVINCIBILITY);
 		assertTrue(b.isInvincible());
 	}
 
@@ -145,6 +153,7 @@ public class PlayerBoatTest {
 		assertEquals(projDmgMul, b.getDamageMul());
 		// Ensure damage multiplier is greater with the damage powerup
 		b.receivePower(PowerupType.DAMAGE);
+		b.activatePowerup(PowerupType.DAMAGE);
 		assertTrue(b.getDamageMul() > projDmgMul);
 	}
 
@@ -177,6 +186,7 @@ public class PlayerBoatTest {
 	@Test
 	public void testShootStockBurst() {
 		b.receivePower(PowerupType.STARBURSTFIRE);
+		b.activatePowerup(PowerupType.STARBURSTFIRE);
 		b.shootStock(1);
 		// Shoot 8 projectiles
 		assertEquals(8, gc.physicsObjects.size());
@@ -264,6 +274,7 @@ public class PlayerBoatTest {
 
 		// Assert boat is faster with speed powerup
 		b.receivePower(PowerupType.SPEED);
+		b.activatePowerup(PowerupType.SPEED);
 		b.setCenter(new Vector2(10, 10));
 		b.processInput(1f);
 		assertTrue(b.getCenter().dst(pos) > dist);
@@ -362,6 +373,7 @@ public class PlayerBoatTest {
 	@Test
 	public void testOnCollisionBoatInvincible() {
 		b.receivePower(PowerupType.INVINCIBILITY);
+		b.activatePowerup(PowerupType.INVINCIBILITY);
 		NeutralBoat nb = new NeutralBoat(gc, new Vector2(0, 0));
 		b.HP = 100;
 		b.OnCollision(nb);
@@ -394,6 +406,7 @@ public class PlayerBoatTest {
 
 		// ensure rapid fire results in faster shot recharging
 		b.receivePower(PowerupType.RAPIDFIRE);
+		b.activatePowerup(PowerupType.RAPIDFIRE);
 		float t2 = b.timeSinceLastShot;
 		b.Update(0.05f);
 		float newTime2 = b.timeSinceLastShot;
@@ -452,6 +465,62 @@ public class PlayerBoatTest {
 		upgrade = b.turnSpeed;
 		b.Upgrade(Upgrades.turnspeed, 1);
 		assertTrue(b.turnSpeed > upgrade);
+	}
+
+	@Test
+	public void testProcessPowerupInput() {
+		PowerupType[] powerups = PowerupType.values();
+		when(input.isKeyJustPressed(Keys.NUM_1)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[0]));
+
+		when(input.isKeyJustPressed(Keys.NUM_1)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUM_2)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[1]));
+
+		when(input.isKeyJustPressed(Keys.NUM_2)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUM_3)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[2]));
+
+		when(input.isKeyJustPressed(Keys.NUM_3)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUM_4)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[3]));
+
+		when(input.isKeyJustPressed(Keys.NUM_4)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUM_5)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[4]));
+	}
+
+	@Test
+	public void testProcessPowerupInputNumPad() {
+		PowerupType[] powerups = PowerupType.values();
+		when(input.isKeyJustPressed(Keys.NUMPAD_1)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[0]));
+
+		when(input.isKeyJustPressed(Keys.NUMPAD_1)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUMPAD_2)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[1]));
+
+		when(input.isKeyJustPressed(Keys.NUMPAD_2)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUMPAD_3)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[2]));
+
+		when(input.isKeyJustPressed(Keys.NUMPAD_3)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUMPAD_4)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[3]));
+
+		when(input.isKeyJustPressed(Keys.NUMPAD_4)).thenReturn(false);
+		when(input.isKeyJustPressed(Keys.NUMPAD_5)).thenReturn(true);
+		b.processPowerupInput(1f);
+		verify(b, times(1)).activatePowerup(eq(powerups[4]));
 	}
 
 }

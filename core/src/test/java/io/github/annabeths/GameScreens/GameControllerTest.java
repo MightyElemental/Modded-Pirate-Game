@@ -6,7 +6,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyFloat;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.atLeast;
 import static org.mockito.Mockito.doReturn;
@@ -23,9 +25,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
@@ -55,9 +56,7 @@ public class GameControllerTest {
 
 	@BeforeAll
 	public static void init() {
-		Gdx.gl = mock(GL20.class);
-		Gdx.graphics = mock(Graphics.class);
-		TestHelper.initFonts();
+		TestHelper.setupEnv();
 	}
 
 	@BeforeEach
@@ -123,20 +122,20 @@ public class GameControllerTest {
 
 	@Test
 	public void testLogicIncreaseXpNotPlunder() {
-		float xp = gc.xp;
-		float plunder = gc.plunder;
+		float xp = gc.getXp();
+		float plunder = gc.getPlunder();
 		gc.logic(1);
-		assertTrue(gc.xp > xp);
-		assertEquals(plunder, gc.plunder);
+		assertTrue(gc.getXp() > xp);
+		assertEquals(plunder, gc.getPlunder());
 	}
 
 	@Test
 	public void testLogicNotIncreaseXpPlunderUnderTime() {
-		float xp = gc.xp;
-		float plunder = gc.plunder;
+		float xp = gc.getXp();
+		float plunder = gc.getPlunder();
 		gc.logic(0);
-		assertEquals(xp, gc.xp);
-		assertEquals(plunder, gc.plunder);
+		assertEquals(xp, gc.getXp());
+		assertEquals(plunder, gc.getPlunder());
 	}
 
 	@Test
@@ -219,6 +218,7 @@ public class GameControllerTest {
 		assertTrue(gc.isPlayerInDanger());
 
 		gc.playerBoat.receivePower(PowerupType.INVINCIBILITY);
+		gc.playerBoat.activatePowerup(PowerupType.INVINCIBILITY);
 		assertFalse(gc.isPlayerInDanger());
 
 		gc.playerBoat.setCenter(new Vector2(GameMap.getMapWidth() / 2, GameMap.getMapHeight() / 2));
@@ -255,9 +255,10 @@ public class GameControllerTest {
 
 	@Test
 	public void testAddXP() {
-		gc.AddXP(10);
-		assertEquals(10, gc.plunder);
-		assertEquals(10, gc.xp);
+		gc.addXp(10);
+		gc.addPlunder(10);
+		assertEquals(10, gc.getPlunder());
+		assertEquals(10, gc.getXp());
 	}
 
 	@Test
@@ -288,6 +289,63 @@ public class GameControllerTest {
 		gc.rays.add(mock(ProjectileRay.class));
 		gc.ClearKilledObjects();
 		assertEquals(1, gc.rays.size());
+	}
+
+	@Test
+	public void testGetXpLevel() {
+		gc.setXp(0);
+		assertEquals(0, gc.getXpLevel());
+		gc.setXp(100);
+		assertEquals(7, gc.getXpLevel());
+	}
+
+	@Test
+	public void testGetXpInLevel() {
+		gc.setXp(0);
+		assertEquals(0, gc.getXpInLevel());
+		gc.setXp(91);
+		assertEquals(0, gc.getXpInLevel());
+		gc.setXp(100);
+		assertEquals(9, gc.getXpInLevel());
+	}
+
+	@Test
+	public void testSubtractXPLevels() {
+		gc.setXp(91);
+		gc.subtractXpLevels(1);
+		assertEquals(72, gc.getXp());
+		gc.subtractXpLevels(2);
+		assertEquals(40, gc.getXp());
+	}
+
+	@Test
+	public void getXpRequiredForLevel() {
+		assertEquals(7, GameController.getXpRequiredForLevel(1));
+		assertEquals(9, GameController.getXpRequiredForLevel(2));
+		assertEquals(11, GameController.getXpRequiredForLevel(3));
+	}
+
+	@Test
+	public void testGetXpRequiredForNextLevel() {
+		gc.setXp(0);
+		assertEquals(7, gc.getXpRequiredForNextLevel());
+		gc.setXp(7);
+		assertEquals(9, gc.getXpRequiredForNextLevel());
+		gc.setXp(8);
+		assertEquals(9, gc.getXpRequiredForNextLevel());
+		gc.setXp(9);
+		assertEquals(9, gc.getXpRequiredForNextLevel());
+		gc.setXp(16);
+		assertEquals(11, gc.getXpRequiredForNextLevel());
+	}
+
+	@Test
+	public void testResize() {
+		gc.camera = mock(OrthographicCamera.class);
+		gc.hud = mock(HUD.class);
+		gc.resize(100, 100);
+		verify(gc.camera, times(1)).setToOrtho(anyBoolean(), anyFloat(), anyFloat());
+		verify(gc.hud, times(1)).resize(anyInt(), anyInt());
 	}
 
 }

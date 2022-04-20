@@ -3,51 +3,83 @@ package io.github.annabeths.UI;
 import static io.github.annabeths.GeneralControl.ResourceManager.font;
 import static io.github.annabeths.GeneralControl.ResourceManager.getTexture;
 
-import java.util.Random;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar;
+import com.badlogic.gdx.scenes.scene2d.ui.ProgressBar.ProgressBarStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip;
+import com.badlogic.gdx.scenes.scene2d.ui.TextTooltip.TextTooltipStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
+import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Scaling;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 
+import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
-import io.github.annabeths.Level.WaterBackground;
+import io.github.annabeths.GeneralControl.DebugUtils;
 
 public class HUD extends GameObject {
 
-	GlyphLayout hpTextLayout;
-	GlyphLayout timerTextLayout;
-	WaterBackground bg;
-
 	Stage stage;
 
-	TextButton menuButton;
-	TextButtonStyle menuButtonStyle;
+	/* Shop objects */
 
+	TextButton shopButton;
+	TextButtonStyle shopButtonStyle;
+
+	TextButtonStyle upgradeButtonStyle;
 	TextButton upgradeButton1;
-	TextButtonStyle upgradeButton1Style;
-
 	TextButton upgradeButton2;
-	TextButtonStyle upgradeButton2Style;
 
 	Image upgradeMenuBackground;
 
-	GlyphLayout xpTextLayout;
-	GlyphLayout plunderTextLayout;
+	/* HUD objects */
 
-	GlyphLayout powerTextLayout;
+	TextTooltipStyle toolTipStyle;
 
-	GameController gc;
+	/** The image that serves as a base for the HUD */
+	Image hudBg;
+
+	Group hudGroup;
+
+	LabelStyle lblStyleBlk, lblStyleWht;
+	Label hpText;
+	Label timerText;
+	Label xpText;
+	Label plunderText;
+
+	Map<PowerupType, Image> powerupIcons;
+	Map<PowerupType, Label> powerupQuanityLabels;
+	Map<PowerupType, Label> powerupTimeLabels;
+
+	ProgressBar healthBar;
+	ProgressBar xpBar;
+
+	private GameController gc;
 
 	/** Used to disable certain player behaviors when hovering over a button */
 	public boolean hoveringOverButton = false;
@@ -64,37 +96,201 @@ public class HUD extends GameObject {
 	public HUD(GameController gameController) {
 		gc = gameController;
 
-		stage = new Stage(); // Lets us implement interactable UI elements
-		hpTextLayout = new GlyphLayout();
-		timerTextLayout = new GlyphLayout();
-		xpTextLayout = new GlyphLayout();
-		plunderTextLayout = new GlyphLayout();
-		powerTextLayout = new GlyphLayout();
-		powerTextLayout.setText(font, "No power");
+		setupStyles();
+
+		stage = new Stage(new FillViewport(Gdx.graphics.getWidth(), Gdx.graphics.getHeight()));
 		Gdx.input.setInputProcessor(stage);
 
-		DrawUpgradeButton(); // put this in its own function to make this function look a bit
-								// cleaner
+		// Background image
+		hudBg = new Image(getTexture("ui/hud-ui.png"));
+		hudBg.setScaling(Scaling.fit);
+
+		// HUD group object
+		hudGroup = new Group();
+		hudGroup.addActor(hudBg);
+
+		setupProgressBars(); // health and xp bars
+		setupPowerups(); // powerup display
+		setupShopButton(); // button to open shop
+		setupLabels(); // hud text
+
+		hudGroup.setWidth(stage.getViewport().getScreenWidth());
+		hudGroup.setScale(stage.getViewport().getScreenWidth() / 1920f);
+		stage.addActor(hudGroup);
+	}
+
+	public void setupLabels() {
+		hpText = new Label("#", lblStyleWht);
+		timerText = new Label("#", lblStyleBlk);
+		xpText = new Label("#", lblStyleWht);
+		plunderText = new Label("#", lblStyleBlk);
+
+		hpText.setPosition(820, 88);
+		hpText.setFontScale(0.9f);
+		timerText.setPosition(1920 - 158, 172);
+		timerText.setFontScale(1.5f);
+		plunderText.setPosition(1920 - 180, 112);
+		plunderText.setFontScale(1.5f);
+		xpText.setPosition(820, 18);
+		xpText.setFontScale(0.9f);
+
+		hudGroup.addActor(hpText);
+		hudGroup.addActor(timerText);
+		hudGroup.addActor(xpText);
+		hudGroup.addActor(plunderText);
+	}
+
+	public void setupStyles() {
+		Drawable buttonBg = new TextureRegionDrawable(getTexture("ui/button.png"));
+		lblStyleBlk = new LabelStyle(font, Color.BLACK);
+		lblStyleWht = new LabelStyle(font, Color.WHITE);
+		toolTipStyle = new TextTooltipStyle(lblStyleBlk, buttonBg);
+
+		shopButtonStyle = new TextButtonStyle();
+		shopButtonStyle.font = font;
+		shopButtonStyle.fontColor = Color.BLACK;
+		shopButtonStyle.up = buttonBg;
+
+		upgradeButtonStyle = new TextButtonStyle();
+		upgradeButtonStyle.font = font;
+		upgradeButtonStyle.fontColor = Color.BLACK;
+		upgradeButtonStyle.up = new TextureRegionDrawable(getTexture("ui/upgradebutton.png"));
+	}
+
+	/** Set up the powerup section of the HUD */
+	public void setupPowerups() {
+		List<PowerupType> powerups = Arrays.asList(PowerupType.values());
+		// initialize icon images
+		powerupIcons = powerups.stream().collect(
+				Collectors.toMap(Function.identity(), p -> new Image(getTexture(p.getTexture()))));
+		powerupQuanityLabels = powerups.stream()
+				.collect(Collectors.toMap(Function.identity(), p -> new Label("", lblStyleBlk)));
+		powerupTimeLabels = powerups.stream()
+				.collect(Collectors.toMap(Function.identity(), p -> new Label("", lblStyleWht)));
+
+		int startX = 50;
+		int startY = 190;
+		int gap = 68;
+
+		// place the powerupIcons on the HUD
+		powerupIcons.values().forEach(p -> p.setSize(50, 50));
+		// adjust font size for quantity labels
+		powerupQuanityLabels.values().forEach(p -> p.setFontScale(1.5f));
+		int i = 0;
+		for (int y = 0; y < 3; y++) {
+			PowerupType pt = powerups.get(i++);
+			powerupIcons.get(pt).setPosition(startX, startY - gap * y, Align.center);
+			powerupQuanityLabels.get(pt).setPosition(startX + 30, startY - gap * y - 10,
+					Align.bottomLeft);
+			powerupTimeLabels.get(pt).setBounds(startX - 25, startY - 25 - gap * y, 50, 50);
+		}
+		for (int y = 0; y < 2; y++) {
+			PowerupType pt = powerups.get(i++);
+			powerupIcons.get(pt).setPosition(startX + 125, startY - gap * (y + 1), Align.center);
+			powerupQuanityLabels.get(pt).setPosition(startX + 30 + 125, startY - gap * (y + 1) - 10,
+					Align.bottomLeft);
+			powerupTimeLabels.get(pt).setBounds(startX - 25 + 125, startY - 25 - gap * (y + 1), 50,
+					50);
+		}
+		powerupTimeLabels.values().forEach(l -> l.setAlignment(Align.center));
+
+		// create tool tips
+		for (i = 0; i < powerupIcons.size(); i++) {
+			PowerupType p = PowerupType.values()[i];
+			TextTooltip tip = new TextTooltip(
+					String.format(" %s\n Press %d to activate ", p.getName(), i + 1), toolTipStyle);
+			tip.setInstant(true);
+			powerupIcons.get(p).addListener(tip);
+		}
+
+		// add icons to HUD
+		powerupIcons.values().forEach(p -> hudGroup.addActor(p));
+		// add labels to HUD
+		powerupQuanityLabels.values().forEach(l -> hudGroup.addActor(l));
+	}
+
+	/** Set up the display bars such as health and XP */
+	public void setupProgressBars() {
+		ProgressBarStyle hStyle = new ProgressBarStyle();
+		hStyle.knobBefore = new TextureRegionDrawable(barKnob(Color.WHITE));
+		hStyle.knobAfter = new TextureRegionDrawable(barKnob(Color.BLACK));
+		healthBar = new ProgressBar(0, gc.playerBoat.getMaxHealth(), 1, false, hStyle);
+		healthBar.setBounds(812, 92, 377, 35);
+		healthBar.setAnimateDuration(0.5f);
+
+		TextTooltip tip = new TextTooltip(" How much health you have ", toolTipStyle);
+		tip.setInstant(true);
+		healthBar.addListener(tip);
+
+		ProgressBarStyle xpStyle = new ProgressBarStyle();
+		xpStyle.knobBefore = new TextureRegionDrawable(barKnob(Color.FOREST));
+		xpStyle.knobAfter = new TextureRegionDrawable(barKnob(Color.BLACK));
+		xpBar = new ProgressBar(0, gc.getXpRequiredForNextLevel(), 0.5f, false, xpStyle);
+		xpBar.setBounds(812, 24, 377, 35);
+		xpBar.setAnimateDuration(0.25f);
+
+		tip = new TextTooltip(" The total experience you have ", toolTipStyle);
+		tip.setInstant(true);
+		xpBar.addListener(tip);
+
+		hudGroup.addActor(healthBar);
+		hudGroup.addActor(xpBar);
+	}
+
+	/**
+	 * Generates a 2x35 texture to be used by progress bars.
+	 * 
+	 * @param col the color of the knob
+	 * @return the knob texture
+	 * @see ProgressBarStyle
+	 */
+	public static Texture barKnob(Color col) {
+		Pixmap p = new Pixmap(2, 35, Pixmap.Format.RGB888);
+		p.setColor(col);
+		p.fill();
+		return new Texture(p);
 	}
 
 	@Override
 	public void Update(float delta) {
-		hpTextLayout.setText(font, String.format("HP: %.0f/%.0f", gc.playerBoat.getHealth(),
+		/* Update label text */
+		hpText.setText(String.format("%.0f/%.0f", gc.playerBoat.getHealth(),
 				gc.playerBoat.getMaxHealth()));
-		xpTextLayout.setText(font, "XP: " + Integer.toString((int) gc.xp));
-		timerTextLayout.setText(font, "Time: " + generateTimeString((int) gc.timer));
-		plunderTextLayout.setText(font, "Plunder: " + Integer.toString(gc.plunder));
+		xpText.setText(String.format("Level %d + %.0fxp", gc.getXpLevel(), gc.getXpInLevel()));
+		timerText.setText(generateTimeString((int) gc.timer));
+		plunderText.setText("$" + Integer.toString(gc.getPlunder()));
 
-		StringBuilder powerupText = new StringBuilder();
-		gc.playerBoat.activePowerups.forEach((k, v) -> {
-			String line = String.format("%s %.1fs\n", k.getName(), v);
-			powerupText.append(line);
+		powerupIcons.forEach((p, i) -> {
+			boolean f = gc.playerBoat.activePowerups.containsKey(p);
+			i.setColor(f ? Color.DARK_GRAY : Color.WHITE);
 		});
-		powerTextLayout.setText(font, powerupText.toString());
+		powerupQuanityLabels.forEach((p, l) -> {
+			l.setText("x" + gc.playerBoat.collectedPowerups.getOrDefault(p, 0));
+		});
+		powerupTimeLabels.forEach((p, l) -> {
+			float t = gc.playerBoat.activePowerups.getOrDefault(p, 0f);
+			if (t > 0) {// add label if powerup is active
+				l.setText((int) t + "s");
+				if (!l.hasParent()) hudGroup.addActor(l);
+			} else {// remove powerup if powerup is inactive
+				l.remove();
+			}
+		});
 
-		font.getData().setScale(1);
+		/* Update progress bars */
+		healthBar.setRange(0, gc.playerBoat.getMaxHealth());
+		healthBar.setValue(gc.playerBoat.getHealth());
+		healthBar.setColor(gc.playerBoat.isInvincible() ? Color.ROYAL : Color.SCARLET);
+		xpBar.setRange(0, gc.getXpRequiredForNextLevel());
+		xpBar.setValue(gc.getXpInLevel());
 	}
 
+	/**
+	 * Converts seconds into a human readable string
+	 * 
+	 * @param seconds the number of seconds
+	 * @return The time string
+	 */
 	public static String generateTimeString(int seconds) {
 		int sec = seconds % 60;
 		int min = seconds / 60;
@@ -103,29 +299,27 @@ public class HUD extends GameObject {
 
 	@Override
 	public void Draw(SpriteBatch batch) {
-		// Draw the text showing the player's stats
-		font.draw(batch, hpTextLayout, 5, gc.camera.viewportHeight - 10);
-		font.draw(batch, timerTextLayout, 5, gc.camera.viewportHeight - 50);
-		font.draw(batch, xpTextLayout, gc.camera.viewportWidth - xpTextLayout.width - 5,
-				gc.camera.viewportHeight - 50);
-		font.draw(batch, plunderTextLayout, gc.camera.viewportWidth - plunderTextLayout.width - 5,
-				gc.camera.viewportHeight - 10);
-		font.draw(batch, powerTextLayout, 5, gc.camera.viewportHeight - 100);
-
+		stage.act();
 		stage.draw();
+
+		Camera camera = stage.getViewport().getCamera();
+
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		if (DebugUtils.DRAW_DEBUG_TEXT) DebugUtils.drawDebugText(gc, batch);
+		batch.end();
 	}
 
-	// UI & Upgrade Functions
+	/** Set up the shop button on the HUD */
+	public void setupShopButton() {
+		shopButton = new TextButton("Shop", shopButtonStyle);
 
-	public void DrawUpgradeButton() {
-		// Create the upgrade button and add it to the UI stage
-		menuButtonStyle = new TextButtonStyle();
-		menuButtonStyle.font = font;
-		menuButtonStyle.fontColor = Color.BLACK;
-		menuButtonStyle.up = new TextureRegionDrawable(getTexture("ui/button.png"));
-		menuButton = new TextButton("Upgrade", menuButtonStyle);
+		TextTooltip tip = new TextTooltip(" Buy upgrades with plunder and experience! ",
+				toolTipStyle);
+		tip.setInstant(true);
+		shopButton.addListener(tip);
 
-		menuButton.addListener(new ClickListener() {
+		shopButton.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
 				upgradeMenuOpen = !upgradeMenuOpen;
@@ -138,7 +332,7 @@ public class HUD extends GameObject {
 			public void enter(InputEvent event, float x, float y, int pointer, Actor fromActor) {
 				if (pointer == -1) {
 					hoveringOverButton = true;
-					System.out.println("Hovering over");
+					// System.out.println("Hovering over");
 				}
 			}
 
@@ -150,11 +344,10 @@ public class HUD extends GameObject {
 			}
 		});
 
-		menuButton.setScale(1f, 1f);
-		menuButton.setPosition(Gdx.graphics.getWidth() / 2 - menuButton.getWidth() / 2,
-				Gdx.graphics.getHeight() - menuButton.getHeight());
+		// shopButton.setPosition(1655, 16);
+		shopButton.setBounds(1658, 15, 250, 75);
 
-		stage.addActor(menuButton);
+		hudGroup.addActor(shopButton);
 	}
 
 	public void ToggleMenu() {
@@ -163,11 +356,11 @@ public class HUD extends GameObject {
 
 		// Initialize the menu if it hasn't been, this avoids repeatedly creating new
 		// buttons.
-		if (!upgradeMenuInitialised) InitialiseMenu();
+		if (!upgradeMenuInitialised) setupShopMenu();
 
 		// Add/re-add the UI elements back to the stage
 		if (upgradeMenuOpen) {
-			UpdateMenu();
+			updateShopMenu();
 			stage.addActor(upgradeMenuBackground);
 			stage.addActor(upgradeButton1);
 			stage.addActor(upgradeButton2);
@@ -183,7 +376,7 @@ public class HUD extends GameObject {
 	 * Creates the menu for the first time, and also generates the first set of
 	 * upgrades.
 	 */
-	public void InitialiseMenu() {
+	public void setupShopMenu() {
 		// Create the background
 		upgradeMenuBackground = new Image(getTexture("ui/background.png"));
 		upgradeMenuBackground.setPosition(
@@ -208,28 +401,18 @@ public class HUD extends GameObject {
 		});
 
 		// Create the upgrade buttons
-		upgradeButton1Style = new TextButtonStyle();
-		upgradeButton1Style.font = font;
-		upgradeButton1Style.fontColor = Color.BLACK;
-		upgradeButton1Style.up = new TextureRegionDrawable(getTexture("ui/upgradebutton.png"));
-
-		upgradeButton2Style = new TextButtonStyle();
-		upgradeButton2Style.font = font;
-		upgradeButton2Style.fontColor = Color.BLACK;
-		upgradeButton2Style.up = new TextureRegionDrawable(getTexture("ui/upgradebutton.png"));
-
-		upgradeButton1 = new TextButton("", upgradeButton1Style);
-		upgradeButton2 = new TextButton("", upgradeButton2Style);
+		upgradeButton1 = new TextButton("", upgradeButtonStyle);
+		upgradeButton2 = new TextButton("", upgradeButtonStyle);
 
 		upgradeButton1.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if (gc.xp >= upgrade1cost) {
-					gc.xp -= upgrade1cost;
+				if (gc.getXpLevel() >= upgrade1cost) {
+					gc.subtractXpLevels(upgrade1cost);
 					BuyUpgrade(1);
 					RandomiseUpgrades();
 				}
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
@@ -250,12 +433,12 @@ public class HUD extends GameObject {
 		upgradeButton2.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if (gc.xp >= upgrade2cost) {
-					gc.xp -= upgrade2cost;
+				if (gc.getXpLevel() >= upgrade2cost) {
+					gc.subtractXpLevels(upgrade2cost);
 					BuyUpgrade(2);
 					RandomiseUpgrades();
 				}
-				return true;
+				return super.touchDown(event, x, y, pointer, button);
 			}
 
 			@Override
@@ -282,30 +465,29 @@ public class HUD extends GameObject {
 		stage.addActor(upgradeButton2);
 	}
 
-	public void UpdateMenu() {
-		// Update the upgrade buttons
+	/**
+	 * Generates a string to present upgrade purchase information to the user.
+	 * 
+	 * @param upgrade the type of upgrade to buy
+	 * @param amount how much the upgrade will increase
+	 * @param cost how much the upgrade will cost
+	 * @return The upgrade purchase information
+	 */
+	public static String getUpgradeText(Upgrades upgrade, float amount, int cost) {
+		String u1a = (upgrade == Upgrades.projectiledamage || upgrade == Upgrades.projectilespeed)
+				? ((int) (amount * 100) + "%")
+				: (int) amount + "";
+		return String.format("Upgrade:\n%s + %s\nCost:\n%d Levels", upgrade.label, u1a, cost);
+	}
 
-		upgradeButton1.setText(
-				!(upgrade1 == Upgrades.projectiledamage || upgrade1 == Upgrades.projectilespeed)
-						? "Upgrade:\n" + upgrade1.label + " + " + upgrade1amount + "\nCost:\n"
-								+ upgrade1cost + " XP"
-						: "Upgrade:\n" + upgrade1.label + " + " + upgrade1amount * 100
-								+ "%\nCost:\n" + upgrade1cost + " XP");
-
-		upgradeButton1.setScale(1f, 1f);
+	public void updateShopMenu() {
+		upgradeButton1.setText(getUpgradeText(upgrade1, upgrade1amount, upgrade1cost));
 		upgradeButton1.setPosition(
 				Gdx.graphics.getWidth() / 2 - upgradeMenuBackground.getWidth() / 2 + 15,
 				Gdx.graphics.getHeight() / 2 + upgradeMenuBackground.getHeight() / 2
 						- upgradeButton1.getHeight() - 15);
 
-		upgradeButton2.setText(
-				!(upgrade2 == Upgrades.projectiledamage || upgrade2 == Upgrades.projectilespeed)
-						? "Upgrade:\n" + upgrade2.label + " + " + upgrade2amount + "\nCost:\n"
-								+ upgrade2cost + " XP"
-						: "Upgrade:\n" + upgrade2.label + " + " + upgrade2amount * 100
-								+ "%\nCost:\n" + upgrade2cost + " XP");
-
-		upgradeButton2.setScale(1f, 1f);
+		upgradeButton2.setText(getUpgradeText(upgrade2, upgrade2amount, upgrade2cost));
 		upgradeButton2.setPosition(Gdx.graphics.getWidth() / 2 + 35, Gdx.graphics.getHeight() / 2
 				+ upgradeMenuBackground.getHeight() / 2 - upgradeButton2.getHeight() - 15);
 	}
@@ -322,73 +504,76 @@ public class HUD extends GameObject {
 	}
 
 	void RandomiseUpgrades() {
-		Random r = new Random();
-		switch (r.nextInt(6)) {
+		switch (MathUtils.random(5)) {
 		case 0: // Max Health
 			upgrade1 = Upgrades.maxhealth;
 			upgrade1amount = 10;
-			upgrade1cost = 25;
+			upgrade1cost = 5;
 			break;
 		case 1: // Speed
 			upgrade1 = Upgrades.speed;
 			upgrade1amount = 6.25f;
-			upgrade1cost = 25;
+			upgrade1cost = 5;
 			break;
 		case 2: // Turn Speed
 			upgrade1 = Upgrades.turnspeed;
 			upgrade1amount = 7.5f;
-			upgrade1cost = 25;
+			upgrade1cost = 5;
 			break;
 		case 3: // Damage
 			upgrade1 = Upgrades.projectiledamage;
 			upgrade1amount = 0.1f;
-			upgrade1cost = 25;
+			upgrade1cost = 5;
 			break;
 		case 4: // Speed
 			upgrade1 = Upgrades.projectilespeed;
 			upgrade1amount = 0.05f;
-			upgrade1cost = 25;
+			upgrade1cost = 5;
 			break;
 		case 5: // Defense
 			upgrade1 = Upgrades.defense;
 			upgrade1amount = 1f;
-			upgrade1cost = 35;
+			upgrade1cost = 6;
 			break;
 		}
 
-		switch (r.nextInt(6)) {
+		switch (MathUtils.random(5)) {
 		case 0: // Max Health
 			upgrade2 = Upgrades.maxhealth;
 			upgrade2amount = 10;
-			upgrade2cost = 25;
+			upgrade2cost = 5;
 			break;
 		case 1: // Speed
 			upgrade2 = Upgrades.speed;
 			upgrade2amount = 6.25f;
-			upgrade2cost = 25;
+			upgrade2cost = 5;
 			break;
 		case 2: // Turn Speed
 			upgrade2 = Upgrades.turnspeed;
 			upgrade2amount = 7.5f;
-			upgrade2cost = 25;
+			upgrade2cost = 5;
 			break;
 		case 3: // Damage
 			upgrade2 = Upgrades.projectiledamage;
 			upgrade2amount = 0.1f;
-			upgrade2cost = 25;
+			upgrade2cost = 5;
 			break;
 		case 4: // Speed
 			upgrade2 = Upgrades.projectilespeed;
 			upgrade2amount = 0.05f;
-			upgrade2cost = 25;
+			upgrade2cost = 5;
 			break;
 		case 5: // Defense
 			upgrade2 = Upgrades.defense;
 			upgrade2amount = 1f;
-			upgrade2cost = 35;
+			upgrade2cost = 6;
 			break;
 		}
 
-		UpdateMenu();
+		updateShopMenu();
+	}
+
+	public void resize(int width, int height) {
+		stage.getViewport().update(width, height, true);
 	}
 }

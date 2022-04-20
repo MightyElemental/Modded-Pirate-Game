@@ -21,9 +21,11 @@ import io.github.annabeths.GameScreens.GameController;
 /** @author James Burnell */
 public class DebugUtils {
 
+	public static boolean SKIP_SPLASH = false;
 	public static boolean DRAW_DEBUG_COLLISIONS = false;
 	public static boolean DRAW_DEBUG_TEXT = false;
 	public static boolean ENEMY_COLLEGE_FIRE = true;
+	public static boolean FORCE_POWERUP = false;
 
 	/**
 	 * Load the default debug settings from the xml file. This is needed in the
@@ -41,9 +43,11 @@ public class DebugUtils {
 			XmlReader xReader = new XmlReader();
 			Element e = xReader.parse(file);
 
+			SKIP_SPLASH = getSavedValue(e, "SKIP_SPLASH");
 			DRAW_DEBUG_COLLISIONS = getSavedValue(e, "DRAW_DEBUG_COLLISIONS");
 			DRAW_DEBUG_TEXT = getSavedValue(e, "DRAW_DEBUG_TEXT");
 			ENEMY_COLLEGE_FIRE = getSavedValue(e, "ENEMY_COLLEGE_FIRE");
+			FORCE_POWERUP = getSavedValue(e, "FORCE_POWERUP");
 		} catch (NullPointerException e) {
 			System.err.println("Failed to load debug values");
 		}
@@ -56,7 +60,7 @@ public class DebugUtils {
 	public static void drawDebugText(GameController gc, SpriteBatch batch) {
 		List<String> debugText = generateDebugText(gc);
 		for (int i = 0; i < debugText.size(); i++) {
-			debugFont.draw(batch, debugText.get(i), 10, 30 + 15 * i);
+			debugFont.draw(batch, debugText.get(i), 10, Gdx.graphics.getHeight() - 15 - 15 * i);
 		}
 	}
 

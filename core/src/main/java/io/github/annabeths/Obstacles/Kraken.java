@@ -61,8 +61,8 @@ public class Kraken extends ObstacleEntity implements IHealth {
 		health = health - dmg;
 		if (health <= 0) {
 			kill();
-			controller.plunder += plunderValue;
-			controller.xp += xpValue;
+			controller.addPlunder(plunderValue);
+			controller.addXp(xpValue);
 		}
 	}
 
