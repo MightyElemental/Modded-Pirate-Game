@@ -65,6 +65,7 @@ public class SplashTest {
 
 	@Test
 	public void testRender() {
+		s.showShard = false;
 		assertDoesNotThrow(() -> s.render(1f));
 
 		verify(sprite, times(1)).draw(any());
@@ -72,6 +73,7 @@ public class SplashTest {
 
 	@Test
 	public void testFade() {
+		s.showShard = false;
 		s.render(0.5f);
 		verify(sprite, times(1)).setAlpha(anyFloat());
 		// ensure fade is not skipped half way through
