@@ -41,6 +41,7 @@ import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.GeneralControl.DebugUtils;
+import io.github.annabeths.Projectiles.ProjectileData;
 
 public class HUD extends GameObject {
 
@@ -85,6 +86,7 @@ public class HUD extends GameObject {
 	public boolean hoveringOverButton = false;
 	boolean upgradeMenuOpen = false;
 	boolean upgradeMenuInitialised = false; // Set to true once initialized
+	public boolean usePlunderShop = true;
 
 	Upgrades upgrade1;
 	int upgrade1cost;
@@ -283,6 +285,11 @@ public class HUD extends GameObject {
 		healthBar.setColor(gc.playerBoat.isInvincible() ? Color.ROYAL : Color.SCARLET);
 		xpBar.setRange(0, gc.getXpRequiredForNextLevel());
 		xpBar.setValue(gc.getXpInLevel());
+
+		usePlunderShop = gc.isPlayerInRangeOfFriendlyCollege();
+
+		// if gc.playerboat distance from friendly college less than x
+		shopButton.setColor(usePlunderShop ? Color.GOLD : Color.WHITE);
 	}
 
 	/**
@@ -407,11 +414,21 @@ public class HUD extends GameObject {
 		upgradeButton1.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if (gc.getXpLevel() >= upgrade1cost) {
-					gc.subtractXpLevels(upgrade1cost);
-					BuyUpgrade(1);
-					RandomiseUpgrades();
+				if (usePlunderShop) {
+					if (gc.getPlunder() >= 500
+							&& gc.playerBoat.activeProjectileType != ProjectileData.RAY) {
+						gc.subtractPlunder(500);
+						gc.playerBoat.activeProjectileType = ProjectileData.RAY;
+						updateShopMenu();
+					}
+				} else {
+					if (gc.getXpLevel() >= upgrade1cost) {
+						gc.subtractXpLevels(upgrade1cost);
+						BuyUpgrade(1);
+						RandomiseUpgrades();
+					}
 				}
+
 				return super.touchDown(event, x, y, pointer, button);
 			}
 
@@ -433,11 +450,20 @@ public class HUD extends GameObject {
 		upgradeButton2.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if (gc.getXpLevel() >= upgrade2cost) {
-					gc.subtractXpLevels(upgrade2cost);
-					BuyUpgrade(2);
-					RandomiseUpgrades();
+				if (usePlunderShop) {
+					if (gc.getPlunder() > upgrade2cost * 10) {
+						gc.subtractPlunder(upgrade2cost * 10);
+						BuyUpgrade(2);
+						RandomiseUpgrades();
+					}
+				} else {
+					if (gc.getXpLevel() >= upgrade2cost) {
+						gc.subtractXpLevels(upgrade2cost);
+						BuyUpgrade(2);
+						RandomiseUpgrades();
+					}
 				}
+
 				return super.touchDown(event, x, y, pointer, button);
 			}
 
@@ -473,21 +499,32 @@ public class HUD extends GameObject {
 	 * @param cost how much the upgrade will cost
 	 * @return The upgrade purchase information
 	 */
-	public static String getUpgradeText(Upgrades upgrade, float amount, int cost) {
+	public static String getUpgradeText(Upgrades upgrade, float amount, int cost, String currency) {
 		String u1a = (upgrade == Upgrades.projectiledamage || upgrade == Upgrades.projectilespeed)
 				? ((int) (amount * 100) + "%")
 				: (int) amount + "";
-		return String.format("Upgrade:\n%s + %s\nCost:\n%d Levels", upgrade.label, u1a, cost);
+		return String.format("Upgrade:\n%s + %s\nCost:\n%d %s", upgrade.label, u1a, cost, currency);
 	}
 
 	public void updateShopMenu() {
-		upgradeButton1.setText(getUpgradeText(upgrade1, upgrade1amount, upgrade1cost));
+		if (usePlunderShop) {
+			// plunder upgrades
+			upgradeButton1.setText(
+					gc.playerBoat.activeProjectileType == ProjectileData.RAY ? "Already bought"
+							: "Upgrade:\nRay bullets\nCost:\n500 plunder");
+			upgradeButton2.setText(
+					getUpgradeText(upgrade2, upgrade2amount, upgrade2cost * 10, "plunder"));
+		} else {
+			upgradeButton1
+					.setText(getUpgradeText(upgrade1, upgrade1amount, upgrade1cost, "Levels"));
+			upgradeButton2
+					.setText(getUpgradeText(upgrade2, upgrade2amount, upgrade2cost, "Levels"));
+		}
+
 		upgradeButton1.setPosition(
 				Gdx.graphics.getWidth() / 2 - upgradeMenuBackground.getWidth() / 2 + 15,
 				Gdx.graphics.getHeight() / 2 + upgradeMenuBackground.getHeight() / 2
 						- upgradeButton1.getHeight() - 15);
-
-		upgradeButton2.setText(getUpgradeText(upgrade2, upgrade2amount, upgrade2cost));
 		upgradeButton2.setPosition(Gdx.graphics.getWidth() / 2 + 35, Gdx.graphics.getHeight() / 2
 				+ upgradeMenuBackground.getHeight() / 2 - upgradeButton2.getHeight() - 15);
 	}

@@ -418,6 +418,16 @@ public class GameController implements Screen {
 	public void dispose() {
 	}
 
+	/**
+	 * Test if the player is within any friendly college
+	 * 
+	 * @return {@code true} if player is in range, {@code false} otherwise
+	 */
+	public boolean isPlayerInRangeOfFriendlyCollege() {
+		return colleges.stream().filter(c -> c instanceof PlayerCollege)
+				.anyMatch(c -> c.isInRange(playerBoat));
+	}
+
 	public void gameOver() {
 		game.timeUp = timer <= 0;
 		game.gameScore = (int) getGameScore();
@@ -432,7 +442,7 @@ public class GameController implements Screen {
 		float powerupScore = playerBoat.collectedPowerups.values().stream().reduce(0, Integer::sum);
 		float healthScore = playerBoat.getHealth() - 100; // penalty for losing health
 		float timeScore = (timer - PLAY_TIME); // the shorter the play, the more points
-		return getTotalPlunder() * 10 + getTotalXp() + timeScore + healthScore + powerupScore * 25;
+		return getTotalPlunder() * 5 + getTotalXp() + timeScore + healthScore + powerupScore * 25;
 	}
 
 	/**
@@ -465,6 +475,15 @@ public class GameController implements Screen {
 	public void addPlunder(float amount) {
 		plunder += amount;
 		totalPlunder += amount;
+	}
+
+	/**
+	 * Remove plunder from the player's amount.
+	 * 
+	 * @param amount the amount of plunder to remove
+	 */
+	public void subtractPlunder(float amount) {
+		plunder -= amount;
 	}
 
 	/**
