@@ -74,7 +74,13 @@ public class GameController implements Screen {
 
 	// passes the game class so that we can change scene back later
 	public GameController(eng1game game) {
+		this();
 		this.game = game;
+
+		generateGameObjects();
+	}
+
+	private GameController() {
 		gameObjects = new ArrayList<GameObject>();
 		physicsObjects = new ArrayList<PhysicsObject>();
 		colleges = new ArrayList<College>();
@@ -87,9 +93,6 @@ public class GameController implements Screen {
 		// Create the player boat and place it in the center of the screen
 		playerBoat = new PlayerBoat(this, new Vector2(500, 500));
 		physicsObjects.add(playerBoat);
-
-		generateGameObjects();
-
 	}
 
 	@Override
@@ -558,6 +561,21 @@ public class GameController implements Screen {
 	 */
 	public int getTotalPlunder() {
 		return totalPlunder;
+	}
+
+	/**
+	 * Returns a game controller instance with minimal data filled out to allow the
+	 * HUD to function without taking up a lot of data.
+	 * 
+	 * @return The new GameController instance
+	 */
+	public static GameController getMockForHUD() {
+		GameController gc = new GameController();
+//		gc.playerBoat.activePowerups.put(PowerupType.DAMAGE, 7f);
+//		gc.playerBoat.activePowerups.put(PowerupType.RAPIDFIRE, 2f);
+		gc.playerBoat.damage(13);
+		gc.addXp(50);
+		return gc;
 	}
 
 }
