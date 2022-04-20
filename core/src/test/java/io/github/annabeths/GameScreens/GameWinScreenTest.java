@@ -56,7 +56,7 @@ public class GameWinScreenTest {
 	@Test
 	public void testRender() {
 		assertDoesNotThrow(() -> gws.render(1f));
-		verify(ResourceManager.font, times(1)).draw(any(), eq(gws.winTextLayout), anyFloat(),
+		verify(ResourceManager.font, times(1)).draw(any(), eq(gws.gameOverText), anyFloat(),
 				anyFloat());
 	}
 

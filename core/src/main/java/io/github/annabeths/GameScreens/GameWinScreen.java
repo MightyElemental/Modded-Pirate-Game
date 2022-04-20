@@ -5,21 +5,31 @@ import static io.github.annabeths.GeneralControl.ResourceManager.font;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.github.annabeths.GeneralControl.eng1game;
 
 public class GameWinScreen implements Screen {
 
 	private SpriteBatch batch;
-	GlyphLayout winTextLayout;
+	GlyphLayout winText;
+	GlyphLayout gameOverText;
+	GlyphLayout scoreText;
 	eng1game game;
 
 	public GameWinScreen(eng1game g) {
 		game = g;
-		winTextLayout = new GlyphLayout(font, "YOU WIN! Press ENTER to return to the menu");
+
+		font.setColor(Color.WHITE);
+		font.getData().setScale(1);
+		gameOverText = new GlyphLayout(font, "Press ENTER to return to the menu");
+		scoreText = new GlyphLayout(font, "Your final score was " + g.gameScore);
+		font.setColor(Color.FOREST);
+		font.getData().setScale(2);
+		winText = new GlyphLayout(font, "-= YOU WIN =-");
 	}
 
 	@Override
@@ -34,14 +44,20 @@ public class GameWinScreen implements Screen {
 		}
 
 		// do draws
-		Gdx.gl.glClearColor(0, 0, 0, 1);
-		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		ScreenUtils.clear(Color.BLACK);
 
 		batch.begin();
 		font.getData().setScale(1);
 		// the below line centers the text on the center of the screen
-		font.draw(batch, winTextLayout, Gdx.graphics.getWidth() / 2 - winTextLayout.width / 2,
-				Gdx.graphics.getHeight() / 2 + winTextLayout.height / 2);
+		font.draw(batch, gameOverText, Gdx.graphics.getWidth() / 2 - gameOverText.width / 2,
+				Gdx.graphics.getHeight() / 2 + gameOverText.height / 2);
+		font.draw(batch, scoreText, (Gdx.graphics.getWidth() - scoreText.width) / 2,
+				(Gdx.graphics.getHeight() - scoreText.height) / 2 - 100);
+		font.getData().setScale(2);
+		font.draw(batch, winText, (Gdx.graphics.getWidth() - winText.width) / 2,
+				(Gdx.graphics.getHeight() - winText.height) / 2 + 150);
+		font.getData().setScale(1);
+
 		batch.end();
 	}
 

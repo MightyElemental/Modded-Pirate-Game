@@ -56,7 +56,7 @@ public class GameOverScreenTest {
 	@Test
 	public void testRender() {
 		assertDoesNotThrow(() -> gos.render(1f));
-		verify(ResourceManager.font, times(1)).draw(any(), eq(gos.gameOverTextLayout), anyFloat(),
+		verify(ResourceManager.font, times(1)).draw(any(), eq(gos.gameOverText), anyFloat(),
 				anyFloat());
 	}
 
