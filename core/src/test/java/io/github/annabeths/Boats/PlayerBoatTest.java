@@ -35,6 +35,7 @@ import io.github.annabeths.Colleges.EnemyCollege;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.TestHelper;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
@@ -48,6 +49,7 @@ public class PlayerBoatTest {
 
 	@BeforeEach
 	public void setup() {
+		TestHelper.setupEnv();
 		setupInput();
 
 		gc = mock(GameController.class);
