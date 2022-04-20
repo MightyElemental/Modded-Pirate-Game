@@ -442,7 +442,7 @@ public class GameController implements Screen {
 		float powerupScore = playerBoat.collectedPowerups.values().stream().reduce(0, Integer::sum);
 		float healthScore = playerBoat.getHealth() - 100; // penalty for losing health
 		float timeScore = (timer - PLAY_TIME); // the shorter the play, the more points
-		return getTotalPlunder() * 10 + getTotalXp() + timeScore + healthScore + powerupScore * 25;
+		return getTotalPlunder() * 5 + getTotalXp() + timeScore + healthScore + powerupScore * 25;
 	}
 
 	/**

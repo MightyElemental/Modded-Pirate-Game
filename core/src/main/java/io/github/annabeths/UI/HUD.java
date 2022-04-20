@@ -450,11 +450,20 @@ public class HUD extends GameObject {
 		upgradeButton2.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-				if (gc.getXpLevel() >= upgrade2cost) {
-					gc.subtractXpLevels(upgrade2cost);
-					BuyUpgrade(2);
-					RandomiseUpgrades();
+				if (usePlunderShop) {
+					if (gc.getPlunder() > upgrade2cost * 10) {
+						gc.subtractPlunder(upgrade2cost * 10);
+						BuyUpgrade(2);
+						RandomiseUpgrades();
+					}
+				} else {
+					if (gc.getXpLevel() >= upgrade2cost) {
+						gc.subtractXpLevels(upgrade2cost);
+						BuyUpgrade(2);
+						RandomiseUpgrades();
+					}
 				}
+
 				return super.touchDown(event, x, y, pointer, button);
 			}
 
@@ -490,11 +499,11 @@ public class HUD extends GameObject {
 	 * @param cost how much the upgrade will cost
 	 * @return The upgrade purchase information
 	 */
-	public static String getUpgradeText(Upgrades upgrade, float amount, int cost) {
+	public static String getUpgradeText(Upgrades upgrade, float amount, int cost, String currency) {
 		String u1a = (upgrade == Upgrades.projectiledamage || upgrade == Upgrades.projectilespeed)
 				? ((int) (amount * 100) + "%")
 				: (int) amount + "";
-		return String.format("Upgrade:\n%s + %s\nCost:\n%d Levels", upgrade.label, u1a, cost);
+		return String.format("Upgrade:\n%s + %s\nCost:\n%d %s", upgrade.label, u1a, cost, currency);
 	}
 
 	public void updateShopMenu() {
@@ -502,11 +511,14 @@ public class HUD extends GameObject {
 			// plunder upgrades
 			upgradeButton1.setText(
 					gc.playerBoat.activeProjectileType == ProjectileData.RAY ? "Already bought"
-							: "Ray bullets\nCost: 500 plunder");
-			upgradeButton2.setText("Other upgrade\nCost: 100 plunder");
+							: "Upgrade:\nRay bullets\nCost:\n500 plunder");
+			upgradeButton2.setText(
+					getUpgradeText(upgrade2, upgrade2amount, upgrade2cost * 10, "plunder"));
 		} else {
-			upgradeButton1.setText(getUpgradeText(upgrade1, upgrade1amount, upgrade1cost));
-			upgradeButton2.setText(getUpgradeText(upgrade2, upgrade2amount, upgrade2cost));
+			upgradeButton1
+					.setText(getUpgradeText(upgrade1, upgrade1amount, upgrade1cost, "Levels"));
+			upgradeButton2
+					.setText(getUpgradeText(upgrade2, upgrade2amount, upgrade2cost, "Levels"));
 		}
 
 		upgradeButton1.setPosition(

@@ -93,12 +93,12 @@ public class HUDTest {
 
 	@Test
 	public void testGetUpgradeText() {
-		String value = HUD.getUpgradeText(Upgrades.defense, 15, 10);
+		String value = HUD.getUpgradeText(Upgrades.defense, 15, 10, "Levels");
 		assertTrue(value.contains(Upgrades.defense.label));
 		assertTrue(value.contains("15"));
 		assertTrue(value.contains("10 Levels"));
 
-		value = HUD.getUpgradeText(Upgrades.projectiledamage, 0.3f, 10);
+		value = HUD.getUpgradeText(Upgrades.projectiledamage, 0.3f, 10, "Levels");
 		assertTrue(value.contains(Upgrades.projectiledamage.label));
 		assertTrue(value.contains("30%"));
 		assertTrue(value.contains("10 Levels"));
@@ -168,7 +168,7 @@ public class HUDTest {
 		verify(hud.upgradeButton1, times(1)).setText(anyString());
 		verify(hud.upgradeButton2, times(1)).setText(anyString());
 	}
-	
+
 	@Test
 	public void testUpdateShopMenuPlunder() {
 		try {
