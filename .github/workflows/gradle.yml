@@ -30,13 +30,19 @@ jobs:
       uses: gradle/gradle-build-action@v2
       with:
         gradle-version: 6.7.1
-        arguments: core:test
+        arguments: core:check
     - name: Upload Unit Test Results
       if: always()
       uses: actions/upload-artifact@v2
       with:
         name: Unit Test Results (${{ matrix.os }})
         path: '**/build/test-results/test/TEST-*.xml'
+    - name: Upload Coverage Test Results
+      if: success()
+      uses: actions/upload-artifact@v2
+      with:
+        name: coverage-test-results
+        path: 'core/build/reports/jacoco/report.xml'
 
   publish-test-report:
       name: Publish Unit Test Report
@@ -52,3 +58,23 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1.31
         with:
           files: 'artifacts/**/TEST-*.xml'
+
+  publish-coverage-report:
+      name: Publish Coverage Test Report
+      needs: test
+      runs-on: ubuntu-latest
+      if: success()
+      steps:
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+      - name: Upload Code Coverage
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./artifacts/coverage-test-results/
+          files: report.xml
+          verbose: true
+      - name: Show File Structure
+        run: ls -R

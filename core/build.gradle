@@ -16,3 +16,15 @@ test {
         html.enabled = true
     }
 }
+
+jacocoTestReport {
+	executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+	
+    reports {
+        xml.enabled true
+        xml.destination file("${buildDir}/reports/jacoco/report.xml")
+        html.enabled false
+    }
+}
+
+check.dependsOn jacocoTestReport

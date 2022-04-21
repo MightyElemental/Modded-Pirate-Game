@@ -1,0 +1,10 @@
+coverage:
+  range: 50..90
+  round: down
+  precision: 1
+
+codecov:
+  disable_default_path_fixes: true
+
+fixes:
+   - "::core/src/main/java/"
