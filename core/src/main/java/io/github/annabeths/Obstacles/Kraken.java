@@ -20,8 +20,8 @@ public class Kraken extends ObstacleEntity implements IHealth {
 	final float timeBetweenDirectionChanges = 0.25f;
 	final float speed = 75;
 	private float attackRange = 1000;
-	protected float maxHealth = 500;
-	protected float health = maxHealth;
+	protected float maxHealth;
+	protected float health;
 	private ProjectileData projectileType = ProjectileData.KRAKEN;
 	private float plunderValue = 500;
 	private float xpValue = 250;
@@ -38,11 +38,14 @@ public class Kraken extends ObstacleEntity implements IHealth {
 
 	public Kraken(GameController controller, Vector2 position) {
 		super(controller, position, "img/entity/kraken1.png", new Vector2(200, 200));
-		Polygon poly = new Polygon(new float[] { 0, 75, 75, 150, 150, 75, 75, 0 });
+		Polygon poly = new Polygon(new float[]{0, 75, 75, 150, 150, 75, 75, 0});
 		poly.setPosition(position.x - getLocalCenterX(), position.y);
 		poly.setOrigin(0, 0);
 		poly.setRotation(rotation - 90);
 		setCenter(position);
+		this.maxHealth = 500 * controller.getGameDifficulty().getEnemyHpMul();
+		this.health = maxHealth;
+
 		this.collisionPolygon = poly;
 	}
 
@@ -85,14 +88,14 @@ public class Kraken extends ObstacleEntity implements IHealth {
 
 			String newFrame = null;
 			switch (frameCounter) {
-			case 1:
-				newFrame = frame1;
-				break;
-			case 2:
-				newFrame = frame2;
-				break;
-			case 3:
-				newFrame = frame3;
+				case 1 :
+					newFrame = frame1;
+					break;
+				case 2 :
+					newFrame = frame2;
+					break;
+				case 3 :
+					newFrame = frame3;
 
 			}
 			setSprite(newFrame, position, new Vector2(200, 200));
@@ -124,10 +127,12 @@ public class Kraken extends ObstacleEntity implements IHealth {
 				origin.y - controller.playerBoat.position.y).angleDeg();
 
 		for (int i = 0; i < 6; i++) {
-			Projectile proj = createProjectile(projectileType, direction + (15 * i) + 135, 1, 1,
+			Projectile proj = createProjectile(projectileType, direction + (15 * i) + 135,
+					controller.getGameDifficulty().getEnemyDmgMul(), 1,
 					new Vector2(origin.x + i, origin.y + i));
 
-			// Add the projectile to the GameController's physics objects list so it
+			// Add the projectile to the GameController's physics objects list
+			// so it
 			// receives updates
 			controller.NewPhysicsObject(proj);
 		}

@@ -64,8 +64,9 @@ public class PlayerBoat extends Boat {
 	public PlayerBoat(GameController controller, Vector2 initialPosition) {
 		super(controller, initialPosition, "img/entity/boat1.png");
 
-		this.HP = 100;
+
 		this.maxHP = 100;
+		this.HP = this.maxHP;
 		this.speed = 200;
 		this.turnSpeed = 150;
 
@@ -231,9 +232,9 @@ public class PlayerBoat extends Boat {
 	}
 
 	public float getDamageMul() {
-		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 3 : 1;
+		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 2 : 1;
 		// multiply by the overall damage multiplier
-		return dmgMul * projDmgMul;
+		return dmgMul * projDmgMul * controller.getGameDifficulty().getPlayerDmgMul();
 	}
 
 	@Override

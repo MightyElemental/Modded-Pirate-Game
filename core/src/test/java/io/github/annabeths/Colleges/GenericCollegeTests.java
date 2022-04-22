@@ -1,23 +1,35 @@
 package io.github.annabeths.Colleges;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.GameGenerics.PhysicsObject;
-import io.github.annabeths.GeneralControl.ResourceManager;
+import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.TestHelper;
+import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Projectiles.ProjectileData;
 
 public class GenericCollegeTests {
 
+	GameController gc;
+
 	@BeforeAll
 	public static void init() {
-		ResourceManager.font = mock(BitmapFont.class);
+		TestHelper.setupEnv();
+	}
+
+	@BeforeEach
+	public void setup() {
+		gc = mock(GameController.class, withSettings().useConstructor(mock(eng1game.class))
+				.defaultAnswer(CALLS_REAL_METHODS));
 	}
 
 	@Test
@@ -32,7 +44,7 @@ public class GenericCollegeTests {
 		});
 		assertDoesNotThrow(() -> {
 			new College(new Vector2(0, 0), "img/world/castle/castle_dead.png",
-					"img/world/castle/castle_dead.png", null) {
+					"img/world/castle/castle_dead.png", gc) {
 
 				@Override
 				public void OnCollision(PhysicsObject other) {
@@ -46,7 +58,7 @@ public class GenericCollegeTests {
 		ProjectileData pd = ProjectileData.STOCK;
 		assertDoesNotThrow(() -> {
 			new EnemyCollege(new Vector2(0, 0), "img/world/castle/castle_dead.png",
-					"img/world/castle/castle_dead.png", null, pd, 100);
+					"img/world/castle/castle_dead.png", gc, pd, 100);
 		});
 	}
 
@@ -54,7 +66,7 @@ public class GenericCollegeTests {
 	public void testPlayerCollegeInstantiation() {
 		assertDoesNotThrow(() -> {
 			new PlayerCollege(new Vector2(0, 0), "img/world/castle/castle_dead.png",
-					"img/world/castle/castle_dead.png", null,false);
+					"img/world/castle/castle_dead.png", gc, false);
 		});
 	}
 

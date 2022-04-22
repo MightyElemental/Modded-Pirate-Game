@@ -34,8 +34,14 @@ public abstract class AttackBoat extends AIBoat {
 
 	@Override
 	public void Shoot() {
-		Projectile projLeft = createProjectile(projectileType, -90, 1, 1);
-		Projectile projRight = createProjectile(projectileType, 90, 1, 1);
+
+		float damageMul = 1;
+		if (this instanceof EnemyBoat) {
+			damageMul = controller.getGameDifficulty().getEnemyDmgMul();
+		}
+
+		Projectile projLeft = createProjectile(projectileType, -90, damageMul, 1);
+		Projectile projRight = createProjectile(projectileType, 90, damageMul, 1);
 
 		// Add the projectile to the GameController's physics objects list so it
 		// receives updates
@@ -68,26 +74,28 @@ public abstract class AttackBoat extends AIBoat {
 
 	@Override
 	public void Update(float delta) {
-		if (isDead()) Destroy();
+		if (isDead())
+			Destroy();
 		timeSinceLastShot += delta;
 
 		updateAIState();
 
 		switch (state) {
-		case APPROACH:
+		case APPROACH :
 			approach(delta);
 			break;
-		case ATTACK:
+		case ATTACK :
 			attack(delta);
 			break;
-		case IDLE:
+		case IDLE :
 			idle(delta);
 			break;
-		default:
+		default :
 			break;
 		}
 
-		if (destination != null) MoveToDestination(delta);
+		if (destination != null)
+			MoveToDestination(delta);
 	}
 
 	public void approach(float delta) {
@@ -115,7 +123,8 @@ public abstract class AttackBoat extends AIBoat {
 			adjustedAng = MathHelper.normalizeAngle(adjustedAng);
 			adjustedAng -= adjustedAng > 270 ? 180 : 0;
 
-			// If the angle to the player is within acceptable angle range, shoot
+			// If the angle to the player is within acceptable angle range,
+			// shoot
 			if (adjustedAng > 80 && adjustedAng < 100) {
 				Shoot();
 				timeSinceLastShot = 0;

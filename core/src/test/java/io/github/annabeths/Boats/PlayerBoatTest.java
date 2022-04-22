@@ -15,8 +15,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
-import java.util.ArrayList;
-
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -24,22 +23,19 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Input.Keys;
-import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Collectables.PowerupType;
-import io.github.annabeths.Colleges.College;
 import io.github.annabeths.Colleges.EnemyCollege;
-import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.GeneralControl.TestHelper;
+import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
-import io.github.annabeths.Projectiles.ProjectileRay;
 import io.github.annabeths.UI.HUD;
 
 public class PlayerBoatTest {
@@ -47,20 +43,19 @@ public class PlayerBoatTest {
 	public GameController gc;
 	public PlayerBoat b;
 
+	@BeforeAll
+	public static void init() {
+		TestHelper.setupEnv();
+	}
+
 	@BeforeEach
 	public void setup() {
-		TestHelper.setupEnv();
 		setupInput();
 
-		gc = mock(GameController.class);
+		gc = mock(GameController.class, withSettings().useConstructor(mock(eng1game.class))
+				.defaultAnswer(CALLS_REAL_METHODS));
 		gc.map = mock(GameMap.class);
-		gc.colleges = new ArrayList<College>();
-		gc.physicsObjects = new ArrayList<PhysicsObject>();
-		gc.rays = new ArrayList<ProjectileRay>();
-		doCallRealMethod().when(gc).NewPhysicsObject(any(PhysicsObject.class));
 		setupColleges();
-		gc.playerBoat = new PlayerBoat(gc, new Vector2(0, 0));
-		gc.camera = new OrthographicCamera();
 
 		gc.hud = mock(HUD.class);
 
@@ -90,7 +85,7 @@ public class PlayerBoatTest {
 		doCallRealMethod().when(c).setCenter(any(Vector2.class));
 
 		c.sprite = new Sprite();
-		Polygon collisionPolygon = new Polygon(new float[] { 0, 0, 100, 0, 100, 100, 0, 100 });
+		Polygon collisionPolygon = new Polygon(new float[]{0, 0, 100, 0, 100, 100, 0, 100});
 		collisionPolygon.setPosition(pos.x, pos.y);
 		c.setCenter(pos);
 		c.collisionPolygon = collisionPolygon;
@@ -132,8 +127,10 @@ public class PlayerBoatTest {
 		b.receivePower(p);
 		b.activatePowerup(p);
 		assertFalse(b.activePowerups.isEmpty());
-		b.updatePowerups(p.getDefaultTime() / 2f); // skip half way through powerup
-		assertFalse(b.activePowerups.isEmpty()); // powerup should still be present
+		b.updatePowerups(p.getDefaultTime() / 2f); // skip half way through
+													// powerup
+		assertFalse(b.activePowerups.isEmpty()); // powerup should still be
+													// present
 		b.updatePowerups(p.getDefaultTime()); // skip past end of powerup
 		assertTrue(b.activePowerups.isEmpty()); // powerup should be removed
 	}
@@ -161,19 +158,23 @@ public class PlayerBoatTest {
 	public void testGetAngleBetweenMouseAndBoat() {
 		b.setCenter(new Vector2(0, 0));
 		when(Gdx.input.getX()).thenReturn(1280 / 2);
-		when(Gdx.input.getY()).thenReturn(720 / 2 - 100); // point above the player
+		when(Gdx.input.getY()).thenReturn(720 / 2 - 100); // point above the
+															// player
 		assertEquals(90, b.getAngleBetweenMouseAndBoat());
 
-		when(Gdx.input.getY()).thenReturn(720 / 2 + 100); // point below the player
+		when(Gdx.input.getY()).thenReturn(720 / 2 + 100); // point below the
+															// player
 		assertEquals(270, b.getAngleBetweenMouseAndBoat());
 
-		when(Gdx.input.getX()).thenReturn(1280 / 2 - 100); // point left of the player
+		when(Gdx.input.getX()).thenReturn(1280 / 2 - 100); // point left of the
+															// player
 		when(Gdx.input.getY()).thenReturn(720 / 2);
 		assertEquals(180, b.getAngleBetweenMouseAndBoat());
 	}
 
 	@Test
 	public void testShootStockNormal() {
+		gc.physicsObjects.clear();
 		b.shootStock(1);
 		// Shoot 2 projectiles
 		assertEquals(2, gc.physicsObjects.size());
@@ -185,6 +186,7 @@ public class PlayerBoatTest {
 
 	@Test
 	public void testShootStockBurst() {
+		gc.physicsObjects.clear();
 		b.receivePower(PowerupType.STARBURSTFIRE);
 		b.activatePowerup(PowerupType.STARBURSTFIRE);
 		b.shootStock(1);

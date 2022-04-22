@@ -22,8 +22,8 @@ public class EnemyBoat extends AttackBoat {
 		xpValue = 150;
 		plunderValue = 100;
 
-		this.HP = 100;
-		this.maxHP = 100;
+		this.maxHP = 100 * controller.getGameDifficulty().getEnemyHpMul();
+		this.HP = this.maxHP;
 		this.speed = 75;
 		this.turnSpeed = 150;
 		// uncomment for fun
@@ -77,7 +77,8 @@ public class EnemyBoat extends AttackBoat {
 			Destroy();
 		}
 
-		if (objWasPlayer) controller.addXp((dmgToInflict / maxHP) * xpValue);
+		if (objWasPlayer)
+			controller.addXp((dmgToInflict / maxHP) * xpValue);
 		damage(dmgToInflict);
 	}
 
