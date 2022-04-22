@@ -7,14 +7,11 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
-
-import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +27,8 @@ import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.GeneralControl.DebugUtils;
-import io.github.annabeths.GeneralControl.ResourceManager;
+import io.github.annabeths.GeneralControl.TestHelper;
+import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
@@ -46,18 +44,16 @@ public class EnemyCollegeTest {
 
 	@BeforeAll
 	public static void init() {
-		ResourceManager.font = mock(BitmapFont.class);
+		TestHelper.setupEnv();
 	}
 
 	@BeforeEach
 	public void setup() {
-		gc = mock(GameController.class);
+		gc = mock(GameController.class, withSettings().useConstructor(mock(eng1game.class))
+				.defaultAnswer(CALLS_REAL_METHODS));
 		gc.map = mock(GameMap.class);
-		gc.colleges = new ArrayList<College>();
-		gc.physicsObjects = new ArrayList<PhysicsObject>();
+		
 		gc.playerBoat = new PlayerBoat(gc, new Vector2(0, 0));
-		doCallRealMethod().when(gc).CollegeDestroyed(any(EnemyCollege.class));
-		doCallRealMethod().when(gc).NewPhysicsObject(any(PhysicsObject.class));
 
 		col = mock(EnemyCollege.class,
 				withSettings()

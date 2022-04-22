@@ -59,10 +59,10 @@ public class GameDifScreen implements Screen {
 		// Size of each button
 		Vector2 btnSize = new Vector2(150, 350);
 		// Array of colors the text should be
-		Color[] textColors = { Color.GREEN, Color.ORANGE, Color.RED, Color.BLACK };
+		Color[] textColors = {Color.GREEN, Color.ORANGE, Color.RED, Color.BLACK};
 		// Array of text to display on the buttons
-		String[] buttonText = { "EASY", "MEDIUM", "HARD", "RETURN\nTO MENU" };
-		Difficulty[] buttonDiff = { EASY, MEDIUM, HARD };
+		String[] buttonText = {"EASY", "MEDIUM", "HARD", "RETURN\nTO MENU"};
+		Difficulty[] buttonDiff = {EASY, MEDIUM, HARD};
 
 		// y position of the buttons
 		float btnY = (Gdx.graphics.getHeight() - btnSize.y) / 2;
@@ -91,8 +91,8 @@ public class GameDifScreen implements Screen {
 			if (i < buttonDiff.length) {
 				final int index = i;
 				clickListener(buttons[i], event -> {
-					game.gotoScreen(Screens.gameScreen);
 					game.setDifficulty(buttonDiff[index]);
+					game.gotoScreen(Screens.gameScreen);
 				});
 			}
 
@@ -105,11 +105,13 @@ public class GameDifScreen implements Screen {
 	}
 
 	/**
-	 * Created a new click listener based on the action given and assigns it as a
-	 * new listener to the actor. Used to make code cleaner elsewhere.
+	 * Created a new click listener based on the action given and assigns it as
+	 * a new listener to the actor. Used to make code cleaner elsewhere.
 	 * 
-	 * @param act the actor to apply the listener to
-	 * @param actions the actions to run upon clicking the actor
+	 * @param act
+	 *            the actor to apply the listener to
+	 * @param actions
+	 *            the actions to run upon clicking the actor
 	 * @author James Burnell
 	 */
 	private void clickListener(Actor act, Consumer<InputEvent> actions) {

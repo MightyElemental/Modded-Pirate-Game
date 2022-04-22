@@ -4,7 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.withSettings;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,9 +22,10 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.NeutralBoat;
 import io.github.annabeths.Boats.PlayerBoat;
-import io.github.annabeths.Colleges.College;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.TestHelper;
+import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 
 public class ProjectileRayTest {
@@ -35,13 +38,15 @@ public class ProjectileRayTest {
 
 	@BeforeAll
 	public static void init() {
-		gc = mock(GameController.class);
-		gc.map = mock(GameMap.class);
-		gc.colleges = new ArrayList<College>();
+		TestHelper.setupEnv();
 	}
 
 	@BeforeEach
 	public void setupWorld() {
+		gc = mock(GameController.class, withSettings().useConstructor(mock(eng1game.class))
+				.defaultAnswer(CALLS_REAL_METHODS));
+		gc.map = mock(GameMap.class);
+
 		objects = new ArrayList<PhysicsObject>();
 
 		// line of boats

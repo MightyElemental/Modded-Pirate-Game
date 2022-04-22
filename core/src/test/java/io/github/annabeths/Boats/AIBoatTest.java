@@ -13,17 +13,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
 
-import java.util.ArrayList;
-
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.annabeths.Colleges.College;
 import io.github.annabeths.Colleges.EnemyCollege;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.TestHelper;
+import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.ProjectileData;
 
@@ -32,11 +32,17 @@ public class AIBoatTest {
 	public GameController gc;
 	public AIBoat b;
 
+	@BeforeAll
+	public static void init() {
+		TestHelper.setupEnv();
+	}
+
 	@BeforeEach
 	public void setup() {
-		gc = mock(GameController.class);
+		gc = mock(GameController.class, withSettings().useConstructor(mock(eng1game.class))
+				.defaultAnswer(CALLS_REAL_METHODS));
 		gc.map = mock(GameMap.class);
-		gc.colleges = new ArrayList<College>();
+		gc.physicsObjects.clear();
 		initColleges();
 		gc.playerBoat = new PlayerBoat(gc, new Vector2(0, 0));
 
@@ -144,7 +150,8 @@ public class AIBoatTest {
 		b.updateDestination();
 		assertEquals(old, b.GetDestination());
 
-		b.destinationThreshold = 100000; // ensure boat is within threshold to force update
+		b.destinationThreshold = 100000; // ensure boat is within threshold to
+											// force update
 		b.updateDestination();
 		assertNotEquals(old, b.GetDestination());
 	}

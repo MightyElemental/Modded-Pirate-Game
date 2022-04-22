@@ -4,13 +4,9 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
-import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.withSettings;
-
-import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,9 +14,9 @@ import org.junit.jupiter.api.Test;
 
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.annabeths.Colleges.College;
-import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.TestHelper;
+import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
@@ -32,15 +28,15 @@ public class NeutralBoatTest {
 
 	@BeforeAll
 	public static void init() {
-		gc = mock(GameController.class, withSettings().defaultAnswer(CALLS_REAL_METHODS));
-		gc.map = mock(GameMap.class);
-		gc.colleges = new ArrayList<College>();
-		gc.physicsObjects = new ArrayList<PhysicsObject>();
-		doCallRealMethod().when(gc).NewPhysicsObject(any(PhysicsObject.class));
+		TestHelper.setupEnv();
 	}
 
 	@BeforeEach
 	public void setup() {
+		gc = mock(GameController.class, withSettings().useConstructor(mock(eng1game.class))
+				.defaultAnswer(CALLS_REAL_METHODS));
+		gc.map = mock(GameMap.class);
+
 		nb = new NeutralBoat(gc, new Vector2(0, 0));
 	}
 
@@ -53,7 +49,8 @@ public class NeutralBoatTest {
 
 	@Test
 	public void testDestroyDropsPowerupRandomly() {
-		// The number of powerups should be less than the number of destroy calls
+		// The number of powerups should be less than the number of destroy
+		// calls
 		int runs = 10000;
 		for (int i = 0; i < runs; i++) {
 			nb.Destroy();

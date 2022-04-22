@@ -3,9 +3,9 @@ package io.github.annabeths.Colleges;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
+import static org.mockito.Mockito.withSettings;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +16,8 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.annabeths.Boats.NeutralBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GeneralControl.TestHelper;
+import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 
 public class CollegeTest {
@@ -26,9 +28,10 @@ public class CollegeTest {
 
 	@BeforeAll
 	public static void init() {
-		gc = mock(GameController.class);
+		TestHelper.setupEnv();
+		gc = mock(GameController.class, withSettings().useConstructor(mock(eng1game.class))
+				.defaultAnswer(CALLS_REAL_METHODS));
 		gc.map = mock(GameMap.class);
-		gc.colleges = new ArrayList<College>();
 	}
 
 	@BeforeEach

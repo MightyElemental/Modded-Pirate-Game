@@ -73,12 +73,21 @@ public class GameController implements Screen {
 	float xpTick = 1f;
 	float xpTickMultiplier = 1f;
 
-	// passes the game class so that we can change scene back later
-	public GameController(eng1game game) {
+	public GameController(eng1game game, Difficulty diff) {
 		this();
 		this.game = game;
 
+		this.setDifficulty(diff);
+
 		generateGameObjects();
+	}
+
+	/**
+	 * Creates a GameController with a default difficulty of
+	 * {@link Difficulty#MEDIUM}
+	 */
+	public GameController(eng1game game) {
+		this(game, Difficulty.MEDIUM);
 	}
 
 	private GameController() {
