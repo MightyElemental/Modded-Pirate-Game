@@ -26,15 +26,21 @@ jobs:
       uses: gradle/gradle-build-action@v2
       with:
         gradle-version: 6.7.1
-        arguments: desktop:dist
+        arguments: desktop:dist core:javadoc
     - name: Get the version
       id: get_version
       run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
-    - name: Rename jar file
+    - name: Generate JRE-bundled distributions
       run: |
-        cd desktop/build/libs
-        mv desktop-1.0.jar "pirategame-mario_shard-$TAG.jar"
-        ls
+        chmod +x build-exec.sh
+        ./build-exec.sh
+      env:
+        TAG: ${{ steps.get_version.outputs.VERSION }}
+    - name: Package JavaDoc
+      run: |
+        cd core/build/docs/javadoc
+        tar -czvf "doc-$TAG.tar.gz" *
+        cd ../../../..
       env:
         TAG: ${{ steps.get_version.outputs.VERSION }}
     - name: Automatically release
@@ -43,3 +49,5 @@ jobs:
         fail_on_unmatched_files: true
         files: |
           desktop/build/libs/*.jar
+          builds/export/pirategame*
+          core/build/docs/javadoc/doc*.tar.gz

@@ -27,4 +27,10 @@ jacocoTestReport {
     }
 }
 
+javadoc {
+    source = sourceSets.main.allJava
+    classpath = sourceSets.main.runtimeClasspath
+    title = "ShardSoftware Mario Pirate Game"
+}
+
 check.dependsOn jacocoTestReport
