@@ -30,6 +30,7 @@ public class GameWinScreen implements Screen {
 		font.setColor(Color.FOREST);
 		font.getData().setScale(2);
 		winText = new GlyphLayout(font, "-= YOU WIN =-");
+		font.setColor(Color.WHITE);
 	}
 
 	@Override

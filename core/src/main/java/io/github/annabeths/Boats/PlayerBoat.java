@@ -64,7 +64,6 @@ public class PlayerBoat extends Boat {
 	public PlayerBoat(GameController controller, Vector2 initialPosition) {
 		super(controller, initialPosition, "img/entity/boat1.png");
 
-
 		this.maxHP = 100;
 		this.HP = this.maxHP;
 		this.speed = 200;
@@ -157,13 +156,17 @@ public class PlayerBoat extends Boat {
 		} else if (other instanceof College) {
 			// End game if player crashes into college
 			controller.gameOver();
-		} else if (other instanceof Boat) {
-			// Damage player if collides with boat
-			dmgToInflict = 50;
 		}
 
 		// Deal damage if player is not invincible
-		if (!isInvincible()) damage(Math.max(dmgToInflict - defense, 0));
+		if (!isInvincible()) damage(dmgToInflict);
+	}
+
+	@Override
+	public void damage(float dmg) {
+		if (isInvincible()) return; // no damage if invincible
+		dmg = Math.max(dmg - defense, 0); // subtract defense
+		HP = MathUtils.clamp(HP - dmg, 0, maxHP);
 	}
 
 	/** @return {@code true} if invincibility powerup is active */

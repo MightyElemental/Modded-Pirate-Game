@@ -14,7 +14,7 @@ public class NeutralBoat extends AIBoat {
 	public NeutralBoat(GameController controller, Vector2 initialPosition) {
 		super(controller, initialPosition, "img/entity/boat_neutral.png");
 
-		xpValue = 20  * controller.getGameDifficulty().getPlayerXpMul();
+		xpValue = 20 * controller.getGameDifficulty().getPlayerXpMul();
 		plunderValue = 25;
 
 		this.HP = 100;
@@ -43,6 +43,8 @@ public class NeutralBoat extends AIBoat {
 			// Hit by player, destroy and add XP
 			controller.addXp(xpValue);
 			controller.addPlunder(plunderValue);
+			// damage player
+			((PlayerBoat) object).damage(50);
 			Destroy();
 		} else if (object instanceof Projectile) {
 			object.kill();

@@ -31,6 +31,12 @@ public abstract class GameObject {
 		killOnNextTick = true;
 	}
 
+	/**
+	 * Should the object be removed from the world
+	 * 
+	 * @return {@code true} if the object should be removed from the world,
+	 *         {@code false} otherwise
+	 */
 	public boolean removeOnNextTick() {
 		return killOnNextTick;
 	}

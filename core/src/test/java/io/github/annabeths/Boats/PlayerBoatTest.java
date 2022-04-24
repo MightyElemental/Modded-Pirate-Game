@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.doCallRealMethod;
@@ -85,7 +86,7 @@ public class PlayerBoatTest {
 		doCallRealMethod().when(c).setCenter(any(Vector2.class));
 
 		c.sprite = new Sprite();
-		Polygon collisionPolygon = new Polygon(new float[]{0, 0, 100, 0, 100, 100, 0, 100});
+		Polygon collisionPolygon = new Polygon(new float[] { 0, 0, 100, 0, 100, 100, 0, 100 });
 		collisionPolygon.setPosition(pos.x, pos.y);
 		c.setCenter(pos);
 		c.collisionPolygon = collisionPolygon;
@@ -283,6 +284,14 @@ public class PlayerBoatTest {
 	}
 
 	@Test
+	public void testProcessInputMoveBack() {
+		when(Gdx.input.isKeyPressed(Input.Keys.S)).thenReturn(true);
+		b.setCenter(new Vector2(100, 100));
+		b.processInput(1f);
+		verify(b, times(1)).Move(anyFloat(), eq(-1));
+	}
+
+	@Test
 	public void testProcessInputClick() {
 		when(Gdx.input.isButtonJustPressed(Input.Buttons.LEFT)).thenReturn(true);
 		gc.hud.hoveringOverButton = false;
@@ -366,9 +375,8 @@ public class PlayerBoatTest {
 	public void testOnCollisionBoat() {
 		NeutralBoat nb = new NeutralBoat(gc, new Vector2(0, 0));
 		b.HP = 100;
-		b.OnCollision(nb);
-		assertEquals(100 - 50 + b.defense, b.getHealth());
 		nb.OnCollision(b);
+		assertEquals(100 - 50 + b.defense, b.getHealth());
 		assertTrue(nb.removeOnNextTick());
 	}
 
@@ -523,6 +531,13 @@ public class PlayerBoatTest {
 		when(input.isKeyJustPressed(Keys.NUMPAD_5)).thenReturn(true);
 		b.processPowerupInput(1f);
 		verify(b, times(1)).activatePowerup(eq(powerups[4]));
+	}
+
+	@Test
+	public void testReceivePowerupLimit() {
+		assertTrue(gc.playerBoat.receivePower(PowerupType.DAMAGE));
+		assertTrue(gc.playerBoat.receivePower(PowerupType.DAMAGE));
+		assertFalse(gc.playerBoat.receivePower(PowerupType.DAMAGE));
 	}
 
 }
