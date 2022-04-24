@@ -2,22 +2,26 @@ package io.github.annabeths.GameScreens;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.withSettings;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
@@ -51,35 +55,26 @@ public class GameDifScreenTest {
 	}
 
 	@Test
-	public void testSetupButtons()
-			throws NoSuchMethodException, SecurityException, IllegalAccessException,
-			IllegalArgumentException, InvocationTargetException, NoSuchFieldException {
-		Method setupBtn = GameDifScreen.class.getDeclaredMethod("setupButtons");
-		setupBtn.setAccessible(true);
-
-		assertDoesNotThrow(() -> setupBtn.invoke(gds));
-		TextButton[] btns = buttons();
+	public void testSetupButtons() {
+		assertDoesNotThrow(() -> gds.setupButtons());
+		TextButton[] btns = gds.getButtons();
 
 		for (TextButton b : btns) {
 			assertNotNull(b);
 		}
 	}
 
-	public TextButton[] buttons() throws NoSuchFieldException, SecurityException,
-			IllegalArgumentException, IllegalAccessException {
-		Field fb = GameDifScreen.class.getDeclaredField("buttons");
-		fb.setAccessible(true);
-		return (TextButton[]) fb.get(gds);
+	@Test
+	public void testSetupLabels() {
+		assertDoesNotThrow(() -> gds.setupLabel());
+		verify(s, times(1)).addActor(any(Label.class));
 	}
 
 	@Test
-	public void testClickListener()
-			throws NoSuchFieldException, SecurityException, IllegalArgumentException,
-			IllegalAccessException, NoSuchMethodException, InvocationTargetException {
-
+	public void testClickListener() {
 		testSetupButtons(); // ensure buttons are set up
 
-		TextButton[] buttons = buttons();
+		TextButton[] buttons = gds.getButtons();
 
 		ClickListener cl = (ClickListener) buttons[0].getListeners().get(1);
 		cl.clicked(null, 0, 0);
@@ -99,6 +94,30 @@ public class GameDifScreenTest {
 		assertDoesNotThrow(() -> gds.render(1f));
 		verify(s, times(1)).act();
 		verify(s, times(1)).draw();
+	}
+
+	@Test
+	public void testKeyPress() {
+		testSetupButtons(); // ensure buttons are set up
+
+		when(Gdx.input.isKeyJustPressed(Keys.E)).thenReturn(false);
+		gds.render(1f);
+		verify(game, never()).setDifficulty(Difficulty.EASY);
+		verify(game, never()).gotoScreen(Screens.gameScreen);
+
+		when(Gdx.input.isKeyJustPressed(Keys.E)).thenReturn(true);
+		gds.render(1f);
+		verify(game, times(1)).setDifficulty(Difficulty.EASY);
+		verify(game, times(1)).gotoScreen(Screens.gameScreen);
+	}
+
+	@Test
+	public void testEscKeyPress() {
+		testSetupButtons(); // ensure buttons are set up
+
+		when(Gdx.input.isKeyJustPressed(Keys.ESCAPE)).thenReturn(true);
+		gds.render(1f);
+		verify(game, times(1)).gotoScreen(Screens.menuScreen);
 	}
 
 	@Test

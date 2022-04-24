@@ -32,6 +32,7 @@ public class GameOverScreen implements Screen {
 		font.setColor(Color.RED);
 		font.getData().setScale(2);
 		loseText = new GlyphLayout(font, "-= YOU LOSE =-");
+		font.setColor(Color.WHITE);
 	}
 
 	@Override

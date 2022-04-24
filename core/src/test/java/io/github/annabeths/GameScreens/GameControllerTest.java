@@ -188,22 +188,22 @@ public class GameControllerTest {
 
 	@Test
 	public void testIsEnemyCollegeNearPlayer() {
-		assertFalse(gc.isEnemyCollegeNearPlayer());
+		assertFalse(gc.isPlayerNearEnemyCollege());
 
 		gc.playerBoat.setCenter(new Vector2(GameMap.getMapWidth() / 2, GameMap.getMapHeight() / 2));
 
-		assertTrue(gc.isEnemyCollegeNearPlayer());
+		assertTrue(gc.isPlayerNearEnemyCollege());
 	}
 
 	@Test
 	public void testIsEnemyBoatNearPlayer() {
-		assertFalse(gc.isEnemyBoatNearPlayer());
+		assertFalse(gc.isPlayerNearEnemyBoat());
 
 		PhysicsObject boat = gc.physicsObjects.stream().filter(p -> p instanceof EnemyBoat)
 				.findFirst().get();
 		gc.playerBoat.setCenter(boat.getCenter());
 
-		assertTrue(gc.isEnemyBoatNearPlayer());
+		assertTrue(gc.isPlayerNearEnemyBoat());
 	}
 
 	@Test
@@ -364,6 +364,15 @@ public class GameControllerTest {
 
 		// should have four directions
 		assertEquals(4, directions.size());
+	}
+
+	@Test
+	public void testUpdateGenerateWeather() {
+		gc.logic(0f);
+		verify(gc, never()).generateWeather();
+
+		gc.logic(10f);
+		verify(gc, times(1)).generateWeather();
 	}
 
 	@Test

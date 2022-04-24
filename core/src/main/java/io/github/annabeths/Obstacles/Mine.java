@@ -4,6 +4,7 @@ import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.Boat;
+import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 
@@ -21,8 +22,12 @@ public class Mine extends ObstacleEntity {
 
 	@Override
 	public void OnCollision(PhysicsObject other) {
+		boolean shouldDamage = true;
+		if (other instanceof PlayerBoat) {
+			shouldDamage &= !((PlayerBoat) other).isInvincible();
+		}
 		if (other instanceof Boat) {
-			((Boat) other).damage(50);
+			if (shouldDamage) ((Boat) other).damage(50);
 			kill();
 		}
 	}

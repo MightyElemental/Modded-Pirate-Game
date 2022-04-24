@@ -111,8 +111,7 @@ public class eng1game extends Game {
 	}
 
 	public void setDifficulty(Difficulty difficulty) {
-		Gdx.app.log("eng1game",
-				String.format("Set game difficulty to %s\n", difficulty.toString()));
+		Gdx.app.log("eng1game", String.format("Set game difficulty to %s", difficulty.toString()));
 		if (gameScreen != null) gameScreen.setDifficulty(difficulty);
 		this.diff = difficulty;
 	}

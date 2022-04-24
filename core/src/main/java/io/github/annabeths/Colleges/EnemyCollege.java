@@ -19,8 +19,8 @@ public class EnemyCollege extends College {
 
 	/**
 	 * The inaccuracy when firing cannonballs. Measured in degrees and reflected
-	 * about the center. i.e. the cannon could be fired anywhere between -x and
-	 * x where x is the inaccuracy.
+	 * about the center. i.e. the cannon could be fired anywhere between -x and x
+	 * where x is the inaccuracy.
 	 */
 	public float shootingInaccuracy = 10f;
 	public float timeSinceLastShot = 0;
@@ -39,7 +39,7 @@ public class EnemyCollege extends College {
 				new Vector2(100, 100));
 
 		this.maxHP = maxHP * controller.getGameDifficulty().getEnemyHpMul();
-		HP = maxHP;
+		this.HP = this.maxHP;
 		range = 500;
 		fireRate = 1.5f;
 		projectileType = projectileData;
@@ -69,8 +69,7 @@ public class EnemyCollege extends College {
 				p.kill();
 				if (!isInvulnerable()) {
 					damage(p.getDamage());
-					if (isDead())
-						gc.CollegeDestroyed(this);
+					if (isDead()) gc.CollegeDestroyed(this);
 					updateHpText();
 				} else {
 					hpText.setText(font, "RESISTED, destroy other colleges first!");
@@ -111,12 +110,10 @@ public class EnemyCollege extends College {
 
 	void ShootAt(Vector2 target) {
 		// If fire is disabled, skip calculation.
-		if (!DebugUtils.ENEMY_COLLEGE_FIRE)
-			return;
+		if (!DebugUtils.ENEMY_COLLEGE_FIRE) return;
 		/*
-		 * calculate the shot angle by getting a vector from the center of the
-		 * college to the target. Convert to degrees for the inaccuracy
-		 * calculation.
+		 * calculate the shot angle by getting a vector from the center of the college
+		 * to the target. Convert to degrees for the inaccuracy calculation.
 		 */
 		Vector2 directionVec = target.cpy().sub(getCenter());
 		float shotAngle = directionVec.angleDeg();
@@ -126,8 +123,8 @@ public class EnemyCollege extends College {
 		float dmgMul = gc.getGameDifficulty().getEnemyDmgMul();
 
 		/*
-		 * instantiate a new bullet and pass a reference to the gamecontroller
-		 * so it can be updated and drawn
+		 * instantiate a new bullet and pass a reference to the gamecontroller so it can
+		 * be updated and drawn
 		 */
 		gc.NewPhysicsObject(
 				new Projectile(getCenter(), shotAngle, projectileType, false, dmgMul, 1));

@@ -4,7 +4,6 @@ import static io.github.annabeths.Level.GameMap.BORDER_BRIM;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -187,9 +186,12 @@ public class GameController implements Screen {
 
 		// create some powerups
 		for (int i = 0; i < 5; i++) {
-			// TODO: Prevent powerups spawning on top of colleges
-			physicsObjects
-					.add(new Powerup(PowerupType.randomPower(), GameMap.getRandomPointInBounds()));
+			Powerup pup;
+			do {
+				pup = new Powerup(PowerupType.randomPower(), GameMap.getRandomPointInBounds());
+			} while (isObjectOverlappingAnyObj(pup)); // world is big enough to prevent blocking
+
+			physicsObjects.add(pup);
 		}
 
 		// create some boats
@@ -206,10 +208,28 @@ public class GameController implements Screen {
 		if (getGameDifficulty().doesKrakenSpawn())
 			physicsObjects.add(new Kraken(this, new Vector2(1500, 1500)));
 
+		// generate mines
 		for (int i = 0; i < getGameDifficulty().getNumMines(); i++) {
-			physicsObjects.add(new Mine(this, GameMap.getRandomPointInBounds()));
+			Mine m;
+			do { // ensure mine is not overlapping any object
+				m = new Mine(this, GameMap.getRandomPointInBounds());
+			} while (isObjectOverlappingAnyObj(m)); // world is big enough to prevent blocking
+
+			physicsObjects.add(m);
 		}
 
+	}
+
+	/**
+	 * Test if an object is overlapping any existing object in the world. Useful to
+	 * prevent objects being generated on top of another object
+	 * 
+	 * @param obj the object to test
+	 * @return {@code true} if the object is overlapping with any object in the
+	 *         world, {@code false} otherwise
+	 */
+	public boolean isObjectOverlappingAnyObj(PhysicsObject obj) {
+		return physicsObjects.stream().anyMatch(p -> p.CheckCollisionWith(obj));
 	}
 
 	public void logic(float delta) {
@@ -230,12 +250,12 @@ public class GameController implements Screen {
 		UpdateObjects(delta); // update all physicsobjects
 		ClearKilledObjects(); // clear any 'killed' objects
 
-		if (bossCollege.isDead()) { // if the boss college is dead, the game is
-									// won
+		// if the boss college is dead, the game is won
+		if (bossCollege.isDead()) {
 			game.gameScore = (int) getGameScore();
 			game.gotoScreen(Screens.gameWinScreen);
 		}
-		timeSinceLastWeather = timeSinceLastWeather + delta;
+		timeSinceLastWeather += delta;
 		if (timeSinceLastWeather >= timeBetweenWeatherGeneration) {
 			generateWeather();
 			timeSinceLastWeather = 0;
@@ -327,15 +347,15 @@ public class GameController implements Screen {
 
 	/**
 	 * Tests if player is in danger. The player is in danger if it is in range of an
-	 * {@link EnemyCollege} or an {@link EnemyBoat}.
+	 * {@link EnemyCollege}, {@link EnemyBoat}, or {@link Kraken}.
 	 * 
-	 * @return {@code true} if within range of an enemy college or boat,
-	 *         {@code false} otherwise or player is invincible.
+	 * @return {@code true} if within range of a danger, {@code false} otherwise or
+	 *         player is invincible.
 	 * @author James Burnell
 	 */
 	public boolean isPlayerInDanger() {
 		return !playerBoat.isInvincible()
-				&& (isEnemyCollegeNearPlayer() || isEnemyBoatNearPlayer());
+				&& (isPlayerNearEnemyCollege() || isPlayerNearEnemyBoat() || isPlayerNearKraken());
 	}
 
 	/**
@@ -345,7 +365,7 @@ public class GameController implements Screen {
 	 *         otherwise.
 	 * @author James Burnell
 	 */
-	public boolean isEnemyBoatNearPlayer() {
+	public boolean isPlayerNearEnemyBoat() {
 		return physicsObjects.stream().filter(p -> p instanceof EnemyBoat)
 				.anyMatch(p -> p.getCenter().dst2(playerBoat.getCenter()) < 500 * 500);
 	}
@@ -357,9 +377,20 @@ public class GameController implements Screen {
 	 *         otherwise.
 	 * @author James Burnell
 	 */
-	public boolean isEnemyCollegeNearPlayer() {
+	public boolean isPlayerNearEnemyCollege() {
 		return colleges.stream().filter(c -> c instanceof EnemyCollege)
 				.anyMatch(c -> c.isInRange(playerBoat));
+	}
+
+	/**
+	 * Tests if player is in range of a {@link Kraken}.
+	 * 
+	 * @return {@code true} if within range of a kraken, {@code false} otherwise.
+	 * @author James Burnell
+	 */
+	public boolean isPlayerNearKraken() {
+		return physicsObjects.stream().filter(p -> p instanceof Kraken)
+				.anyMatch(p -> ((Kraken) p).isInRange(playerBoat));
 	}
 
 	/**
@@ -372,7 +403,7 @@ public class GameController implements Screen {
 	public void CollegeDestroyed(EnemyCollege oldCollege) {
 		addXp(100);
 
-		boolean foundCollege = physicsObjects.stream().filter(c -> c instanceof EnemyCollege)
+		boolean foundCollege = colleges.stream().filter(c -> c instanceof EnemyCollege)
 				.anyMatch(c -> {
 					EnemyCollege e = (EnemyCollege) c;
 					// there is still a normal college alive
@@ -384,29 +415,21 @@ public class GameController implements Screen {
 		}
 
 		PlayerCollege newFriendlyCollege = new PlayerCollege(oldCollege);
+		physicsObjects.remove(oldCollege);
 		physicsObjects.add(newFriendlyCollege);
+		colleges.remove(oldCollege);
+		colleges.add(newFriendlyCollege);
 	}
 
 	/**
-	 * Goes through all the {@link PhysicsObject} and removes ones from the list
-	 * that have had the flag set ({@link GameObject#removeOnNextTick()}) in a safe
-	 * manner
+	 * Goes through {@link #physicsObjects} and {@link #rays} to remove ones from
+	 * the lists that have had the flag set ({@link GameObject#removeOnNextTick()})
 	 */
 	public void ClearKilledObjects() {
-		Iterator<PhysicsObject> p = physicsObjects.iterator();
-		while (p.hasNext()) {
-			PhysicsObject current = p.next();
-			if (current.removeOnNextTick()) {
-				p.remove();
-			}
-		}
+		// Clean up objects
+		physicsObjects.removeIf(p -> p.removeOnNextTick());
 		// Clean up rays
-		Iterator<ProjectileRay> ri = rays.iterator();
-		while (ri.hasNext()) {
-			if (ri.next().removeOnNextTick()) {
-				ri.remove();
-			}
-		}
+		rays.removeIf(r -> r.removeOnNextTick());
 	}
 
 	@Override

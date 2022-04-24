@@ -21,7 +21,8 @@ public class Kraken extends ObstacleEntity implements IHealth {
 
 	final float timeBetweenDirectionChanges = 0.25f;
 	final float speed = 75;
-	private float attackRange = 1000;
+	/** How close an object needs to be before the kraken starts attacking */
+	private float attackRange = 750;
 	protected float maxHealth;
 	protected float health;
 	private ProjectileData projectileType = ProjectileData.KRAKEN;
@@ -137,9 +138,19 @@ public class Kraken extends ObstacleEntity implements IHealth {
 		}
 	}
 
+	/**
+	 * Test if an object is within attack range
+	 * 
+	 * @param obj the object to range test
+	 * @return {@code true} if the object is within {@link #attackRange},
+	 *         {@code false} otherwise
+	 */
+	public boolean isInRange(PhysicsObject obj) {
+		return getCenter().dst2(obj.getCenter()) < attackRange * attackRange;
+	}
+
 	public void Shoot() {
-		float dst = getCenter().dst(controller.playerBoat.getCenter());
-		if (dst <= attackRange) {
+		if (isInRange(controller.playerBoat)) {
 			ShotgunShot();
 		}
 	}

@@ -18,9 +18,11 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.Boats.PlayerBoat;
+import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.GeneralControl.TestHelper;
 import io.github.annabeths.GeneralControl.eng1game;
@@ -41,6 +43,16 @@ public class WeatherTest {
 				.defaultAnswer(CALLS_REAL_METHODS));
 		w = mock(Weather.class, withSettings().useConstructor(gc, new Vector2(0, 0), 0)
 				.defaultAnswer(CALLS_REAL_METHODS));
+		w.opacity = 1f;
+	}
+
+	@Test
+	public void testFade() {
+		w.opacity = 0;
+		w.sprite = mock(Sprite.class);
+		w.Update(0.5f);
+		assertTrue(w.opacity > 0);
+		verify(w.sprite, times(1)).setColor(anyFloat(), anyFloat(), anyFloat(), anyFloat());
 	}
 
 	@Test
@@ -76,6 +88,14 @@ public class WeatherTest {
 		assertDoesNotThrow(() -> w.OnCollision(pb));
 		verify(gc, times(1)).addXp(anyFloat());
 		verify(pb, never()).damage(anyFloat());
+	}
+
+	@Test
+	public void testOnCollisionInvincible() {
+		w.damageActive = false;
+		gc.playerBoat.activePowerups.put(PowerupType.INVINCIBILITY, 2f);
+		w.OnCollision(gc.playerBoat);
+		assertEquals(gc.playerBoat.getMaxHealth(), gc.playerBoat.getHealth());
 	}
 
 	@Test

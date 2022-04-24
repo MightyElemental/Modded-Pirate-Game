@@ -6,15 +6,20 @@ import static io.github.annabeths.GeneralControl.Difficulty.MEDIUM;
 import static io.github.annabeths.GeneralControl.ResourceManager.font;
 import static io.github.annabeths.GeneralControl.ResourceManager.getTexture;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input.Keys;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -22,6 +27,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.github.annabeths.GeneralControl.Difficulty;
+import io.github.annabeths.GeneralControl.ResourceManager;
 import io.github.annabeths.GeneralControl.eng1game;
 
 /**
@@ -33,16 +39,22 @@ public class GameDifScreen implements Screen {
 
 	private Stage stage;
 
+	/** The game object used to change screens */
 	private eng1game game;
 
 	/** Array of the menu buttons */
-	private TextButton[] buttons = new TextButton[4];
+	private TextButton[] buttons;
+
+	/** A collection of actions to perform when the associated key is pressed */
+	private Map<Integer, Consumer<InputEvent>> keyActions;
 
 	public GameDifScreen(eng1game g) {
 		game = g;
+		keyActions = new HashMap<Integer, Consumer<InputEvent>>();
+		buttons = new TextButton[4];
 	}
 
-	private void setupButtons() {
+	public void setupButtons() {
 		// Size of each button
 		Vector2 btnSize = new Vector2(150, 350);
 		// Array of colors the text should be
@@ -50,6 +62,7 @@ public class GameDifScreen implements Screen {
 		// Array of text to display on the buttons
 		String[] buttonText = { "EASY", "MEDIUM", "HARD", "RETURN\nTO MENU" };
 		Difficulty[] buttonDiff = { EASY, MEDIUM, HARD };
+		int[] buttonKeys = { Keys.E, Keys.M, Keys.H };
 
 		// y position of the buttons
 		float btnY = (Gdx.graphics.getHeight() - btnSize.y) / 2;
@@ -76,11 +89,7 @@ public class GameDifScreen implements Screen {
 
 			// Define button click actions
 			if (i < buttonDiff.length) {
-				final int index = i;
-				clickListener(buttons[i], event -> {
-					game.setDifficulty(buttonDiff[index]);
-					game.gotoScreen(Screens.gameScreen);
-				});
+				assignDifficultyToBtn(buttonKeys[i], buttons[i], buttonDiff[i]);
 			}
 
 			// Add button to stage
@@ -89,6 +98,25 @@ public class GameDifScreen implements Screen {
 
 		// Return to menu
 		clickListener(buttons[3], event -> game.gotoScreen(Screens.menuScreen));
+		keyActions.put(Keys.ESCAPE, event -> game.gotoScreen(Screens.menuScreen));
+	}
+
+	/**
+	 * Maps a button and a key to an action that changes the game difficulty
+	 * 
+	 * @param key the key to press to activate the action
+	 * @param btn the button to click to activate the action
+	 * @param dif the difficulty to change the game to
+	 * @see Keys
+	 * @see #keyActions
+	 */
+	public void assignDifficultyToBtn(int key, TextButton btn, Difficulty dif) {
+		Consumer<InputEvent> actions = event -> {
+			game.setDifficulty(dif);
+			game.gotoScreen(Screens.gameScreen);
+		};
+		clickListener(btn, actions);
+		keyActions.put(key, actions);
 	}
 
 	/**
@@ -99,7 +127,7 @@ public class GameDifScreen implements Screen {
 	 * @param actions the actions to run upon clicking the actor
 	 * @author James Burnell
 	 */
-	private void clickListener(Actor act, Consumer<InputEvent> actions) {
+	public void clickListener(Actor act, Consumer<InputEvent> actions) {
 		act.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -114,10 +142,26 @@ public class GameDifScreen implements Screen {
 		Gdx.input.setInputProcessor(stage);
 
 		setupButtons();
+		setupLabel();
+	}
+
+	public void setupLabel() {
+		LabelStyle style = new LabelStyle();
+		style.font = ResourceManager.font;
+		style.fontColor = Color.WHITE;
+		Label l = new Label("Click a button or press E/M/H to select difficulty", style);
+		l.setPosition(10, 10);
+
+		stage.addActor(l);
 	}
 
 	@Override
 	public void render(float delta) {
+		// test for any pressed keys
+		keyActions.forEach((key, action) -> {
+			if (Gdx.input.isKeyJustPressed(key)) action.accept(null);
+		});
+
 		ScreenUtils.clear(Color.DARK_GRAY);
 		stage.act();
 		stage.draw();
@@ -142,6 +186,13 @@ public class GameDifScreen implements Screen {
 	@Override
 	public void dispose() {
 		stage.dispose();
+	}
+
+	/**
+	 * @return the buttons
+	 */
+	public TextButton[] getButtons() {
+		return buttons;
 	}
 
 }

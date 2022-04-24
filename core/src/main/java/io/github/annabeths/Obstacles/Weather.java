@@ -24,6 +24,13 @@ public class Weather extends ObstacleEntity {
 	String frame1 = "img/entity/weather1.png";
 	String frame2 = "img/entity/weather2.png";
 
+	/**
+	 * The length of time in seconds it takes the object to fade in when spawning
+	 */
+	public float fadeTime;
+	/** How opaque the object is */
+	public float opacity = 0f;
+
 	Vector2 direction;
 	float timeOnCurrentDirection = 0;
 	/**
@@ -55,6 +62,9 @@ public class Weather extends ObstacleEntity {
 		this.collisionPolygon = poly;
 		ChangeDirection();
 		timeUntilNextLightningStrike = MathUtils.random(maxTimeBetweenLightningStrikes);
+
+		fadeTime = 3 + MathUtils.random(-1.5f, 1f); // add random amount to fade time
+		sprite.setColor(1, 1, 1, 0f); // set transparent when spawned
 	}
 
 	public void toggleLightning() {
@@ -71,13 +81,17 @@ public class Weather extends ObstacleEntity {
 
 	@Override
 	public void OnCollision(PhysicsObject other) {
+		boolean shouldDamage = damageActive;
+
 		if (other instanceof PlayerBoat) {
 			// The player gets xp for sailing through bad weather
 			controller.addXp(5 * Gdx.graphics.getDeltaTime());
+			// should not damage if player is invincible
+			shouldDamage &= !((PlayerBoat) other).isInvincible();
 		}
-		if (!damageActive) {
-			return; // Only deal damage when lightning frames are showing
-		}
+
+		if (!shouldDamage) return;
+
 		if (other instanceof Boat) {
 			((Boat) other).damage(1f * controller.getGameDifficulty().getEnemyDmgMul());
 		}
@@ -119,16 +133,22 @@ public class Weather extends ObstacleEntity {
 
 	@Override
 	public void Update(float delta) {
-		// Update the sprite and check state of lightning
-		if (damageActive) {
-			timeSinceStrikeStarted += delta;
-			if (timeSinceStrikeStarted >= timeStrikeActive) {
-				toggleLightning();
-			}
-		} else {
-			timeSinceLastStrike += delta;
-			if (timeSinceLastStrike >= timeUntilNextLightningStrike) {
-				toggleLightning();
+		// fade weather in gradually
+		if (opacity < 1) {
+			opacity += delta / fadeTime;
+			sprite.setColor(1, 1, 1, MathUtils.clamp(opacity, 0, 1));
+		} else { // don't strike if fading in
+			// Update the sprite and check state of lightning
+			if (damageActive) {
+				timeSinceStrikeStarted += delta;
+				if (timeSinceStrikeStarted >= timeStrikeActive) {
+					toggleLightning();
+				}
+			} else {
+				timeSinceLastStrike += delta;
+				if (timeSinceLastStrike >= timeUntilNextLightningStrike) {
+					toggleLightning();
+				}
 			}
 		}
 

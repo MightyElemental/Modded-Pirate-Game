@@ -5,11 +5,11 @@ import com.badlogic.gdx.math.MathUtils;
 /** @author James Burnell */
 public enum PowerupType {
 
-	SPEED("Speed", 20, "speed.png", "speed-boost.mp3"),
-	RAPIDFIRE("Rapid Fire", 30, "rapidFire.png", "rapid-fire.mp3"),
-	INVINCIBILITY("Invincibility", 30, "invincible.png", "invincibility.mp3"),
-	STARBURSTFIRE("Burst Fire", 15, "starBurst.png", "burst-fire.mp3"),
-	DAMAGE("Damage Buff", 20, "dmgBuff.png", "damage-buff.mp3");
+	SPEED("Speed", 10, "speed.png", "speed-boost.mp3"),
+	RAPIDFIRE("Rapid Fire", 10, "rapidFire.png", "rapid-fire.mp3"),
+	INVINCIBILITY("Invincibility", 10, "invincible.png", "invincibility.mp3"),
+	STARBURSTFIRE("Burst Fire", 10, "starBurst.png", "burst-fire.mp3"),
+	DAMAGE("Damage Buff", 10, "dmgBuff.png", "damage-buff.mp3");
 
 	private PowerupType(String name, float activeTime, String texture, String activationAudio) {
 		this.name = name;
