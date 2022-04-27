@@ -22,7 +22,6 @@ import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
-import io.github.annabeths.Boats.GenericBoat;
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
@@ -52,7 +51,7 @@ public class EnemyCollegeTest {
 		gc = mock(GameController.class, withSettings().useConstructor(mock(eng1game.class))
 				.defaultAnswer(CALLS_REAL_METHODS));
 		gc.map = mock(GameMap.class);
-		
+
 		gc.playerBoat = new PlayerBoat(gc, new Vector2(0, 0));
 
 		col = mock(EnemyCollege.class,
@@ -171,8 +170,7 @@ public class EnemyCollegeTest {
 
 	@Test
 	public void testOnCollisionNonProjectile() {
-		GenericBoat b = new GenericBoat(new Vector2(0, 0));
-		assertDoesNotThrow(() -> col.OnCollision(b));
+		assertDoesNotThrow(() -> col.OnCollision(mock(PlayerBoat.class)));
 	}
 
 	@Test

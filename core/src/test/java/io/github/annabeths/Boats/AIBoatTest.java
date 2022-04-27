@@ -157,12 +157,6 @@ public class AIBoatTest {
 	}
 
 	@Test
-	public void testGetDestinationThreshold() {
-		b.destinationThreshold = 1337;
-		assertEquals(1337, b.getDestinationThreshold());
-	}
-
-	@Test
 	public void testUpdateHP() {
 		// Update method should destroy boat if HP is zero
 		b.Update(1);

@@ -54,11 +54,6 @@ public class MenuTest {
 	}
 
 	@Test
-	public void testConstruction() {
-		assertDoesNotThrow(() -> new Menu(game));
-	}
-
-	@Test
 	public void testRender() {
 		assertDoesNotThrow(() -> m.render(1f));
 		// test renders menu text

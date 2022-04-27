@@ -401,7 +401,8 @@ public class GameController implements Screen {
 	 * @param oldCollege the college that was destroyed
 	 */
 	public void CollegeDestroyed(EnemyCollege oldCollege) {
-		addXp(100);
+		addXp(150);
+		addPlunder(250);
 
 		boolean foundCollege = colleges.stream().filter(c -> c instanceof EnemyCollege)
 				.anyMatch(c -> {
@@ -514,8 +515,8 @@ public class GameController implements Screen {
 	 * @param amount the amount of plunder to add
 	 */
 	public void addPlunder(float amount) {
-		plunder += amount;
-		totalPlunder += amount;
+		plunder += amount * getGameDifficulty().getPlayerXpMul();
+		totalPlunder += amount * getGameDifficulty().getPlayerXpMul();
 	}
 
 	/**

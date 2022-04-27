@@ -97,9 +97,8 @@ public class NeutralBoatTest {
 
 	@Test
 	public void testOnCollisionOther() {
-		GenericBoat g = new GenericBoat(new Vector2(0, 0));
 		float hp = nb.getHealth();
-		assertDoesNotThrow(() -> nb.OnCollision(g));
+		assertDoesNotThrow(() -> nb.OnCollision(mock(NeutralBoat.class)));
 		assertEquals(hp, nb.getHealth()); // no damage
 	}
 
