@@ -2,7 +2,15 @@ package io.github.annabeths.Projectiles;
 
 import com.badlogic.gdx.math.Vector2;
 
-/** Used to define each type of projectile found in the game */
+/**
+ * Used to define each type of projectile found in the game
+ * 
+ * @author James Burnell
+ * @author Hector Woods
+ * @author Leif Kemp
+ * 
+ * @tt.updated Assessment 2
+ */
 public enum ProjectileData {
 
 	/** Rays damage entities directly without traveling */
@@ -10,7 +18,7 @@ public enum ProjectileData {
 	STOCK(250, 20, new Vector2(20, 20), "img/entity/cannonball.png"),
 	BOSS(300, 20, new Vector2(20, 20), "img/entity/cannonball.png"),
 	ENEMY(250, 20, new Vector2(20, 20), "img/entity/cannonball.png"),
-	KRAKEN(250, 30, new Vector2(20,20), "img/entity/kraken_cannonball.png");
+	KRAKEN(250, 30, new Vector2(20, 20), "img/entity/kraken_cannonball.png");
 
 	/** The scalar speed of the object, not the velocity */
 	public float speed;

@@ -7,6 +7,10 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.github.annabeths.GeneralControl.ResourceManager;
 
+/**
+ * @author James Burnell
+ * @tt.updated Assessment 2
+ */
 public abstract class GameObject {
 	// every GameObject needs to have these values, and define these methods
 

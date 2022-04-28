@@ -31,6 +31,7 @@ javadoc {
     source = sourceSets.main.allJava
     classpath = sourceSets.main.runtimeClasspath
     title = "ShardSoftware Mario Pirate Game"
+    options.tags = [ "tt.updated:a:'Updated:'" ] 
 }
 
 check.dependsOn jacocoTestReport

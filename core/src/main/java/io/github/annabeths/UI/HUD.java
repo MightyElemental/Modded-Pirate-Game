@@ -43,6 +43,10 @@ import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.Projectiles.ProjectileData;
 
+/**
+ * @author James Burnell
+ * @tt.updated Assessment 2
+ */
 public class HUD extends GameObject {
 
 	Stage stage;

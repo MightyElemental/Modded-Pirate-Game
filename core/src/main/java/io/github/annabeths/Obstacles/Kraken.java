@@ -15,6 +15,7 @@ import io.github.annabeths.Projectiles.ProjectileData;
 /**
  * Kraken Obstacle. Attacks the player and other ships if they get close enough
  * 
+ * @since Assessment 2
  * @author Hector Woods
  */
 public class Kraken extends ObstacleEntity implements IHealth {

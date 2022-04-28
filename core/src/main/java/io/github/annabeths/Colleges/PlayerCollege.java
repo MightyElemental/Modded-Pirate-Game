@@ -11,6 +11,11 @@ import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 
+/**
+ * @author James Burnell
+ * @author Hector Woods
+ * @tt.updated Assessment 2
+ */
 public class PlayerCollege extends College {
 
 	/**

@@ -25,6 +25,13 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	protected float shotDelay = 0.5f;
 	protected float timeSinceLastShot = 0f;
 
+	/**
+	 * @author James Burnell
+	 * @tt.updated Assessment 2
+	 * @param controller the game controller
+	 * @param position the position of the boat
+	 * @param texLoc the texture file location for the boat
+	 */
 	public Boat(GameController controller, Vector2 position, String texLoc) {
 		this.controller = controller;
 		this.position = position.cpy();
@@ -47,6 +54,8 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 * 
 	 * @param delta time since last frame
 	 * @param multiplier multiplier to set forward or reverse motion (1 or -1)
+	 * 
+	 * @since Assessment 1
 	 */
 	void Move(float delta, int multiplier) {
 		// Convention: 0 degrees means the object is pointing right, positive angles are
@@ -73,6 +82,8 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 * 
 	 * @param delta time since last frame
 	 * @param multiplier turn anti-clockwise if +ve, clockwise if -ve
+	 * 
+	 * @since Assessment 1
 	 */
 	void Turn(float delta, float multiplier) {
 		rotation = rotation + turnSpeed * delta * multiplier;
@@ -87,6 +98,7 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 * 
 	 * @param desiredAngle the angle the boat should end up at
 	 * @param delta the time since the last update
+	 * @since Assessment 2
 	 * @author James Burnell
 	 * @author Hector Woods
 	 */
@@ -116,6 +128,8 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 * 
 	 * @param x the x position
 	 * @param y the y position
+	 * 
+	 * @since Assessment 1
 	 */
 	void SetPosition(float x, float y) {
 		position.x = x;
@@ -123,6 +137,7 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 		sprite.setPosition(x, y);
 	}
 
+	/** @since Assessment 1 */
 	@Override
 	public void Draw(SpriteBatch batch) {
 		sprite.draw(batch);
@@ -137,6 +152,9 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 * @param spdMul the speed multiplier
 	 * 
 	 * @return A new projectile object
+	 * 
+	 * @since Assessment 2
+	 * @author James Burnell
 	 */
 	protected Projectile createProjectile(ProjectileData type, float rotationOffset, float dmgMul,
 			float spdMul) {

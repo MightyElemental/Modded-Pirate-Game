@@ -15,6 +15,10 @@ import io.github.annabeths.GeneralControl.ResourceManager;
 import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.UI.HUD;
 
+/**
+ * @author James Burnell
+ * @tt.updated Assessment 2
+ */
 public class Menu implements Screen {
 	private SpriteBatch batch;
 	GlyphLayout menuTextLayout;

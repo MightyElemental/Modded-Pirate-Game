@@ -13,6 +13,7 @@ import io.github.annabeths.Collectables.PowerupType;
 /**
  * Handles resource management of textures, audio, and fonts
  * 
+ * @since Assessment 2
  * @author James Burnell
  */
 public class ResourceManager {

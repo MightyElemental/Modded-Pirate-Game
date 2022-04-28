@@ -12,6 +12,11 @@ import com.badlogic.gdx.utils.ScreenUtils;
 
 import io.github.annabeths.GeneralControl.eng1game;
 
+/**
+ * @author James Burnell
+ * @author Annabeth
+ * @tt.updated Assessment 2
+ */
 public class GameWinScreen implements Screen {
 
 	private SpriteBatch batch;

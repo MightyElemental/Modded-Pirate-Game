@@ -11,6 +11,12 @@ import io.github.annabeths.Projectiles.Projectile;
 
 public class NeutralBoat extends AIBoat {
 
+	/**
+	 * @author James Burnell
+	 * @tt.updated Assessment 2
+	 * @param controller the game controller
+	 * @param initialPosition the position of the boat
+	 */
 	public NeutralBoat(GameController controller, Vector2 initialPosition) {
 		super(controller, initialPosition, "img/entity/boat_neutral.png");
 
@@ -23,6 +29,11 @@ public class NeutralBoat extends AIBoat {
 		this.turnSpeed = 150;
 	}
 
+	/**
+	 * @author James Burnell
+	 * @author Ben Faulker
+	 * @tt.updated Assessment 2
+	 */
 	public void Destroy() {
 		killOnNextTick = true;
 		if (MathUtils.randomBoolean(0.2f)) {
@@ -34,6 +45,10 @@ public class NeutralBoat extends AIBoat {
 		// Ignore, neutral boats do not shoot, but this must be defined
 	}
 
+	/**
+	 * @author James Burnell
+	 * @tt.updated Assessment 2
+	 */
 	public void OnCollision(PhysicsObject object) {
 		float dmgToInflict = 0;
 		// whether or not the object belongs to the player

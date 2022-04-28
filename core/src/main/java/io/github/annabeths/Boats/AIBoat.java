@@ -7,6 +7,9 @@ import io.github.annabeths.Colleges.College;
 import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Level.GameMap;
 
+/**
+ * @since Assessment 2
+ */
 public abstract class AIBoat extends Boat {
 
 	/** The current state of the AI */
@@ -15,7 +18,7 @@ public abstract class AIBoat extends Boat {
 	Vector2 initialPosition;
 	Vector2 destination;
 	public float plunderValue;
-    public float xpValue;
+	public float xpValue;
 
 	/** How close should the boat be to its destination before setting a new one */
 	float destinationThreshold = 50f;
@@ -161,5 +164,5 @@ public abstract class AIBoat extends Boat {
 		return destinationThreshold;
 	}
 
-    abstract void Shoot();
+	abstract void Shoot();
 }

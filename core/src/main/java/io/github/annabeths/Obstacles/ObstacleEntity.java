@@ -8,6 +8,10 @@ import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
+/**
+ * @since Assessment 2
+ * @author Hector Woods
+ */
 public abstract class ObstacleEntity extends PhysicsObject {
 
 	GameController controller;

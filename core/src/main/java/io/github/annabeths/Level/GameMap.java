@@ -9,6 +9,10 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameScreens.GameController;
 
+/**
+ * @author James Burnell
+ * @tt.updated Assessment 2
+ */
 public class GameMap extends GameObject {
 
 	/**

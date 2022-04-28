@@ -11,6 +11,10 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GeneralControl.ResourceManager;
 
+/**
+ * @author Annabeth
+ * @since Assessment 1
+ */
 public class WaterBackground extends GameObject {
 
 	TextureRegion[] waterTextureRegion;

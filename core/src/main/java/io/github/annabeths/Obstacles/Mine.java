@@ -8,6 +8,10 @@ import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 
+/**
+ * @since Assessment 2
+ * @author Hector Woods
+ */
 public class Mine extends ObstacleEntity {
 
 	public Mine(GameController controller, Vector2 position) {

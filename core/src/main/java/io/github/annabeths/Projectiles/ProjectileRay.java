@@ -15,6 +15,7 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
  * A type of projectile that travels instantly and inflicts damage on objects in
  * its path
  * 
+ * @since Assessment 2
  * @author James Burnell
  */
 public class ProjectileRay extends Projectile {

@@ -15,6 +15,7 @@ import io.github.annabeths.Level.GameMap;
  * Weather. The player gets more points for sailing through it, but they risk
  * taking damage from lightning
  * 
+ * @since Assessment 2
  * @author Hector Woods
  */
 public class Weather extends ObstacleEntity {

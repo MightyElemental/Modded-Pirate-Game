@@ -10,6 +10,7 @@ import io.github.annabeths.Projectiles.ProjectileData;
 /**
  * A form of {@link AIBoat} that can attack other ships
  * 
+ * @since Assessment 2
  * @author James Burnell
  */
 public abstract class AttackBoat extends AIBoat {
@@ -74,28 +75,26 @@ public abstract class AttackBoat extends AIBoat {
 
 	@Override
 	public void Update(float delta) {
-		if (isDead())
-			Destroy();
+		if (isDead()) Destroy();
 		timeSinceLastShot += delta;
 
 		updateAIState();
 
 		switch (state) {
-		case APPROACH :
+		case APPROACH:
 			approach(delta);
 			break;
-		case ATTACK :
+		case ATTACK:
 			attack(delta);
 			break;
-		case IDLE :
+		case IDLE:
 			idle(delta);
 			break;
-		default :
+		default:
 			break;
 		}
 
-		if (destination != null)
-			MoveToDestination(delta);
+		if (destination != null) MoveToDestination(delta);
 	}
 
 	public void approach(float delta) {

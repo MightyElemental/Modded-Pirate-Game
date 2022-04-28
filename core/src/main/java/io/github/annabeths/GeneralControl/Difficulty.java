@@ -5,6 +5,7 @@ package io.github.annabeths.GeneralControl;
  * selected difficulty. Based on the difficulty, other changes may be defined
  * elsewhere in other classes.
  * 
+ * @since Assessment 2
  * @author James Burnell
  * @author Hector Woods
  */

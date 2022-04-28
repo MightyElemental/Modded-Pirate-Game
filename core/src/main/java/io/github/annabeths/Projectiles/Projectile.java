@@ -14,6 +14,7 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
  * @author Leif Kemp
  * @author Annabeth Singleton
  * @author James Burnell
+ * @tt.updated Assessment 2
  */
 public class Projectile extends PhysicsObject {
 

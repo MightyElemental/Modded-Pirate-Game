@@ -18,6 +18,11 @@ import com.badlogic.gdx.video.VideoPlayerCreator;
 
 import io.github.annabeths.GeneralControl.eng1game;
 
+/**
+ * @author James Burnell
+ * @author Leif Kemp
+ * @tt.updated Assessment 2
+ */
 public class Splash implements Screen {
 
 	private SpriteBatch batch;

@@ -15,6 +15,12 @@ import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
+/**
+ * @author James Burnell
+ * @author Hector Woods
+ * 
+ * @tt.updated Assessment 2
+ */
 public class EnemyCollege extends College {
 
 	/**

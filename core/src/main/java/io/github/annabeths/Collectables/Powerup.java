@@ -8,7 +8,10 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 
-/** @author Ben Faulkner */
+/**
+ * @since Assessment 2
+ * @author Ben Faulkner
+ */
 public class Powerup extends PhysicsObject {
 
 	// id of powerup given

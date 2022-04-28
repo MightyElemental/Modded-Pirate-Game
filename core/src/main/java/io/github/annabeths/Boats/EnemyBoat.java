@@ -12,6 +12,7 @@ import io.github.annabeths.Projectiles.Projectile;
 /**
  * A boat that attacks the player
  * 
+ * @since Assessment 2
  * @author James Burnell
  */
 public class EnemyBoat extends AttackBoat {

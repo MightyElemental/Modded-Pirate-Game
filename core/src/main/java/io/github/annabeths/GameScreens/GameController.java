@@ -40,6 +40,11 @@ import io.github.annabeths.Projectiles.ProjectileData;
 import io.github.annabeths.Projectiles.ProjectileRay;
 import io.github.annabeths.UI.HUD;
 
+/**
+ * @author James Burnell
+ * @author Hector Woods
+ * @tt.updated Assessment 2
+ */
 public class GameController implements Screen {
 
 	private eng1game game;

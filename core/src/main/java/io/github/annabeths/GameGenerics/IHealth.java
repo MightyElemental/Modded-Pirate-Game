@@ -1,5 +1,9 @@
 package io.github.annabeths.GameGenerics;
 
+/**
+ * @author James Burnell
+ * @since Assessment 2
+ */
 public interface IHealth {
 
 	public float getHealth();

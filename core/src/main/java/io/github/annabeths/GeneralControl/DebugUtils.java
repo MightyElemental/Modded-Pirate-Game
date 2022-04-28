@@ -18,7 +18,10 @@ import io.github.annabeths.Boats.AIBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 
-/** @author James Burnell */
+/**
+ * @since Assessment 2
+ * @author James Burnell
+ */
 public class DebugUtils {
 
 	public static boolean SKIP_SPLASH = false;

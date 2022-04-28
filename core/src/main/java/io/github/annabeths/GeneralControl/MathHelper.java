@@ -1,6 +1,11 @@
 package io.github.annabeths.GeneralControl;
 
-/** A collection of useful math functions */
+/**
+ * A collection of useful math functions
+ * 
+ * @since Assessment 2
+ * @author James Burnell
+ */
 public class MathHelper {
 
 	/**

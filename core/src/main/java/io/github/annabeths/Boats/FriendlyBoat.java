@@ -9,6 +9,7 @@ import io.github.annabeths.Projectiles.Projectile;
 /**
  * A type of boat that attacks enemy ships
  * 
+ * @since Assessment 2
  * @author Hector Woods
  */
 public class FriendlyBoat extends AttackBoat {

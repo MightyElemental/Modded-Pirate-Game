@@ -33,6 +33,14 @@ public abstract class College extends PhysicsObject implements IHealth {
 	 */
 	protected GameController gc;
 
+	/**
+	 * @author James Burnell
+	 * @tt.updated Assessment 2
+	 * @param pos the position of the college
+	 * @param aliveTexture the texture to use for when the college is alive
+	 * @param islandTexture the texture of the island the college sits on
+	 * @param gc the game controller
+	 */
 	public College(Vector2 pos, String aliveTexture, String islandTexture, GameController gc) {
 		this.gc = gc;
 		position = pos;

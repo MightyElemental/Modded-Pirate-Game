@@ -12,6 +12,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.annabeths.GeneralControl.eng1game;
 
+/**
+ * @author James Burnell
+ * @author Annabeth
+ * @tt.updated Assessment 2
+ */
 public class GameOverScreen implements Screen {
 
 	private SpriteBatch batch;

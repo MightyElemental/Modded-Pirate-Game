@@ -2,7 +2,10 @@ package io.github.annabeths.Collectables;
 
 import com.badlogic.gdx.math.MathUtils;
 
-/** @author James Burnell */
+/**
+ * @author James Burnell
+ * @since Assessment 2
+ */
 public enum PowerupType {
 
 	SPEED("Speed", 10, "speed.png", "speed-boost.mp3"),

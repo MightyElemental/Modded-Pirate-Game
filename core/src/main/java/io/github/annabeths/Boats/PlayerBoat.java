@@ -61,6 +61,12 @@ public class PlayerBoat extends Boat {
 	/** The type of projectile currently in use */
 	public ProjectileData activeProjectileType;
 
+	/**
+	 * @author James Burnell
+	 * @tt.updated Assessment 2
+	 * @param controller the game controller
+	 * @param initialPosition the position of the boat
+	 */
 	public PlayerBoat(GameController controller, Vector2 initialPosition) {
 		super(controller, initialPosition, "img/entity/boat1.png");
 
@@ -73,6 +79,10 @@ public class PlayerBoat extends Boat {
 
 	}
 
+	/**
+	 * @author James Burnell
+	 * @tt.updated Assessment 2
+	 */
 	@Override
 	public void Update(float delta) {
 		boolean rapidFire = activePowerups.containsKey(PowerupType.RAPIDFIRE);
@@ -86,6 +96,11 @@ public class PlayerBoat extends Boat {
 
 	}
 
+	/**
+	 * @author James Burnell
+	 * @since Assessment 2
+	 * @param delta the time since the last update
+	 */
 	public void updatePowerups(float delta) {
 		// Subtract delta time from each active power up
 		activePowerups.replaceAll((k, v) -> v - delta);
@@ -97,6 +112,10 @@ public class PlayerBoat extends Boat {
 	 * Processes keyboard and mouse inputs
 	 * 
 	 * @param delta the time since the last update in seconds
+	 * @since Assessment 2
+	 * @author James Burnell
+	 * @author Hector Woods
+	 * @author Ben Faulkner
 	 */
 	public void processInput(float delta) {
 		boolean up = input.isKeyPressed(Keys.W);
@@ -123,6 +142,11 @@ public class PlayerBoat extends Boat {
 		processPowerupInput(delta);
 	}
 
+	/**
+	 * @author James Burnell
+	 * @since Assessment 2
+	 * @param delta the time since the last update
+	 */
 	public void processPowerupInput(float delta) {
 		PowerupType[] powerups = PowerupType.values();
 		if (input.isKeyJustPressed(Keys.NUM_1) || input.isKeyJustPressed(Keys.NUMPAD_1))
@@ -141,6 +165,9 @@ public class PlayerBoat extends Boat {
 	 * Method that executes when a collision is detected
 	 * 
 	 * @param other the other object, as a PhysicsObject to be generic
+	 * @author Annabeth
+	 * @author James Burnell
+	 * @tt.updated Assessment 2
 	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
@@ -162,6 +189,10 @@ public class PlayerBoat extends Boat {
 		if (!isInvincible()) damage(dmgToInflict);
 	}
 
+	/**
+	 * @author James Burnell
+	 * @since Assessment 2
+	 */
 	@Override
 	public void damage(float dmg) {
 		if (isInvincible()) return; // no damage if invincible
@@ -169,11 +200,20 @@ public class PlayerBoat extends Boat {
 		HP = MathUtils.clamp(HP - dmg, 0, maxHP);
 	}
 
-	/** @return {@code true} if invincibility powerup is active */
+	/**
+	 * @return {@code true} if invincibility powerup is active
+	 * 
+	 * @author James Burnell
+	 * @since Assessment 2
+	 */
 	public boolean isInvincible() {
 		return activePowerups.containsKey(PowerupType.INVINCIBILITY);
 	}
 
+	/**
+	 * @author James Burnell
+	 * @tt.updated Assessment 2
+	 */
 	@Override
 	public void Shoot() {
 
@@ -191,6 +231,11 @@ public class PlayerBoat extends Boat {
 
 	}
 
+	/**
+	 * @author James Burnell
+	 * @since Assessment 2
+	 * @param dmgMul the damage multiplier
+	 */
 	public void shootRay(float dmgMul) {
 		float angle = getAngleBetweenMouseAndBoat();
 		angle += MathUtils.random(-5, 5); // randomize ray so it is not perfect
@@ -207,6 +252,10 @@ public class PlayerBoat extends Boat {
 	 * this by unwrapping the cursor position with the controller camera.
 	 * 
 	 * @return The angle in degrees
+	 * 
+	 * @author James Burnell
+	 * @since Assessment 2
+	 *
 	 */
 	public float getAngleBetweenMouseAndBoat() {
 		int mouseX = input.getX();
@@ -218,6 +267,11 @@ public class PlayerBoat extends Boat {
 		return pos.sub(getCenter()).angleDeg();
 	}
 
+	/**
+	 * @author James Burnell
+	 * @since Assessment 2
+	 * @param dmgMul the damage multiplier
+	 */
 	public void shootStock(float dmgMul) {
 		if (activePowerups.containsKey(PowerupType.STARBURSTFIRE)) {
 			for (int i = 0; i < 360; i += 45) {
@@ -234,6 +288,11 @@ public class PlayerBoat extends Boat {
 		}
 	}
 
+	/**
+	 * @author James Burnell
+	 * @since Assessment 2
+	 * @return the damage multiplier
+	 */
 	public float getDamageMul() {
 		float dmgMul = activePowerups.containsKey(PowerupType.DAMAGE) ? 2 : 1;
 		// multiply by the overall damage multiplier
@@ -295,6 +354,10 @@ public class PlayerBoat extends Boat {
 	 * @param powerup the powerup to activate
 	 * @return {@code true} if powerup is in the collection and was activated,
 	 *         {@code false} otherwise
+	 * 
+	 * @author James Burnell
+	 * @since Assessment 2
+	 *
 	 */
 	public boolean activatePowerup(PowerupType powerup) {
 		boolean canActivate = collectedPowerups.containsKey(powerup)
@@ -319,6 +382,9 @@ public class PlayerBoat extends Boat {
 	 * @param powerup the powerup to collect
 	 * @return {@code true} if powerup was received, {@code false} if player already
 	 *         had maximum powerups stored
+	 * 
+	 * @author James Burnell
+	 * @since Assessment 2
 	 */
 	public boolean receivePower(PowerupType powerup) {
 		int amount = collectedPowerups.getOrDefault(powerup, 0);
