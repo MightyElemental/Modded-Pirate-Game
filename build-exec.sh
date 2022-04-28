@@ -1,17 +1,27 @@
 #!/bin/bash
+
+# MIT License
+# Copyright (c) 2022 MightyElemental
+# https://github.com/MightyElemental/libgdx-game-exporter
 # Build game into executables for various platforms
 
 windowsjdk="OpenJDK11U-jre_x64_windows_hotspot_11.0.14.1_1.zip"
 linuxjdk="OpenJDK11U-jre_x64_linux_hotspot_11.0.14.1_1.tar.gz"
 buildlocation="desktop/build/libs"
+# Change to your game's main class
+mainclass="io.github.annabeths.desktop.DesktopLauncher"
+# Change to what you want your game file to be called (excluding version)
+gamename="pirategame-mario_shard"
 
 # Set tag if missing
+# The tag can be the game version
 if [ -z "$TAG" ]; then
     # set TAG to the latest tag in git
     TAG=`git tag -l --sort=refname \*.\*.\* | tail -1`
 fi
 
-gamename="pirategame-mario_shard-$TAG"
+# Apply the version tag at the end of the name
+gamename="$gamename-$TAG"
 
 function build_game() {
     echo "Building game file with default method..."
@@ -81,7 +91,7 @@ java -jar packr4.jar \
 --jdk $windowsjdk \
 --executable $gamename \
 --classpath "../$buildlocation/$gamename.jar" \
---mainclass io.github.annabeths.desktop.DesktopLauncher \
+--mainclass $mainclass \
 --output windows
 
 # Zip packaged windows executable
@@ -96,16 +106,16 @@ echo "Starting Linux build"
 # -= BUILD LINUX FILE =-
 
 
-# remove windows directory if present
+# remove linux directory if present
 rm -rf linux
 
-# Pack program into windows executable
+# Pack program into linux executable
 java -jar packr4.jar \
 --platform linux64 \
 --jdk $linuxjdk \
 --executable $gamename \
 --classpath "../$buildlocation/$gamename.jar" \
---mainclass io.github.annabeths.desktop.DesktopLauncher \
+--mainclass $mainclass \
 --output linux
 
 # Archive packaged linux executable
