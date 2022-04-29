@@ -8,6 +8,7 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
@@ -336,6 +337,19 @@ public class PlayerBoat extends Boat {
 			turnSpeed += amount;
 			break;
 		}
+	}
+
+	/**
+	 * Load powerups from a save file.
+	 * @param pref A libgdx preferences object which has a reference to saved power up data.
+	 */
+	public void loadPowerups(Preferences pref){
+		collectedPowerups = new HashMap<PowerupType, Integer>();
+		collectedPowerups.put(PowerupType.SPEED, pref.getInteger("Speed", 0));
+		collectedPowerups.put(PowerupType.RAPIDFIRE, pref.getInteger("Rapid Fire", 0));
+		collectedPowerups.put(PowerupType.INVINCIBILITY, pref.getInteger("Invincibility", 0));
+		collectedPowerups.put(PowerupType.STARBURSTFIRE, pref.getInteger("Burst Fire", 0));
+		collectedPowerups.put(PowerupType.DAMAGE,pref.getInteger("Damage Buff", 0));
 	}
 
 	public void Heal(int amount, float delta) {

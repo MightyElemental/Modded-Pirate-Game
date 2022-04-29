@@ -1,5 +1,6 @@
 package io.github.annabeths.GameScreens;
 
+import static com.badlogic.gdx.Gdx.input;
 import static io.github.annabeths.Level.GameMap.BORDER_BRIM;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -31,6 +33,7 @@ import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.GeneralControl.Difficulty;
+import io.github.annabeths.GeneralControl.SaveManager;
 import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Obstacles.Kraken;
@@ -240,6 +243,14 @@ public class GameController implements Screen {
 	public void logic(float delta) {
 		timer -= delta;
 		if (timer <= 0) gameOver();
+
+		if (input.isKeyJustPressed(Input.Keys.T)){
+			SaveManager.save("save1", this);
+		}
+
+		if (input.isKeyJustPressed(Input.Keys.B)){
+			SaveManager.load("save1", this);
+		}
 
 		// give the player XP and Plunder each frame, normalized using delta
 		xpTick -= delta * xpTickMultiplier;
