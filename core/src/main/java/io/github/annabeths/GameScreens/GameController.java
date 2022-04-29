@@ -252,6 +252,7 @@ public class GameController implements Screen {
 			SaveManager.load("save1", this);
 		}
 
+
 		// give the player XP and Plunder each frame, normalized using delta
 		xpTick -= delta * xpTickMultiplier;
 		if (xpTick <= 0) {
