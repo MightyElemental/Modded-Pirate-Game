@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Vector3;
 
 import io.github.annabeths.Collectables.PowerupType;
 import io.github.annabeths.Colleges.College;
+import io.github.annabeths.Colleges.EnemyCollege;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
 import io.github.annabeths.GameScreens.GameController;
@@ -181,7 +182,7 @@ public class PlayerBoat extends Boat {
 				p.kill();
 				dmgToInflict = p.getDamage();
 			}
-		} else if (other instanceof College) {
+		} else if (other instanceof EnemyCollege) {
 			// End game if player crashes into college
 			controller.gameOver();
 		}
@@ -344,7 +345,7 @@ public class PlayerBoat extends Boat {
 	 * @param pref A libgdx preferences object which has a reference to saved power up data.
 	 */
 	public void loadPowerups(Preferences pref){
-		collectedPowerups = new HashMap<PowerupType, Integer>();
+		collectedPowerups = new HashMap<>();
 		collectedPowerups.put(PowerupType.SPEED, pref.getInteger("Speed", 0));
 		collectedPowerups.put(PowerupType.RAPIDFIRE, pref.getInteger("Rapid Fire", 0));
 		collectedPowerups.put(PowerupType.INVINCIBILITY, pref.getInteger("Invincibility", 0));
@@ -366,14 +367,11 @@ public class PlayerBoat extends Boat {
 	 * activated if one is already active.
 	 * 
 	 * @param powerup the powerup to activate
-	 * @return {@code true} if powerup is in the collection and was activated,
-	 *         {@code false} otherwise
-	 * 
 	 * @author James Burnell
 	 * @since Assessment 2
 	 *
 	 */
-	public boolean activatePowerup(PowerupType powerup) {
+	public void activatePowerup(PowerupType powerup) {
 		boolean canActivate = collectedPowerups.containsKey(powerup)
 				&& !activePowerups.containsKey(powerup);
 		if (canActivate || DebugUtils.FORCE_POWERUP) {
@@ -385,9 +383,7 @@ public class PlayerBoat extends Boat {
 			// TODO: change to use resource manager
 			Gdx.audio.newSound(Gdx.files.internal(powerup.getActivationAudio())).play(1f,
 					1f + MathUtils.random(-0.1f, 0.1f), 0f);
-			return true;
 		}
-		return false;
 	}
 
 	/**

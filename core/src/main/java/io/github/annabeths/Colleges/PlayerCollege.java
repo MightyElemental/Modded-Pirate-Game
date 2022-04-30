@@ -66,6 +66,7 @@ public class PlayerCollege extends College {
 	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
+
 	}
 
 	@Override
