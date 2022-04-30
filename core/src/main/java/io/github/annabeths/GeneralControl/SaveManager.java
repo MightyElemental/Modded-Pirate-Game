@@ -61,7 +61,7 @@ public abstract class SaveManager {
      */
     public static void saveMines(Preferences pref, GameController gc){
         pref.clear(); // clear out any old references to entities that no longer exist
-        Map m = new HashMap<String, String>();
+        Map<String, String> m = new HashMap<>();
         int i = 0;
         for(PhysicsObject o : gc.physicsObjects){
             if(o instanceof Mine){
@@ -144,18 +144,22 @@ public abstract class SaveManager {
 
     public static void savePlayerBoat(Preferences pref, PlayerBoat playerBoat){
         String boatInfo = playerBoat.position.toString() + ":" + playerBoat.getHealth() + ":" +
-                playerBoat.getMaxHealth();
+                playerBoat.getMaxHealth() + ":" + playerBoat.getDefense() + ":" + playerBoat.getSpeed() + ":" +
+                playerBoat.getTurnSpeed() + ":" + playerBoat.getProjDmgMul() + ":" + playerBoat.getProjSpdMul();
         pref.putString("playerBoat",boatInfo);
     }
 
     public static void loadPlayerBoat(String s, GameController gc){
         String[] boatInfo = s.split(":");
         Vector2 pos = new Vector2().fromString(boatInfo[0]);
-        float health = Float.parseFloat(boatInfo[1]);
-        float maxHealth = Float.parseFloat(boatInfo[2]);
+        gc.playerBoat.setHealth(Float.parseFloat(boatInfo[1]));
+        gc.playerBoat.setMaxHealth(Float.parseFloat(boatInfo[2]));
+        gc.playerBoat.setDefense(Integer.parseInt(boatInfo[3]));
+        gc.playerBoat.setSpeed(Float.parseFloat(boatInfo[4]));
+        gc.playerBoat.setTurnSpeed(Float.parseFloat(boatInfo[5]));
+        gc.playerBoat.setProjDmgMul(Float.parseFloat(boatInfo[6]));
+        gc.playerBoat.setProjSpdMul(Float.parseFloat(boatInfo[7]));
         gc.playerBoat.setCenter(pos);
-        gc.playerBoat.setMaxHealth(maxHealth);
-        gc.playerBoat.setHealth(health);
     }
 
     public static void saveEntities(Preferences pref, List<PhysicsObject> physicsObjects){

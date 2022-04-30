@@ -340,6 +340,41 @@ public class PlayerBoat extends Boat {
 		}
 	}
 
+	public int getDefense(){
+		return defense;
+	}
+	public void setDefense(int d){
+		defense = d;
+	}
+	public float getSpeed(){
+		return speed;
+	}
+	public void setSpeed(float s){
+		speed = s;
+	}
+	public void setTurnSpeed(float ts){
+		turnSpeed = ts;
+	}
+	public float getTurnSpeed(){
+		return turnSpeed;
+	}
+
+	public float getProjDmgMul() {
+		return projDmgMul;
+	}
+
+	public void setProjSpdMul(float projSpdMul) {
+		this.projSpdMul = projSpdMul;
+	}
+
+	public float getProjSpdMul() {
+		return projSpdMul;
+	}
+
+	public void setProjDmgMul(float projDmgMul) {
+		this.projDmgMul = projDmgMul;
+	}
+
 	/**
 	 * Load powerups from a save file.
 	 * @param pref A libgdx preferences object which has a reference to saved power up data.
