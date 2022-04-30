@@ -35,6 +35,7 @@ import io.github.annabeths.GeneralControl.eng1game;
  * 
  * @tt.updated Assessment 2
  * @author James Burnell
+ * @author Hector Woods
  */
 public class GameDifScreen implements Screen {
 
@@ -57,11 +58,11 @@ public class GameDifScreen implements Screen {
 
 	public void setupButtons() {
 		// Size of each button
-		Vector2 btnSize = new Vector2(150, 350);
+		Vector2 btnSize = new Vector2(250, 250);
 		// Array of colors the text should be
 		Color[] textColors = { Color.GREEN, Color.ORANGE, Color.RED, Color.BLACK };
 		// Array of text to display on the buttons
-		String[] buttonText = { "EASY", "MEDIUM", "HARD", "RETURN\nTO MENU" };
+		String[] buttonText = { "EASY", "MEDIUM", "HARD", "Back" };
 		Difficulty[] buttonDiff = { EASY, MEDIUM, HARD };
 		int[] buttonKeys = { Keys.E, Keys.M, Keys.H };
 
@@ -98,8 +99,8 @@ public class GameDifScreen implements Screen {
 		}
 
 		// Return to menu
-		clickListener(buttons[3], event -> game.gotoScreen(Screens.menuScreen));
-		keyActions.put(Keys.ESCAPE, event -> game.gotoScreen(Screens.menuScreen));
+		clickListener(buttons[3], event -> game.gotoScreen(Screens.saveLoadScreen));
+		keyActions.put(Keys.ESCAPE, event -> game.gotoScreen(Screens.saveLoadScreen));
 	}
 
 	/**

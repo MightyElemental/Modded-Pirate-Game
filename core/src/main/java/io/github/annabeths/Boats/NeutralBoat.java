@@ -13,6 +13,7 @@ public class NeutralBoat extends AIBoat {
 
 	/**
 	 * @author James Burnell
+	 * @author Hector Woods
 	 * @tt.updated Assessment 2
 	 * @param controller the game controller
 	 * @param initialPosition the position of the boat
@@ -39,6 +40,7 @@ public class NeutralBoat extends AIBoat {
 		if (MathUtils.randomBoolean(0.2f)) {
 			controller.NewPhysicsObject(new Powerup(PowerupType.randomPower(), getCenter()));
 		}
+
 	}
 
 	public void Shoot() {
@@ -55,10 +57,7 @@ public class NeutralBoat extends AIBoat {
 		boolean objWasPlayer = false;
 
 		if (object instanceof PlayerBoat) {
-			// Hit by player, destroy and add XP
-			controller.addXp(xpValue);
-			controller.addPlunder(plunderValue);
-			// damage player
+			// Hit by player, destroy
 			((PlayerBoat) object).damage(50);
 			Destroy();
 		} else if (object instanceof Projectile) {
@@ -68,7 +67,10 @@ public class NeutralBoat extends AIBoat {
 			dmgToInflict = p.getDamage();
 		}
 
-		if (objWasPlayer) controller.addXp((dmgToInflict / maxHP) * xpValue);
+		if (objWasPlayer && getHealth() - dmgToInflict <= 0){
+			controller.addXp(xpValue);
+			controller.addPlunder(plunderValue);
+		}
 		damage(dmgToInflict);
 	}
 }

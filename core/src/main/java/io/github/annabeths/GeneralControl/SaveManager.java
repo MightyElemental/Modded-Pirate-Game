@@ -19,6 +19,11 @@ import java.util.*;
 public abstract class SaveManager {
 
 
+    /**
+     * Save player powerups.
+     * @param pref A libgdx preferences object
+     * @param pUps A Map of PowerUpType -> Integer describing how much of each powerup the player has collected.
+     */
     public static void savePowerups(Preferences pref, Map<PowerupType, Integer> pUps){
         int numSpeed = 0;
         int numRapidFire = 0;
@@ -64,7 +69,11 @@ public abstract class SaveManager {
     }
 
 
-
+    /**
+     * Save the locations of mines to a file.
+     * @param pref A libgdx preferences object
+     * @param gc Reference to the GameController instance of this game
+     */
     public static void saveMines(Preferences pref, GameController gc){
         Map m = new HashMap<String, String>();
         int i = 0;
@@ -77,6 +86,12 @@ public abstract class SaveManager {
         pref.put(m);
     }
 
+    /**
+     * Load mines from save file. Recreates mines by loading positions and instantiating new mines at this position.
+     * @param mines A map of strings of from String -> String, where the value String is of form "(x,y)", where
+     *              x is the x-position of the mine and y is the y-position of the mine.
+     * @param gc Reference to the GameController instance of this game
+     */
     public static void loadMines(HashMap<String, String> mines, GameController gc){
         for(String minePosAsString : mines.values()){
             Mine mine = new Mine(gc, new Vector2().fromString(minePosAsString));
@@ -85,18 +100,31 @@ public abstract class SaveManager {
     }
 
 
+    /**
+     * Save the game state to the given file name. In reality multiple files are created to store different aspects
+     * of the game, but all files are prefixed by saveFileName. Saving, loading and storage of files is handled by
+     * libgdx's preference system. See https://libgdx.com/wiki/preferences for more details.
+     * @param saveFileName string referring to the fileName
+     * @param gc Reference to the GameController instance of this game
+     */
     public static void save(String saveFileName, GameController gc){
-        /* Append 'shardsoftware' to the fileName so as not to interefere with other games that use ligbdx preferences. */
+        /* Append 'shardsoftware' to the fileName so as not to interfere with other games that use ligbdx preferences. */
         Preferences pref = Gdx.app.getPreferences("shardsoftware_" + saveFileName);
         Preferences minePref = Gdx.app.getPreferences("shardsoftware_" + saveFileName + "_pObjs");
-;
+
         savePowerups(pref, gc.playerBoat.collectedPowerups);
         saveMines(minePref, gc);
         pref.flush();
     }
 
 
-
+    /**
+     * Load the game state for the given file name. In reality multiple files are created to store different aspects
+     * of the game, but all files are prefixed by saveFileName. Saving, loading and storage of files is handled by
+     * libgdx's preference system. See https://libgdx.com/wiki/preferences for more details.
+     * @param saveFileName string referring to the fileName
+     * @param gc Reference to the GameController instance of this game
+     */
     public static void load(String saveFileName, GameController gc){
         Preferences pref = Gdx.app.getPreferences("shardsoftware_"+saveFileName);
         Preferences minePref = Gdx.app.getPreferences("shardsoftware_" + saveFileName + "_pObjs");

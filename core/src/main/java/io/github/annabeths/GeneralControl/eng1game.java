@@ -7,13 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.github.annabeths.GameScreens.GameController;
-import io.github.annabeths.GameScreens.GameOverScreen;
-import io.github.annabeths.GameScreens.GameWinScreen;
-import io.github.annabeths.GameScreens.Menu;
-import io.github.annabeths.GameScreens.Screens;
-import io.github.annabeths.GameScreens.Splash;
-import io.github.annabeths.GameScreens.GameDifScreen;
+import io.github.annabeths.GameScreens.*;
 
 /** @tt.updated Assessment 2 */
 public class eng1game extends Game {
@@ -75,33 +69,36 @@ public class eng1game extends Game {
 	 */
 	public void gotoScreen(Screens s) {
 		switch (s) {
-		case splashScreen: // creates a new splash screen
-			Splash splashScreen = new Splash(this);
-			setScreen(splashScreen);
-			break;
-		case menuScreen: // switch back to the menu screen
-			setScreen(menuScreen);
-			break;
-		case gameScreen: // switch back to the game screen
-			gameScreen = new GameController(this, diff);
-			setScreen(gameScreen);
-			break;
-		case gameOverScreen:
-			removeGameScreen();
-			GameOverScreen gameOverScreen = new GameOverScreen(this,
-					timeUp ? "Time Up! ENTER to go to menu, R to restart"
-							: "You Died! ENTER to go to menu, R to restart");
-			setScreen(gameOverScreen);
-			break;
-		case gameWinScreen:
-			removeGameScreen();
-			GameWinScreen gameWinScreen = new GameWinScreen(this);
-			setScreen(gameWinScreen);
-			break;
-		case gameDifScreen:
-			GameDifScreen gameDifScreen = new GameDifScreen(this);
-			setScreen(gameDifScreen);
-			break;
+			case splashScreen: // creates a new splash screen
+				Splash splashScreen = new Splash(this);
+				setScreen(splashScreen);
+				break;
+			case menuScreen: // switch back to the menu screen
+				setScreen(menuScreen);
+				break;
+			case gameScreen: // switch back to the game screen
+				gameScreen = new GameController(this, diff);
+				setScreen(gameScreen);
+				break;
+			case gameOverScreen:
+				removeGameScreen();
+				GameOverScreen gameOverScreen = new GameOverScreen(this,
+						timeUp ? "Time Up! ENTER to go to menu, R to restart"
+								: "You Died! ENTER to go to menu, R to restart");
+				setScreen(gameOverScreen);
+				break;
+			case gameWinScreen:
+				removeGameScreen();
+				GameWinScreen gameWinScreen = new GameWinScreen(this);
+				setScreen(gameWinScreen);
+				break;
+			case gameDifScreen:
+				GameDifScreen gameDifScreen = new GameDifScreen(this);
+				setScreen(gameDifScreen);
+				break;
+			case saveLoadScreen:
+				SaveLoadScreen saveLoadScreen = new SaveLoadScreen(this);
+				setScreen(saveLoadScreen);
 		}
 	}
 

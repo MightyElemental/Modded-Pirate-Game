@@ -262,7 +262,7 @@ public class HUD extends GameObject {
 		/* Update label text */
 		hpText.setText(String.format("%.0f/%.0f", gc.playerBoat.getHealth(),
 				gc.playerBoat.getMaxHealth()));
-		xpText.setText(String.format("Level %d + %.0fxp to next level", gc.getXpLevel(),
+		xpText.setText(String.format("Level %d - %.0fxp to next level", gc.getXpLevel(),
 				gc.getXpRequiredForNextLevel() - gc.getXpInLevel()));
 		timerText.setText(generateTimeString((int) gc.timer));
 		plunderText.setText("$" + Integer.toString(gc.getPlunder()));

@@ -14,6 +14,7 @@ import io.github.annabeths.Projectiles.Projectile;
  * 
  * @since Assessment 2
  * @author James Burnell
+ * @author Hector Woods
  */
 public class EnemyBoat extends AttackBoat {
 
@@ -56,6 +57,8 @@ public class EnemyBoat extends AttackBoat {
 		if (MathUtils.randomBoolean(0.8f)) {
 			controller.NewPhysicsObject(new Powerup(PowerupType.randomPower(), getCenter()));
 		}
+		controller.addXp((getHealth() / getMaxHealth()) * xpValue);
+		controller.addPlunder(plunderValue);
 	}
 
 	@Override
@@ -72,14 +75,14 @@ public class EnemyBoat extends AttackBoat {
 				dmgToInflict = p.getDamage();
 			}
 		} else if (other instanceof PlayerBoat) {
-			// Hit by player, destroy and add XP
-			controller.addXp((getHealth() / getMaxHealth()) * xpValue);
-			controller.addPlunder(plunderValue);
 			((PlayerBoat) other).damage(50);
 			Destroy();
 		}
 
-		if (objWasPlayer) controller.addXp((dmgToInflict / maxHP) * xpValue);
+		if (objWasPlayer && getHealth() - dmgToInflict <= 0){
+			controller.addXp(xpValue);
+			controller.addPlunder(plunderValue);
+		}
 		damage(dmgToInflict);
 	}
 

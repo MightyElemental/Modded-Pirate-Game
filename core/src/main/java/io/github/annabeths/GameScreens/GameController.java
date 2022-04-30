@@ -418,8 +418,8 @@ public class GameController implements Screen {
 	 * @param oldCollege the college that was destroyed
 	 */
 	public void CollegeDestroyed(EnemyCollege oldCollege) {
-		addXp(150);
-		addPlunder(250);
+		addXp(250);
+		addPlunder(500);
 
 		boolean foundCollege = colleges.stream().filter(c -> c instanceof EnemyCollege)
 				.anyMatch(c -> {

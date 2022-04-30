@@ -59,7 +59,7 @@ public class Menu implements Screen {
 			if (instructionsBeenShown) {
 				// if the ENTER key is pressed, switch to the difficulty screen
 				showInstructions = false;
-				game.gotoScreen(Screens.gameDifScreen);
+				game.gotoScreen(Screens.saveLoadScreen);
 			} else {
 				toggleInstructions();
 			}
