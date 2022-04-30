@@ -23,12 +23,10 @@ public class Kraken extends ObstacleEntity implements IHealth {
 	final float timeBetweenDirectionChanges = 0.25f;
 	final float speed = 75;
 	/** How close an object needs to be before the kraken starts attacking */
-	private float attackRange = 750;
+	private final float attackRange = 750;
 	protected float maxHealth;
 	protected float health;
-	private ProjectileData projectileType = ProjectileData.KRAKEN;
-	private float plunderValue = 500;
-	private float xpValue = 250;
+	private final ProjectileData projectileType = ProjectileData.KRAKEN;
 	final float timeBetweenShots = 2;
 	private float timeSinceLastShot = 0;
 
@@ -68,7 +66,9 @@ public class Kraken extends ObstacleEntity implements IHealth {
 		health = MathUtils.clamp(health - dmg, 0, getMaxHealth());
 		if (isDead()) {
 			kill();
+			float plunderValue = 500;
 			controller.addPlunder(plunderValue);
+			float xpValue = 250;
 			controller.addXp(xpValue);
 		}
 	}
@@ -133,8 +133,7 @@ public class Kraken extends ObstacleEntity implements IHealth {
 					controller.getGameDifficulty().getEnemyDmgMul(), 1,
 					new Vector2(origin.x + i, origin.y + i));
 
-			// Add the projectile to the GameController's physics objects list
-			// so it receives updates
+			// Add the projectile to the GameController's physics objects list, so it receives updates
 			controller.NewPhysicsObject(proj);
 		}
 	}
@@ -148,6 +147,14 @@ public class Kraken extends ObstacleEntity implements IHealth {
 	 */
 	public boolean isInRange(PhysicsObject obj) {
 		return getCenter().dst2(obj.getCenter()) < attackRange * attackRange;
+	}
+
+	public void setHealth(float health){
+		this.health = health;
+	}
+
+	public void setMaxHealth(float health){
+		this.maxHealth = health;
 	}
 
 	public void Shoot() {

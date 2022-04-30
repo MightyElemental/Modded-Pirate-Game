@@ -168,6 +168,14 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 		return HP;
 	}
 
+	public void setHealth(float health){
+		this.HP = health;
+	}
+
+	public void setMaxHealth(float maxHealth){
+		this.maxHP = maxHP;
+	}
+
 	@Override
 	public float getMaxHealth() {
 		return maxHP;

@@ -89,10 +89,17 @@ public class GameController implements Screen {
 		generateGameObjects();
 	}
 
+	public GameController(eng1game game, String saveFileName){
+		this();
+		this.game = game;
+		generateGameObjectsForLoadedGame();
+		SaveManager.load(saveFileName, this);
+	}
+
 	/**
 	 * Creates a GameController with a default difficulty of
 	 * {@link Difficulty#MEDIUM}
-	 * 
+	 *
 	 * @param game the game object
 	 */
 	public GameController(eng1game game) {
@@ -113,6 +120,7 @@ public class GameController implements Screen {
 		playerBoat = new PlayerBoat(this, new Vector2(500, 500));
 		physicsObjects.add(playerBoat);
 	}
+
 
 	@Override
 	public void show() {
@@ -151,6 +159,10 @@ public class GameController implements Screen {
 			physicsObjects.add(new Weather(this, new Vector2(position.x + MathUtils.random(500),
 					position.y + MathUtils.random(500)), direction));
 		}
+	}
+
+	private void generateGameObjectsForLoadedGame(){
+
 	}
 
 	private void generateGameObjects() {
@@ -245,13 +257,8 @@ public class GameController implements Screen {
 		if (timer <= 0) gameOver();
 
 		if (input.isKeyJustPressed(Input.Keys.T)){
-			SaveManager.save("save1", this);
+			SaveManager.save("save0", this);
 		}
-
-		if (input.isKeyJustPressed(Input.Keys.B)){
-			SaveManager.load("save1", this);
-		}
-
 
 		// give the player XP and Plunder each frame, normalized using delta
 		xpTick -= delta * xpTickMultiplier;

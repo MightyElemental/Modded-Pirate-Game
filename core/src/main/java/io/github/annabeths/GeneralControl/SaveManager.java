@@ -4,11 +4,17 @@ import com.badlogic.gdx.Gdx;
 
 import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.math.Vector2;
-import io.github.annabeths.Boats.PlayerBoat;
+import io.github.annabeths.Boats.*;
 import io.github.annabeths.Collectables.PowerupType;
+import io.github.annabeths.Colleges.College;
+import io.github.annabeths.Colleges.EnemyCollege;
+import io.github.annabeths.Colleges.PlayerCollege;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.Obstacles.Kraken;
 import io.github.annabeths.Obstacles.Mine;
+import io.github.annabeths.Obstacles.Weather;
+import io.github.annabeths.Projectiles.ProjectileData;
 
 import java.util.*;
 
@@ -25,12 +31,6 @@ public abstract class SaveManager {
      * @param pUps A Map of PowerUpType -> Integer describing how much of each powerup the player has collected.
      */
     public static void savePowerups(Preferences pref, Map<PowerupType, Integer> pUps){
-        int numSpeed = 0;
-        int numRapidFire = 0;
-        int numInvinc = 0;
-        int numStarburst = 0;
-        int numDamage = 0;
-
         for(Map.Entry<PowerupType, Integer> pUpInfo : pUps.entrySet()){
             switch (pUpInfo.getKey().getName()){
                 case "Speed":
@@ -53,21 +53,6 @@ public abstract class SaveManager {
     }
 
 
-    public static <T> Map<String, T> listToMap(List<T> xs){
-        Map<String, T> map = new HashMap<>();
-        int i = 0;
-        for(T obj : xs){
-            map.put(Integer.toString(i), obj);
-        }
-        return map;
-    }
-
-    public static <T> List<T> mapToList(Map<String, T> map){
-        List<T> xs = new LinkedList<>();
-        xs.addAll(map.values());
-        return xs;
-    }
-
 
     /**
      * Save the locations of mines to a file.
@@ -75,6 +60,7 @@ public abstract class SaveManager {
      * @param gc Reference to the GameController instance of this game
      */
     public static void saveMines(Preferences pref, GameController gc){
+        pref.clear(); // clear out any old references to entities that no longer exist
         Map m = new HashMap<String, String>();
         int i = 0;
         for(PhysicsObject o : gc.physicsObjects){
@@ -87,7 +73,7 @@ public abstract class SaveManager {
     }
 
     /**
-     * Load mines from save file. Recreates mines by loading positions and instantiating new mines at this position.
+     * Load mines from save file. Recreate mines by loading positions and instantiating new mines at this position.
      * @param mines A map of strings of from String -> String, where the value String is of form "(x,y)", where
      *              x is the x-position of the mine and y is the y-position of the mine.
      * @param gc Reference to the GameController instance of this game
@@ -96,6 +82,151 @@ public abstract class SaveManager {
         for(String minePosAsString : mines.values()){
             Mine mine = new Mine(gc, new Vector2().fromString(minePosAsString));
             gc.physicsObjects.add(mine);
+        }
+    }
+
+    /**
+     * Save colleges to save file.
+     * @param pref A libgdx preferences object
+     * @param gc Reference to the GameController instance of this game
+     */
+    public static void saveColleges(Preferences pref, GameController gc){
+        pref.clear(); // clear out any old references to entities that no longer exist
+        List<College> colleges = gc.colleges;
+        Map<String, String> m = new HashMap<>();
+        int i = 0;
+        for(College c : colleges){
+            String data = c.position.toString() + ":" + c.aliveTextureFile + ":";
+            if(c instanceof PlayerCollege){
+                data = data + "player";
+            }else{
+                String projectileDataName = "STOCK";
+                if(((EnemyCollege) c).getProjectileType() == ProjectileData.BOSS){
+                    projectileDataName = "BOSS";
+                }
+                data = data + "enemy:" + c.getHealth() + ':' + c.getMaxHealth() + ':' + projectileDataName;
+            }
+            m.put(Integer.toString(i),data);
+            i = i + 1;
+        }
+        System.out.println(m);
+        pref.put(m);
+    }
+
+    public static void loadColleges(HashMap<String, String> cols, GameController gc){
+        for(String s : cols.values()){
+            System.out.println(s);
+            String[] collegeData = s.split(":");
+            Vector2 cPos = new Vector2().fromString(collegeData[0]);
+            String texture = collegeData[1];
+
+            College c;
+            if(collegeData[2].equals("player")){
+                c = new PlayerCollege(cPos, texture,
+                        "img/world/island.png", gc, false);
+            }else{
+                float health = Float.parseFloat(collegeData[3]);
+                float maxHealth = Float.parseFloat(collegeData[4]);
+
+                ProjectileData pd = collegeData[5].equals("BOSS")? ProjectileData.BOSS : ProjectileData.STOCK;
+
+                c = new EnemyCollege(cPos, texture,
+                        "img/world/island.png", gc, pd, maxHealth);
+                c.setHealth(health);
+                if(collegeData[5].equals("BOSS")){
+                    gc.bossCollege = (EnemyCollege) c;
+                }
+            }
+            gc.physicsObjects.add(c);
+            gc.colleges.add(c);
+        }
+    }
+
+    public static void savePlayerBoat(Preferences pref, PlayerBoat playerBoat){
+        String boatInfo = playerBoat.position.toString() + ":" + playerBoat.getHealth() + ":" +
+                playerBoat.getMaxHealth();
+        pref.putString("playerBoat",boatInfo);
+    }
+
+    public static void loadPlayerBoat(String s, GameController gc){
+        String[] boatInfo = s.split(":");
+        Vector2 pos = new Vector2().fromString(boatInfo[0]);
+        float health = Float.parseFloat(boatInfo[1]);
+        float maxHealth = Float.parseFloat(boatInfo[2]);
+        gc.playerBoat.setCenter(pos);
+        gc.playerBoat.setMaxHealth(maxHealth);
+        gc.playerBoat.setHealth(health);
+    }
+
+    public static void saveEntities(Preferences pref, List<PhysicsObject> physicsObjects){
+        pref.clear(); // clear out any old references to entities that no longer exist
+        Map<String, String> m = new HashMap<>();
+        int i = 0;
+        for(PhysicsObject o : physicsObjects) {
+            if (o instanceof NeutralBoat) {
+                String entityInfo = o.position.toString() + ":" + "NeutralBoat:" + ((NeutralBoat) o).getHealth() + ":" +
+                        ((NeutralBoat) o).getMaxHealth();
+                m.put(Integer.toString(i), entityInfo);
+                i = i + 1;
+            } else if (o instanceof FriendlyBoat) {
+                String entityInfo = o.position.toString() + ":" + "FriendlyBoat:" + ((FriendlyBoat) o).getHealth() + ":" +
+                        ((FriendlyBoat) o).getMaxHealth();
+                m.put(Integer.toString(i), entityInfo);
+                i = i + 1;
+            }else if (o instanceof EnemyBoat){
+                String entityInfo = o.position.toString() + ":" + "EnemyBoat:" + ((EnemyBoat) o).getHealth() + ":" +
+                        ((EnemyBoat) o).getMaxHealth();
+                m.put(Integer.toString(i), entityInfo);
+                i = i + 1;
+            }else if(o instanceof Kraken){
+                String entityInfo = o.position.toString() + ":" + "Kraken:" + ((Kraken) o).getHealth() + ":" +
+                        ((Kraken) o).getMaxHealth();
+                m.put(Integer.toString(i), entityInfo);
+                i = i + 1;
+            }else if(o instanceof Weather){
+                String entityInfo = o.position.toString() + ":" + "Weather:" + ((Weather) o).directionTrend;
+                m.put(Integer.toString(i), entityInfo);
+                i = i + 1;
+            }
+        }
+        pref.put(m);
+    }
+
+    private static void loadEntities(HashMap<String, String> entities, GameController gc) {
+        for(String s : entities.values()){
+            System.out.println(s);
+            String[] entityData = s.split(":");
+            Vector2 ePos = new Vector2().fromString(entityData[0]);
+            switch (entityData[1]){
+                case "NeutralBoat":
+                    NeutralBoat nBoat = new NeutralBoat(gc, ePos);
+                    nBoat.setHealth(Float.parseFloat(entityData[2]));
+                    nBoat.setMaxHealth(Float.parseFloat(entityData[3]));
+                    gc.physicsObjects.add(nBoat);
+                    break;
+                case "EnemyBoat":
+                    EnemyBoat eBoat = new EnemyBoat(gc, ePos);
+                    eBoat.setHealth(Float.parseFloat(entityData[2]));
+                    eBoat.setMaxHealth(Float.parseFloat(entityData[3]));
+                    gc.physicsObjects.add(eBoat);
+                    break;
+                case "FriendlyBoat":
+                    FriendlyBoat fBoat = new FriendlyBoat(gc, ePos);
+                    fBoat.setHealth(Float.parseFloat(entityData[2]));
+                    fBoat.setMaxHealth(Float.parseFloat(entityData[3]));
+                    gc.physicsObjects.add(fBoat);
+                    break;
+                case "Kraken":
+                    Kraken kraken = new Kraken(gc, ePos);
+                    kraken.setHealth(Float.parseFloat(entityData[2]));
+                    kraken.setMaxHealth(Float.parseFloat(entityData[3]));
+                    gc.physicsObjects.add(kraken);
+                    break;
+                case "Weather":
+                    Weather weather = new Weather(gc, ePos, Integer.parseInt(entityData[2]));
+                    gc.physicsObjects.add(weather);
+                    break;
+            }
         }
     }
 
@@ -111,10 +242,30 @@ public abstract class SaveManager {
         /* Append 'shardsoftware' to the fileName so as not to interfere with other games that use ligbdx preferences. */
         Preferences pref = Gdx.app.getPreferences("shardsoftware_" + saveFileName);
         Preferences minePref = Gdx.app.getPreferences("shardsoftware_" + saveFileName + "_pObjs");
+        Preferences collegePref = Gdx.app.getPreferences("shardsoftware_" + saveFileName + "_cols");
+        Preferences entityPref = Gdx.app.getPreferences("shardsoftware_" + saveFileName + "_entities");
 
+        pref.putFloat("xp", gc.getXp());
+        pref.putInteger("plunder", gc.getPlunder());
+
+        Difficulty dif = gc.getGameDifficulty();
+        if(dif == Difficulty.EASY){
+            pref.putString("difficulty", "easy");
+        }else if(dif == Difficulty.MEDIUM){
+            pref.putString("difficulty", "medium");
+        }else{
+            pref.putString("difficulty", "hard");
+        }
+
+        savePlayerBoat(pref,gc.playerBoat);
+        saveColleges(collegePref, gc);
         savePowerups(pref, gc.playerBoat.collectedPowerups);
         saveMines(minePref, gc);
+       saveEntities(entityPref, gc.physicsObjects);
         pref.flush();
+        minePref.flush();
+        collegePref.flush();
+        entityPref.flush();
     }
 
 
@@ -123,13 +274,49 @@ public abstract class SaveManager {
      * of the game, but all files are prefixed by saveFileName. Saving, loading and storage of files is handled by
      * libgdx's preference system. See https://libgdx.com/wiki/preferences for more details.
      * @param saveFileName string referring to the fileName
-     * @param gc Reference to the GameController instance of this game
      */
     public static void load(String saveFileName, GameController gc){
-        Preferences pref = Gdx.app.getPreferences("shardsoftware_"+saveFileName);
+        Preferences pref = Gdx.app.getPreferences("shardsoftware_" + saveFileName);
         Preferences minePref = Gdx.app.getPreferences("shardsoftware_" + saveFileName + "_pObjs");
+        Preferences collegePref = Gdx.app.getPreferences("shardsoftware_" + saveFileName + "_cols");
+        Preferences entityPref = Gdx.app.getPreferences("shardsoftware_" + saveFileName + "_entities");
+
+
+        gc.setXp(pref.getFloat("xp"));
+        gc.setPlunder(pref.getInteger("plunder"));
+
+
+
+        switch (pref.getString("difficulty")){
+            case "easy":
+                gc.setDifficulty(Difficulty.EASY);
+                break;
+            case "medium":
+                gc.setDifficulty(Difficulty.MEDIUM);
+                break;
+            case "hard":
+                gc.setDifficulty(Difficulty.HARD);
+        }
+
+
+
         gc.playerBoat.loadPowerups(pref);
+        loadPlayerBoat(pref.getString("playerBoat"), gc);
         loadMines((HashMap<String, String>) minePref.get(), gc);
+        loadColleges((HashMap<String, String>) collegePref.get(), gc);
+        loadEntities((HashMap<String, String>) entityPref.get(), gc);
+    }
+
+
+
+    /**
+     * Returns whether a given save file exists for the saveFileName, or not.
+     * @param saveFileName string referring to the fileName
+     * @return boolean, true if exists, false otherwise
+     */
+    public static boolean doesSaveFileExist(String saveFileName){
+        Preferences pref = Gdx.app.getPreferences("shardsoftware_"+saveFileName);
+        return !pref.get().isEmpty();
     }
 
 }

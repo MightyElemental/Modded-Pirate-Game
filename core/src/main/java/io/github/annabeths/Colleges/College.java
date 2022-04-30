@@ -79,6 +79,10 @@ public abstract class College extends PhysicsObject implements IHealth {
 		return HP;
 	}
 
+	public void setHealth(float newHP){
+		this.HP = newHP;
+	}
+
 	@Override
 	public float getMaxHealth() {
 		return maxHP;

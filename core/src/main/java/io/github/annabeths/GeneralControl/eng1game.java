@@ -64,7 +64,7 @@ public class eng1game extends Game {
 
 	/**
 	 * Uses the {@link Screens} enumeration to change between any screen.
-	 * 
+	 *
 	 * @param s the screen to switch to
 	 */
 	public void gotoScreen(Screens s) {
@@ -99,7 +99,16 @@ public class eng1game extends Game {
 			case saveLoadScreen:
 				SaveLoadScreen saveLoadScreen = new SaveLoadScreen(this);
 				setScreen(saveLoadScreen);
+				break;
 		}
+	}
+
+	public void gotoScreen(Screens s, String saveFileName){
+		if(s != Screens.loadedGameScreen){
+			return;
+		}
+		gameScreen = new GameController(this, saveFileName);
+		setScreen(gameScreen);
 	}
 
 	public void setFullscreen() {

@@ -43,7 +43,7 @@ public class Weather extends ObstacleEntity {
 	 * <li>3 means west-east</li>
 	 * </ul>
 	 */
-	int directionTrend;
+	public int directionTrend;
 
 	boolean damageActive = false;
 	float maxTimeBetweenLightningStrikes = 10;

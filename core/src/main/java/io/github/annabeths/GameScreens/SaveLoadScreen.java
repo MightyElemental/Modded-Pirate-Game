@@ -1,8 +1,5 @@
 package io.github.annabeths.GameScreens;
 
-import static io.github.annabeths.GeneralControl.Difficulty.EASY;
-import static io.github.annabeths.GeneralControl.Difficulty.HARD;
-import static io.github.annabeths.GeneralControl.Difficulty.MEDIUM;
 import static io.github.annabeths.GeneralControl.ResourceManager.font;
 import static io.github.annabeths.GeneralControl.ResourceManager.getTexture;
 
@@ -26,8 +23,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
 
-import io.github.annabeths.GeneralControl.Difficulty;
 import io.github.annabeths.GeneralControl.ResourceManager;
+import io.github.annabeths.GeneralControl.SaveManager;
 import io.github.annabeths.GeneralControl.eng1game;
 
 /**
@@ -46,6 +43,9 @@ public class SaveLoadScreen implements Screen {
     /** Array of the menu buttons */
     private TextButton[] buttons;
 
+    /** Array of the save slot buttons */
+    private TextButton[] saveSlotButtons;
+
     /** A collection of actions to perform when the associated key is pressed */
     private Map<Integer, Consumer<InputEvent>> keyActions;
 
@@ -53,9 +53,58 @@ public class SaveLoadScreen implements Screen {
         game = g;
         keyActions = new HashMap<Integer, Consumer<InputEvent>>();
         buttons = new TextButton[3];
+        saveSlotButtons = new TextButton[4];
     }
 
-    public void setupButtons() {
+    public void setUpSaveSlotButtons(){
+        stage.clear();
+        // Size of each button
+        Vector2 btnSize = new Vector2(250, 100);
+        int[] buttonKeys = { Keys.NUM_1, Keys.NUM_2, Keys.NUM_3, Keys.NUM_4};
+        // y position of the buttons
+        float btnY = (Gdx.graphics.getHeight() - btnSize.y) / 2;
+        // horizontal margin of each button
+        float btnXMarg = 25;
+        // Total width of buttons
+        float menuWidth = (btnSize.x + btnXMarg) * 4 - btnXMarg;
+        // left-most x position of menu
+        float menuXPos = (Gdx.graphics.getWidth() - menuWidth) / 2 + (btnXMarg*5);
+
+        // Define style for the buttons
+        TextButtonStyle style = new TextButtonStyle();
+        style.font = font;
+        style.fontColor = Color.BLACK;
+        style.up = new TextureRegionDrawable(getTexture("ui/upgradebutton.png"));
+
+        // Create buttons
+        for(int i = 0; i < saveSlotButtons.length; i++){
+            // Define the button
+            if(i < 3) {
+                String buttonText = "Slot " + i;
+                boolean saveFileExists = SaveManager.doesSaveFileExist("save" + i);
+                if(!saveFileExists){
+                    buttonText = buttonText + " [Empty]";
+                }
+                saveSlotButtons[i] = new TextButton(buttonText, style);
+                if(saveFileExists){
+                    loadGameBtn(buttonKeys[i], saveSlotButtons[i],"save" + i);
+                }
+            }else{
+                saveSlotButtons[i] = new TextButton("<- Back",style);
+                newBackButton(buttonKeys[i], saveSlotButtons[i]);
+            }
+            saveSlotButtons[i].setSize(btnSize.x, btnSize.y);
+            // Position the button
+            float x = menuXPos + i * (btnSize.x + btnXMarg);
+            saveSlotButtons[i].setPosition(x, btnY);
+            // Add button to stage
+            stage.addActor(saveSlotButtons[i]);
+        }
+
+    }
+
+    public void setupInitialButtons() {
+        stage.clear();
         // Size of each button
         Vector2 btnSize = new Vector2(250, 250);
         // Array of colors the text should be
@@ -97,12 +146,19 @@ public class SaveLoadScreen implements Screen {
         // Define behaviour for new game button
         newGameBtn(buttonKeys[0], buttons[0]);
         // Now for load game button
-        loadGameBtn(buttonKeys[1], buttons[1]);
+        loadGameMenuBtn(buttonKeys[1], buttons[1]);
         // Finally for return to menu button
         clickListener(buttons[2], event -> game.gotoScreen(Screens.menuScreen));
         keyActions.put(Keys.ESCAPE, event -> game.gotoScreen(Screens.menuScreen));
     }
 
+    public void loadGameBtn(int key, TextButton btn, String saveFileName){
+        Consumer<InputEvent> actions = event -> {
+            game.gotoScreen(Screens.loadedGameScreen, saveFileName);
+        };
+        clickListener(btn, actions);
+        keyActions.put(key, actions);
+    }
 
     public void newGameBtn(int key, TextButton btn) {
         Consumer<InputEvent> actions = event -> {
@@ -112,9 +168,17 @@ public class SaveLoadScreen implements Screen {
         keyActions.put(key, actions);
     }
 
-    public void loadGameBtn(int key, TextButton btn) {
+    public void newBackButton(int key, TextButton btn){
         Consumer<InputEvent> actions = event -> {
-            System.out.println("Load load load");
+            setupInitialButtons();
+        };
+        clickListener(btn, actions);
+        keyActions.put(key, actions);
+    }
+
+    public void loadGameMenuBtn(int key, TextButton btn) {
+        Consumer<InputEvent> actions = event -> {
+            setUpSaveSlotButtons();
         };
         clickListener(btn, actions);
         keyActions.put(key, actions);
@@ -142,7 +206,7 @@ public class SaveLoadScreen implements Screen {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
 
-        setupButtons();
+        setupInitialButtons();
         setupLabel();
     }
 

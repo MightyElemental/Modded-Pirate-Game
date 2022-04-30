@@ -38,7 +38,7 @@ public class EnemyCollege extends College {
 	public float timeSinceLastSpawn;
 
 	public EnemyCollege(Vector2 position, String aliveTexture, String islandTexture,
-			GameController controller, ProjectileData projectileData, int maxHP) {
+			GameController controller, ProjectileData projectileData, float maxHP) {
 		super(position, aliveTexture, islandTexture, controller);
 
 		deadSprite = initSprite("img/world/castle/castle_dead.png", position,
@@ -149,4 +149,7 @@ public class EnemyCollege extends College {
 		updateHpText();
 	}
 
+	public ProjectileData getProjectileType(){
+		return projectileType;
+	}
 }
