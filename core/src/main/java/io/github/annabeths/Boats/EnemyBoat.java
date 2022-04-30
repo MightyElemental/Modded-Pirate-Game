@@ -21,8 +21,8 @@ public class EnemyBoat extends AttackBoat {
 	public EnemyBoat(GameController controller, Vector2 position) {
 		super(controller, position, "img/entity/boat_enemy.png");
 
-		xpValue = 150;
-		plunderValue = 100;
+		xpValue = 100;
+		plunderValue = 50;
 
 		this.maxHP = 100 * controller.getGameDifficulty().getEnemyHpMul();
 		this.HP = this.maxHP;
@@ -57,8 +57,7 @@ public class EnemyBoat extends AttackBoat {
 		if (MathUtils.randomBoolean(0.8f)) {
 			controller.NewPhysicsObject(new Powerup(PowerupType.randomPower(), getCenter()));
 		}
-		controller.addXp((getHealth() / getMaxHealth()) * xpValue);
-		controller.addPlunder(plunderValue);
+
 	}
 
 	@Override
@@ -77,6 +76,8 @@ public class EnemyBoat extends AttackBoat {
 		} else if (other instanceof PlayerBoat) {
 			((PlayerBoat) other).damage(50);
 			Destroy();
+			controller.addXp((getHealth() / getMaxHealth()) * xpValue);
+			controller.addPlunder(plunderValue);
 		}
 
 		if (objWasPlayer && getHealth() - dmgToInflict <= 0){

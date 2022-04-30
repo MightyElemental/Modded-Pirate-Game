@@ -178,7 +178,7 @@ public class GameController implements Screen {
 
 		// create the boss college
 		bossCollege = new EnemyCollege(collegeBoss, collegeTextures.get(1), islandTexture, this,
-				ProjectileData.BOSS, 200);
+				ProjectileData.BOSS, 1600);
 
 		bossCollege.setInvulnerable(true);
 		physicsObjects.add(bossCollege);
@@ -187,7 +187,7 @@ public class GameController implements Screen {
 		// create some enemy colleges
 		for (int i = 0; i < 3; i++) {
 			EnemyCollege e = new EnemyCollege(collegePos.get(i), collegeTextures.get(i + 2),
-					islandTexture, this, ProjectileData.STOCK, 200);
+					islandTexture, this, ProjectileData.STOCK, 400);
 			physicsObjects.add(e);
 			colleges.add(e);
 		}
@@ -419,7 +419,7 @@ public class GameController implements Screen {
 	 */
 	public void CollegeDestroyed(EnemyCollege oldCollege) {
 		addXp(250);
-		addPlunder(500);
+		addPlunder(250);
 
 		boolean foundCollege = colleges.stream().filter(c -> c instanceof EnemyCollege)
 				.anyMatch(c -> {

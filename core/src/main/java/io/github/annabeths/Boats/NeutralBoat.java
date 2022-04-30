@@ -40,7 +40,6 @@ public class NeutralBoat extends AIBoat {
 		if (MathUtils.randomBoolean(0.2f)) {
 			controller.NewPhysicsObject(new Powerup(PowerupType.randomPower(), getCenter()));
 		}
-
 	}
 
 	public void Shoot() {
@@ -60,6 +59,8 @@ public class NeutralBoat extends AIBoat {
 			// Hit by player, destroy
 			((PlayerBoat) object).damage(50);
 			Destroy();
+			controller.addXp((getHealth() / getMaxHealth()) * xpValue);
+			controller.addPlunder(plunderValue);
 		} else if (object instanceof Projectile) {
 			object.kill();
 			Projectile p = (Projectile) object;

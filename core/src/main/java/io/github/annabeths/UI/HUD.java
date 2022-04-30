@@ -295,6 +295,7 @@ public class HUD extends GameObject {
 
 		// if gc.playerboat distance from friendly college less than x
 		shopButton.setColor(usePlunderShop ? Color.GOLD : Color.WHITE);
+		shopButton.getLabel().setText(usePlunderShop ? "Shop($)" : "Shop(xp)");
 	}
 
 	/**
@@ -325,6 +326,7 @@ public class HUD extends GameObject {
 	/** Set up the shop button on the HUD */
 	public void setupShopButton() {
 		shopButton = new TextButton("Shop", shopButtonStyle);
+
 
 		TextTooltip tip = new TextTooltip(" Buy upgrades with plunder and experience! ",
 				toolTipStyle);

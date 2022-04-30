@@ -53,7 +53,7 @@ public class EnemyCollege extends College {
 		// updateHpText();
 
 		// Randomize spawn times
-		boatSpawnTime = MathUtils.random(40, 60);
+		boatSpawnTime = MathUtils.random(5, 15);
 		// Create a random spawning offset so boats don't spawn simultaneously
 		timeSinceLastSpawn = MathUtils.random(boatSpawnTime);
 	}

@@ -25,7 +25,7 @@ public class PlayerCollege extends College {
 	 */
 	public int healAmount;
 	/** Spawn a boat every n seconds */
-	public float boatSpawnTime = 15;
+	public float boatSpawnTime = 10;
 	public float timeSinceLastSpawn = 0;
 
 	public float splashTextCounter = 0;
@@ -74,9 +74,8 @@ public class PlayerCollege extends College {
 		// if the player boat is in range, heal it
 		if (isInRange(boat)) {
 			boat.Heal(healAmount, delta);
-		} else { // Don't spawn while the player is too close to prevent collisions
-			checkForSpawnFriendlyBoat(delta);
 		}
+		checkForSpawnFriendlyBoat(delta);
 		if (splashText != null) {
 			splashTextCounter = splashTextCounter + delta;
 			if (splashTextCounter > splashTextTime) {
