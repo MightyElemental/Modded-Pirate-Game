@@ -25,7 +25,7 @@ public class PlayerCollege extends College {
 	 */
 	public int healAmount;
 	/** Spawn a boat every n seconds */
-	public float boatSpawnTime = 25;
+	public float boatSpawnTime = 15;
 	public float timeSinceLastSpawn = 0;
 
 	public float splashTextCounter = 0;

@@ -15,7 +15,7 @@ import io.github.annabeths.Projectiles.Projectile;
 public class FriendlyBoat extends AttackBoat {
 
 	public FriendlyBoat(GameController controller, Vector2 position) {
-		super(controller, position, "img/entity/boat1.png");
+		super(controller, position, "img/entity/boat_friendly.png");
 
 		xpValue = 0; // friendly ships should not reward xp or plunder
 		plunderValue = 0;

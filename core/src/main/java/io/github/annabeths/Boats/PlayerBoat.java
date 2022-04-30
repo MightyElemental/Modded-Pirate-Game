@@ -69,7 +69,7 @@ public class PlayerBoat extends Boat {
 	 * @param initialPosition the position of the boat
 	 */
 	public PlayerBoat(GameController controller, Vector2 initialPosition) {
-		super(controller, initialPosition, "img/entity/boat1.png");
+		super(controller, initialPosition, "img/entity/boat_friendly.png");
 
 		this.maxHP = 100;
 		this.HP = this.maxHP;

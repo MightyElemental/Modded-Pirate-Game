@@ -64,8 +64,8 @@ public class ResourceManager {
 			loadEntityTexture("cannonball.png");
 			loadEntityTexture("kraken_cannonball.png");
 			loadEntityTexture("boat_neutral.png");
-			loadEntityTexture("boat1.png");
-			loadEntityTexture("boat2.png");
+			loadEntityTexture("boat_friendly.png");
+			loadEntityTexture("boat_enemy.png");
 			loadEntityTexture("kraken1.png");
 			loadEntityTexture("kraken2.png");
 			loadEntityTexture("kraken3.png");

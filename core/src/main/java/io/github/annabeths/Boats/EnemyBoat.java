@@ -19,7 +19,7 @@ import io.github.annabeths.Projectiles.Projectile;
 public class EnemyBoat extends AttackBoat {
 
 	public EnemyBoat(GameController controller, Vector2 position) {
-		super(controller, position, "img/entity/boat2.png");
+		super(controller, position, "img/entity/boat_enemy.png");
 
 		xpValue = 150;
 		plunderValue = 100;
