@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.annabeths.GeneralControl.eng1game;
 
 /**
+ * Screen that is shown when the player gets a game over (i.e runs out of health.)
  * @author James Burnell
  * @author Annabeth
  * @tt.updated Assessment 2
@@ -26,6 +27,11 @@ public class GameOverScreen implements Screen {
 	eng1game game;
 	String text;
 
+	/**
+	 * Constructor for GameOverScreen
+	 * @param g reference to eng1game
+	 * @param text string; forms part of the text displayed on screen
+	 */
 	public GameOverScreen(eng1game g, String text) {
 		game = g;
 		this.text = text;
@@ -40,11 +46,18 @@ public class GameOverScreen implements Screen {
 		font.setColor(Color.WHITE);
 	}
 
+	/**
+	 * called when the screen is created.
+	 */
 	@Override
 	public void show() {
 		batch = new SpriteBatch();
 	}
 
+	/**
+	 * Draw the text to the screen. Called once per frame
+	 * @param delta time since the last frame
+	 */
 	@Override
 	public void render(float delta) {
 		if (Gdx.input.isKeyJustPressed(Keys.R)) {
@@ -52,6 +65,9 @@ public class GameOverScreen implements Screen {
 		}
 		if (Gdx.input.isKeyJustPressed(Keys.ENTER)) {
 			game.gotoScreen(Screens.menuScreen);
+		}
+		if(Gdx.input.isKeyJustPressed(Keys.L)){
+			game.goToLoadScreen();
 		}
 
 		// do draws
@@ -73,6 +89,11 @@ public class GameOverScreen implements Screen {
 		batch.end();
 	}
 
+	/**
+	 * resize the window
+	 * @param width new width
+	 * @param height new height
+	 */
 	@Override
 	public void resize(int width, int height) {
 

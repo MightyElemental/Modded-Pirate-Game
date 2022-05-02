@@ -170,12 +170,12 @@ public class AIBoatTest {
 	public void testIdle() {
 		b.destination = null;
 		doNothing().when(b).SetDestination(any(Vector2.class));
-		b.idle(1);
+		b.idle();
 		verify(b, times(1)).SetDestination(any(Vector2.class));
 
 		b.destination = mock(Vector2.class);
 		doNothing().when(b).updateDestination();
-		b.idle(1);
+		b.idle();
 		verify(b, times(1)).updateDestination();
 	}
 

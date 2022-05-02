@@ -92,6 +92,10 @@ public class Projectile extends PhysicsObject {
 		lifeDist2 = lifeDist * lifeDist;
 	}
 
+	/**
+	 * Update the state of the projectile.
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void Update(float delta) {
 		position.mulAdd(velocity, delta);
@@ -109,12 +113,20 @@ public class Projectile extends PhysicsObject {
 		killOnNextTick = true;
 	}
 
+	/**
+	 * Draw the projectile's sprite.
+	 * @param batch Spritebatch to draw the GameObject
+	 */
 	@Override
 	public void Draw(SpriteBatch batch) {
 		sprite.setCenter(position.x, position.y);
 		sprite.draw(batch);
 	}
 
+	/**
+	 * called when the Projectile collides with another object
+	 * @param other the object collided with
+	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		if (other instanceof Projectile) {
@@ -128,19 +140,29 @@ public class Projectile extends PhysicsObject {
 
 	/**
 	 * Get the speed of the projectile
-	 * 
 	 * @return the speed
 	 */
 	public float getSpeed() {
 		return velocity.len();
 	}
 
+	/**
+	 * returns true if the projectile was shot by the player
+	 * @return if the projectile was shot by the player
+	 */
 	public boolean isPlayerProjectile() {
 		return isPlayerProjectile;
 	}
-
+	/**
+	 * returns true if the projectile was shot by the player or a friendly boat/college
+	 * @return if the projectile was shot by the player or a friendly boat/college
+	 */
 	public boolean isFriendlyProjectile(){return isFriendlyProjectile;}
 
+	/**
+	 * get the amount of damage the projectile deals.
+	 * @return the damage dealt by the projectile
+	 */
 	public float getDamage() {
 		return damage;
 	}

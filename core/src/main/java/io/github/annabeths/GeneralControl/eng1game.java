@@ -28,6 +28,10 @@ public class eng1game extends Game {
 	 */
 	private boolean debug = false;
 
+	/**
+	 * Constructor for eng1game
+	 * @param debug whether Debug mode should be enabled or not
+	 */
 	public eng1game(boolean debug) {
 		this.debug = debug;
 	}
@@ -35,6 +39,9 @@ public class eng1game extends Game {
 	public eng1game() {
 	}
 
+	/**
+	 * Called when the game is created.
+	 */
 	@Override
 	public void create() {
 		ResourceManager.init(new AssetManager());
@@ -78,8 +85,8 @@ public class eng1game extends Game {
 			case gameOverScreen:
 				removeGameScreen();
 				GameOverScreen gameOverScreen = new GameOverScreen(this,
-						timeUp ? "Time Up! ENTER to go to menu, R to restart"
-								: "You Died! ENTER to go to menu, R to restart");
+						timeUp ? "Time Up! ENTER to go to menu, R to restart, or L to load from a save."
+								: "You Died! ENTER to go to menu, R to restart, or L to load from a save.");
 				setScreen(gameOverScreen);
 				break;
 			case gameWinScreen:
@@ -92,26 +99,42 @@ public class eng1game extends Game {
 				setScreen(gameDifScreen);
 				break;
 			case saveLoadScreen:
-				SaveLoadScreen saveLoadScreen = new SaveLoadScreen(this);
+				SaveLoadScreen saveLoadScreen = new SaveLoadScreen(this, false);
 				setScreen(saveLoadScreen);
 				break;
 		}
 	}
 
-	public void gotoScreen(Screens s, String saveFileName){
-		if(s != Screens.loadedGameScreen){
-			return;
-		}
+	/**
+	 * load a saved game
+	 * @param saveFileName a saveFile referring to the saved game.
+	 */
+	public void loadSaveGame(String saveFileName){
 		gameScreen = new GameController(this, saveFileName);
 		setScreen(gameScreen);
 	}
 
+	/**
+	 * Go to the load screen
+	 */
+	public void goToLoadScreen(){
+		SaveLoadScreen saveLoadScreen = new SaveLoadScreen(this, true);
+		setScreen(saveLoadScreen);
+	}
+
+	/**
+	 * Set the game to fullscreen
+	 */
 	public void setFullscreen() {
 		Graphics.DisplayMode currentMode = Gdx.graphics.getDisplayMode();
 		Gdx.graphics.setFullscreenMode(currentMode);
 		Gdx.app.log("eng1game", "Switched to Fullscreen");
 	}
 
+	/**
+	 * Set the game's difficulty
+	 * @param difficulty new difficulty
+	 */
 	public void setDifficulty(Difficulty difficulty) {
 		Gdx.app.log("eng1game", String.format("Set game difficulty to %s", difficulty.toString()));
 		if (gameScreen != null) gameScreen.setDifficulty(difficulty);

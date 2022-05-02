@@ -63,6 +63,7 @@ public class PlayerBoat extends Boat {
 	public ProjectileData activeProjectileType;
 
 	/**
+	 * Constructor for PlayerBoat.
 	 * @author James Burnell
 	 * @tt.updated Assessment 2
 	 * @param controller the game controller
@@ -98,6 +99,7 @@ public class PlayerBoat extends Boat {
 	}
 
 	/**
+	 * Update state of the player's active powerups. Called once per frame.
 	 * @author James Burnell
 	 * @since Assessment 2
 	 * @param delta the time since the last update
@@ -111,7 +113,6 @@ public class PlayerBoat extends Boat {
 
 	/**
 	 * Processes keyboard and mouse inputs
-	 * 
 	 * @param delta the time since the last update in seconds
 	 * @since Assessment 2
 	 * @author James Burnell
@@ -144,6 +145,7 @@ public class PlayerBoat extends Boat {
 	}
 
 	/**
+	 * Process inputs for using powerups
 	 * @author James Burnell
 	 * @since Assessment 2
 	 * @param delta the time since the last update
@@ -164,7 +166,6 @@ public class PlayerBoat extends Boat {
 
 	/**
 	 * Method that executes when a collision is detected
-	 * 
 	 * @param other the other object, as a PhysicsObject to be generic
 	 * @author Annabeth
 	 * @author James Burnell
@@ -191,6 +192,7 @@ public class PlayerBoat extends Boat {
 	}
 
 	/**
+	 * Deal damage to the PlayerBoat.
 	 * @author James Burnell
 	 * @since Assessment 2
 	 */
@@ -203,7 +205,6 @@ public class PlayerBoat extends Boat {
 
 	/**
 	 * @return {@code true} if invincibility powerup is active
-	 * 
 	 * @author James Burnell
 	 * @since Assessment 2
 	 */
@@ -233,6 +234,7 @@ public class PlayerBoat extends Boat {
 	}
 
 	/**
+	 * Shoot a ray bullet. Ray bullets are unlocked at the shop
 	 * @author James Burnell
 	 * @since Assessment 2
 	 * @param dmgMul the damage multiplier
@@ -251,12 +253,9 @@ public class PlayerBoat extends Boat {
 	/**
 	 * Calculates the angle between the player boat and the mouse pointer. It does
 	 * this by unwrapping the cursor position with the controller camera.
-	 * 
 	 * @return The angle in degrees
-	 * 
 	 * @author James Burnell
 	 * @since Assessment 2
-	 *
 	 */
 	public float getAngleBetweenMouseAndBoat() {
 		int mouseX = input.getX();
@@ -269,6 +268,7 @@ public class PlayerBoat extends Boat {
 	}
 
 	/**
+	 * Shoots stock projectiles. Shoots two cannonballs on either side of the ship with opposite trajectories
 	 * @author James Burnell
 	 * @since Assessment 2
 	 * @param dmgMul the damage multiplier
@@ -290,6 +290,7 @@ public class PlayerBoat extends Boat {
 	}
 
 	/**
+	 * Get the damage multiplier in regard to the player's active powerups
 	 * @author James Burnell
 	 * @since Assessment 2
 	 * @return the damage multiplier
@@ -300,6 +301,9 @@ public class PlayerBoat extends Boat {
 		return dmgMul * projDmgMul * controller.getGameDifficulty().getPlayerDmgMul();
 	}
 
+	/**
+	 * Called when the ship is destroyed. Causes a gameover.
+	 */
 	@Override
 	public void Destroy() {
 		controller.gameOver();
@@ -307,9 +311,7 @@ public class PlayerBoat extends Boat {
 
 	/**
 	 * Allows the player to upgrade their boat
-	 * 
 	 * @param upgrade The requested upgrade
-	 * 
 	 * @param amount the amount to upgrade by
 	 */
 	public void Upgrade(Upgrades upgrade, float amount) {
@@ -339,37 +341,76 @@ public class PlayerBoat extends Boat {
 		}
 	}
 
+	/**
+	 * getter for the PlayerBoat's defense
+	 * @return the PlayerBoat's defense
+	 */
 	public int getDefense(){
 		return defense;
 	}
+
+	/**
+	 * setter for the PlayerBoat's defense
+	 * @param d new defense value
+	 */
 	public void setDefense(int d){
 		defense = d;
 	}
+	/**
+	 * getter for the PlayerBoat's speed
+	 * @return the PlayerBoat's speed
+	 */
 	public float getSpeed(){
 		return speed;
 	}
+	/**
+	 * setter for the PlayerBoat's speed
+	 * @param s new speed value
+	 */
 	public void setSpeed(float s){
 		speed = s;
 	}
+	/**
+	 * setter for the PlayerBoat's turn speed
+	 * @param ts new turn speed value
+	 */
 	public void setTurnSpeed(float ts){
 		turnSpeed = ts;
 	}
+	/**
+	 * getter for the PlayerBoat's turn speed
+	 * @return the PlayerBoat's  turn speed
+	 */
 	public float getTurnSpeed(){
 		return turnSpeed;
 	}
-
+	/**
+	 * getter for the PlayerBoat's projDmgMul
+	 * @return the PlayerBoat's projDmgMul
+	 */
 	public float getProjDmgMul() {
 		return projDmgMul;
 	}
-
+	/**
+	 * setter for the PlayerBoat's projectile speed multiplier
+	 * @param projSpdMul new turn projectile speed multiplier
+	 */
 	public void setProjSpdMul(float projSpdMul) {
 		this.projSpdMul = projSpdMul;
 	}
 
+	/**
+	 * getter for the PlayerBoat's projSpdMul
+	 * @return the PlayerBoat's projSpdMul
+	 */
 	public float getProjSpdMul() {
 		return projSpdMul;
 	}
 
+	/**
+	 * setter for the PlayerBoat's projectile damage multiplier
+	 * @param projDmgMul new turn projectile damage multiplier
+	 */
 	public void setProjDmgMul(float projDmgMul) {
 		this.projDmgMul = projDmgMul;
 	}
@@ -387,6 +428,11 @@ public class PlayerBoat extends Boat {
 		collectedPowerups.put(PowerupType.DAMAGE,pref.getInteger("Damage Buff", 0));
 	}
 
+	/**
+	 * Heal the ship by a certain amount. Will not heal more hp than maxhp.
+	 * @param amount the amount to heal by
+	 * @param delta time since the last frame
+	 */
 	public void Heal(int amount, float delta) {
 		timeSinceLastHeal += delta;
 		if (amount * timeSinceLastHeal >= 1) {

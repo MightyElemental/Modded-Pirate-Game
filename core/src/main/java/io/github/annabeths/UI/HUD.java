@@ -107,6 +107,10 @@ public class HUD extends GameObject {
 	int upgrade2cost;
 	float upgrade2amount;
 
+	/**
+	 * Constructor for HUD
+	 * @param gameController Instance of GameController
+	 */
 	public HUD(GameController gameController) {
 		gc = gameController;
 
@@ -134,6 +138,9 @@ public class HUD extends GameObject {
 		stage.addActor(hudGroup);
 	}
 
+	/**
+	 * Set up labels on the HUD
+	 */
 	public void setupLabels() {
 		hpText = new Label("#", lblStyleWht);
 		timerText = new Label("#", lblStyleBlk);
@@ -155,6 +162,9 @@ public class HUD extends GameObject {
 		hudGroup.addActor(plunderText);
 	}
 
+	/**
+	 * Set up styles on the HUD
+	 */
 	public void setupStyles() {
 		Drawable buttonBg = new TextureRegionDrawable(getTexture("ui/button.png"));
 		lblStyleBlk = new LabelStyle(font, Color.BLACK);
@@ -266,6 +276,10 @@ public class HUD extends GameObject {
 		return new Texture(p);
 	}
 
+	/**
+	 * Update the hud. Called once per frame
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void Update(float delta) {
 		/* Update label text */
@@ -317,6 +331,10 @@ public class HUD extends GameObject {
 		return min > 0 ? String.format("%d'%02d\"", min, sec) : String.format("%02d seconds", sec);
 	}
 
+	/**
+	 * Draw the hud. called once per frame
+	 * @param batch Spritebatch to draw the HUD
+	 */
 	@Override
 	public void Draw(SpriteBatch batch) {
 		stage.act();
@@ -330,6 +348,9 @@ public class HUD extends GameObject {
 		batch.end();
 	}
 
+	/**
+	 * Updates the state of the save menu.
+	 */
 	public void updateSaveMenu(){
 
 		String slot1Text = "Slot 1";
@@ -350,6 +371,9 @@ public class HUD extends GameObject {
 		saveSlot3.setText(slot3Text);
 	}
 
+	/**
+	 * Sets up the SaveMenu.
+	 */
 	public void setUpSaveMenu(){
 
 		saveMenuBackground = new Image(getTexture("ui/background.png"));
@@ -436,6 +460,11 @@ public class HUD extends GameObject {
 
 	}
 
+	/**
+	 * defines behaviour for a save slot button
+	 * @param button the button
+	 * @param saveSlot the save slot to write to
+	 */
 	public void setUpSaveSlotButton(TextButton button, String saveSlot){
 		button.addListener(new ClickListener() {
 			@Override
@@ -502,6 +531,9 @@ public class HUD extends GameObject {
 		hudGroup.addActor(shopButton);
 	}
 
+	/**
+	 * toggles the save menu on or off
+	 */
 	public void toggleSaveMenu() {
 		saveMenuOpen = !saveMenuOpen;
 		if (!saveMenuInitialized) {setUpSaveMenu();}else{ updateSaveMenu();}
@@ -524,6 +556,9 @@ public class HUD extends GameObject {
 	}
 
 
+	/**
+	 * toggles the upgrade menu on or off
+	 */
 	public void ToggleMenu() {
 		// Put the XP menu drawing calls in its own function so that render doesn't get
 		// too cluttered
@@ -702,6 +737,10 @@ public class HUD extends GameObject {
 				+ upgradeMenuBackground.getHeight() / 2 - upgradeButton2.getHeight() - 15);
 	}
 
+	/**
+	 * Purchases an upgrade
+	 * @param upgrade the upgrade to be purchased
+	 */
 	void BuyUpgrade(int upgrade) {
 		switch (upgrade) {
 		case 1:
@@ -713,6 +752,9 @@ public class HUD extends GameObject {
 		}
 	}
 
+	/**
+	 * Randomises upgrades after one is bought.
+	 */
 	void RandomiseUpgrades() {
 		switch (MathUtils.random(5)) {
 		case 0: // Max Health
@@ -783,6 +825,11 @@ public class HUD extends GameObject {
 		updateShopMenu();
 	}
 
+	/**
+	 * Resize the HUD
+	 * @param width new width
+	 * @param height new height
+	 */
 	public void resize(int width, int height) {
 		stage.getViewport().update(width, height, true);
 	}

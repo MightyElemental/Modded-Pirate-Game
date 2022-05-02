@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import io.github.annabeths.GeneralControl.eng1game;
 
 /**
+ * Shown when the player wins the game.
  * @author James Burnell
  * @author Annabeth
  * @tt.updated Assessment 2
@@ -25,6 +26,10 @@ public class GameWinScreen implements Screen {
 	GlyphLayout scoreText;
 	eng1game game;
 
+	/**
+	 * Constructor for GameWinScreen
+	 * @param g reference to eng1game
+	 */
 	public GameWinScreen(eng1game g) {
 		game = g;
 
@@ -38,11 +43,18 @@ public class GameWinScreen implements Screen {
 		font.setColor(Color.WHITE);
 	}
 
+	/**
+	 * Called when the screen is created
+	 */
 	@Override
 	public void show() {
 		batch = new SpriteBatch();
 	}
 
+	/**
+	 * Draw text to the screen. called once per frame
+	 * @param delta time since the last frame
+	 */
 	@Override
 	public void render(float delta) {
 		if (Gdx.input.isKeyJustPressed(Keys.ENTER)) {
@@ -67,6 +79,11 @@ public class GameWinScreen implements Screen {
 		batch.end();
 	}
 
+	/**
+	 * Resize the window
+	 * @param width new width
+	 * @param height new height
+	 */
 	@Override
 	public void resize(int width, int height) {
 	}

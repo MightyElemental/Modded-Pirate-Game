@@ -50,12 +50,19 @@ public class GameDifScreen implements Screen {
 	/** A collection of actions to perform when the associated key is pressed */
 	private final Map<Integer, Consumer<InputEvent>> keyActions;
 
+	/**
+	 * Constructor for GameDifScreen
+	 * @param g reference to an eng1game instance
+	 */
 	public GameDifScreen(eng1game g) {
 		game = g;
 		keyActions = new HashMap<>();
 		buttons = new TextButton[4];
 	}
 
+	/**
+	 * Method that sets up the difficulty option buttons.
+	 */
 	public void setupButtons() {
 		// Size of each button
 		Vector2 btnSize = new Vector2(250, 250);
@@ -138,6 +145,9 @@ public class GameDifScreen implements Screen {
 		});
 	}
 
+	/**
+	 * Called when the screen is created
+	 */
 	@Override
 	public void show() {
 		stage = new Stage();
@@ -147,6 +157,9 @@ public class GameDifScreen implements Screen {
 		setupLabel();
 	}
 
+	/**
+	 * Initialize a new label
+	 */
 	public void setupLabel() {
 		LabelStyle style = new LabelStyle();
 		style.font = ResourceManager.font;
@@ -157,6 +170,10 @@ public class GameDifScreen implements Screen {
 		stage.addActor(l);
 	}
 
+	/**
+	 * Called once per frame. Draw all buttons and other sprites.
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void render(float delta) {
 		// test for any pressed keys
@@ -169,6 +186,11 @@ public class GameDifScreen implements Screen {
 		stage.draw();
 	}
 
+	/**
+	 * resize the window
+	 * @param width new width
+	 * @param height new height
+	 */
 	@Override
 	public void resize(int width, int height) {
 	}

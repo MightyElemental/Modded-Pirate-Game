@@ -21,7 +21,6 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	protected float maxHP;
 	protected float speed;
 	protected float turnSpeed;
-
 	protected float shotDelay = 0.5f;
 	protected float timeSinceLastShot = 0f;
 
@@ -51,10 +50,8 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	/**
 	 * Generic move method for boats to move forward by their set speed, and a
 	 * multiplier
-	 * 
 	 * @param delta time since last frame
 	 * @param multiplier multiplier to set forward or reverse motion (1 or -1)
-	 * 
 	 * @since Assessment 1
 	 */
 	void Move(float delta, int multiplier) {
@@ -113,8 +110,14 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 		Move(delta, 1);
 	}
 
+	/**
+	 * abstract method for when the Boat shoots a projectile.
+	 */
 	abstract void Shoot();
 
+	/**
+	 * abstract method for when the Boat is destroyed.
+	 */
 	abstract void Destroy();
 
 	/**
@@ -122,7 +125,7 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 * 
 	 * @param x the x position
 	 * @param y the y position
-	 * 
+	 *
 	 * @since Assessment 1
 	 */
 	void SetPosition(float x, float y) {
@@ -158,29 +161,52 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 				spdMul);
 	}
 
+	/**
+	 * getter method for the Boat's HP
+	 * @return the Boat's HP
+	 */
 	@Override
 	public float getHealth() {
 		return HP;
 	}
 
+	/**
+	 * setter method for the Boat's HP
+	 * @param health the new HP for the boat
+	 */
 	public void setHealth(float health){
 		this.HP = health;
 	}
-
+	/**
+	 * setter method for the Boat's maximum HP
+	 * @param maxHealth the new max HP for the boat
+	 */
 	public void setMaxHealth(float maxHealth){
 		this.maxHP = maxHealth;
 	}
 
+	/**
+	 * getter method for the Boat's maximum HP
+	 * @return the Boat's MaxHP
+	 */
 	@Override
 	public float getMaxHealth() {
 		return maxHP;
 	}
 
+	/**
+	 * Deal damage to the boat.
+	 * @param dmg The amount of damage to be dealt.
+	 */
 	@Override
 	public void damage(float dmg) {
 		HP = MathUtils.clamp(HP - dmg, 0, maxHP);
 	}
 
+	/**
+	 * Whether the boat is dead or not.
+	 * @return Boolean - true if dead
+	 */
 	@Override
 	public boolean isDead() {
 		return killOnNextTick || IHealth.super.isDead();

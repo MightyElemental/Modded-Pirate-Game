@@ -19,6 +19,7 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 
 /**
+ * Tools to aid in debugging the game. Not available to the player.
  * @since Assessment 2
  * @author James Burnell
  */
@@ -56,10 +57,16 @@ public class DebugUtils {
 		}
 	}
 
+
 	private static boolean getSavedValue(Element e, String var) {
 		return Boolean.parseBoolean(e.getChildByName(var).get("enabled"));
 	}
 
+	/**
+	 * Draw debug text to the screen
+	 * @param gc instance of gamecontroller
+	 * @param batch SpriteBatch to draw the text
+	 */
 	public static void drawDebugText(GameController gc, SpriteBatch batch) {
 		List<String> debugText = generateDebugText(gc);
 		for (int i = 0; i < debugText.size(); i++) {
@@ -67,6 +74,11 @@ public class DebugUtils {
 		}
 	}
 
+	/**
+	 * Draw entity debug text to the screen
+	 * @param gc instance of gamecontroller
+	 * @param batch SpriteBatch to draw the text
+	 */
 	public static void drawEntityDebugText(GameController gc, SpriteBatch batch) {
 		for (int i = 0; i < gc.physicsObjects.size(); i++) {
 			PhysicsObject o = gc.physicsObjects.get(i);
@@ -80,6 +92,11 @@ public class DebugUtils {
 		}
 	}
 
+	/**
+	 * Generate the debug text
+	 * @param gc instance of GameController
+	 * @return the debug text
+	 */
 	private static List<String> generateDebugText(GameController gc) {
 		return Arrays.asList("PhysObj Count = " + gc.physicsObjects.size(),
 				"Living College Count = "
@@ -88,6 +105,11 @@ public class DebugUtils {
 				"Player in danger? " + gc.isPlayerInDanger());
 	}
 
+	/**
+	 * Draw entity hitboxes and directions of AIBoats.
+	 * @param gc instance of GameController
+	 * @param sr a ShapeRenderer to draw the hitboxes
+	 */
 	public static void drawDebugCollisions(GameController gc, ShapeRenderer sr) {
 		sr.begin(ShapeType.Line);
 

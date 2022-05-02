@@ -10,7 +10,8 @@ import io.github.annabeths.GameScreens.GameController;
 import io.github.annabeths.Projectiles.Projectile;
 
 /**
- * A boat that attacks the player
+ * A boat that attacks instances of PlayerBoat and FriendlyBoat.
+ * Spawned at EnemyCollege. Grants plunder and xp when killed.
  * 
  * @since Assessment 2
  * @author James Burnell
@@ -18,6 +19,11 @@ import io.github.annabeths.Projectiles.Projectile;
  */
 public class EnemyBoat extends AttackBoat {
 
+	/**
+	 * Constructor for EnemyBoat
+	 * @param controller the game controller
+	 * @param position the position of the boat
+	 */
 	public EnemyBoat(GameController controller, Vector2 position) {
 		super(controller, position, "img/entity/boat_enemy.png");
 
@@ -32,6 +38,10 @@ public class EnemyBoat extends AttackBoat {
 		// this.shotDelay = 0.01f;
 	}
 
+	/**
+	 * Get the nearest PlayerBoat or FriendlyBoat in range.
+	 * @return an instance of Boat (either a PlayerBoat or FriendlyBoat)
+	 */
 	public Boat getNearestTarget() {
 		if (controller.playerBoat.getCenter().dst(getCenter()) < approachRange) {
 			return controller.playerBoat;
@@ -51,6 +61,10 @@ public class EnemyBoat extends AttackBoat {
 		return nearestTarget;
 	}
 
+	/**
+	 * Mark the boat to be destroyed on the start of the next frame and a chance
+	 * to drop a powerup at the location of the boat
+	 */
 	@Override
 	public void Destroy() {
 		killOnNextTick = true;
@@ -60,6 +74,10 @@ public class EnemyBoat extends AttackBoat {
 
 	}
 
+	/**
+	 * Called when the boat collides with another PhysicsObject.
+	 * @param other the object collided with
+	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		float dmgToInflict = 0;

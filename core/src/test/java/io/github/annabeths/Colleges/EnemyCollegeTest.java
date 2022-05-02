@@ -136,7 +136,7 @@ public class EnemyCollegeTest {
 		Projectile p = new Projectile(new Vector2(0, 0), 0, ProjectileData.STOCK, true);
 		try { // try-catch because of GlyphLayout null pointer error
 			col.OnCollision(p);
-		} catch (NullPointerException e) {
+		} catch (NullPointerException ignored) {
 		}
 		// Should remove projectile if collided with college
 		assertTrue(p.removeOnNextTick());
@@ -193,7 +193,7 @@ public class EnemyCollegeTest {
 	@Test
 	public void testCheckForSpawnEnemyBoat() {
 		col.timeSinceLastSpawn = col.boatSpawnTime + 1;
-		col.checkForSpawnEnemyBoat(1);
+		col.checkForSpawnEnemyBoat();
 		verify(gc, times(1)).NewPhysicsObject(any(PhysicsObject.class));
 	}
 

@@ -16,6 +16,7 @@ import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.UI.HUD;
 
 /**
+ * The main menu.
  * @author James Burnell
  * @tt.updated Assessment 2
  */
@@ -31,10 +32,17 @@ public class Menu implements Screen {
 	boolean instructionsBeenShown;
 	private HUD hud;
 
+	/**
+	 * Constructor for Menu
+	 * @param g reference to eng1game
+	 */
 	public Menu(eng1game g) {
 		game = g;
 	}
 
+	/**
+	 * Called when the screen is created.
+	 */
 	@Override
 	public void show() {
 		batch = new SpriteBatch();
@@ -48,6 +56,10 @@ public class Menu implements Screen {
 		hud.Update(1f);
 	}
 
+	/**
+	 * Draw text to the screen and handle logic. Called once per frame
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void render(float delta) {
 		// do updates
@@ -82,11 +94,19 @@ public class Menu implements Screen {
 		if (showInstructions) hud.Draw(batch);
 	}
 
+	/**
+	 * toggle whether the instructions should be shown or not.
+	 */
 	public void toggleInstructions() {
 		showInstructions = !showInstructions;
 		instructionsBeenShown = true;
 	}
 
+	/**
+	 * resize the window
+	 * @param width new width
+	 * @param height new height
+	 */
 	@Override
 	public void resize(int width, int height) {
 	}

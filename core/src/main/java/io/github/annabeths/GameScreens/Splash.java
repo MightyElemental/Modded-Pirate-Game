@@ -19,6 +19,7 @@ import com.badlogic.gdx.video.VideoPlayerCreator;
 import io.github.annabeths.GeneralControl.eng1game;
 
 /**
+ * Intro video. First screen that is shown to the player.
  * @author James Burnell
  * @author Leif Kemp
  * @tt.updated Assessment 2
@@ -40,10 +41,17 @@ public class Splash implements Screen {
 
 	private VideoPlayer vPlayer;
 
+	/**
+	 * Constructor for Splash
+	 * @param g reference to eng1game
+	 */
 	public Splash(eng1game g) {
 		game = g;
 	}
 
+	/**
+	 * Called when the screen is created.
+	 */
 	@Override
 	public void show() {
 		batch = new SpriteBatch();
@@ -103,6 +111,10 @@ public class Splash implements Screen {
 
 	float alpha = 1;
 
+	/**
+	 * Play the video
+	 * @param delta time since the last frame
+	 */
 	@Override
 	public void render(float delta) {
 
@@ -135,6 +147,11 @@ public class Splash implements Screen {
 		batch.end();
 	}
 
+	/**
+	 * Resize the window
+	 * @param width new width
+	 * @param height new height
+	 */
 	@Override
 	public void resize(int width, int height) {
 	}

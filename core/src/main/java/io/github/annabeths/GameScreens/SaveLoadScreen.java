@@ -28,9 +28,8 @@ import io.github.annabeths.GeneralControl.SaveManager;
 import io.github.annabeths.GeneralControl.eng1game;
 
 /**
- * The menu where the game difficulty is selected
- *
- * @tt.updated Assessment 2
+ * Menu that allows you to load from save files.
+ * @since  Assessment 2
  * @author Hector Woods
  */
 public class SaveLoadScreen implements Screen {
@@ -49,13 +48,24 @@ public class SaveLoadScreen implements Screen {
     /** A collection of actions to perform when the associated key is pressed */
     private final Map<Integer, Consumer<InputEvent>> keyActions;
 
-    public SaveLoadScreen(eng1game g) {
+    private final boolean showLoadScreenImmediately;
+
+    /**
+     * Constructor for SaveLoadScreen.
+     * @param g reference to eng1game
+     * @param showLoadScreenImmediately whether the save slot buttons should be shown immediately, or not.
+     */
+    public SaveLoadScreen(eng1game g, boolean showLoadScreenImmediately) {
         game = g;
         keyActions = new HashMap<>();
         buttons = new TextButton[3];
         saveSlotButtons = new TextButton[4];
+        this.showLoadScreenImmediately = showLoadScreenImmediately;
     }
 
+    /**
+     * Set up the save slot buttons.
+     */
     public void setUpSaveSlotButtons(){
         stage.clear();
         // Size of each button
@@ -103,6 +113,9 @@ public class SaveLoadScreen implements Screen {
 
     }
 
+    /**
+     * Set up the 'New Game', 'Load game' and 'Return to menu' buttons.
+     */
     public void setupInitialButtons() {
         stage.clear();
         // Size of each button
@@ -152,24 +165,44 @@ public class SaveLoadScreen implements Screen {
         keyActions.put(Keys.ESCAPE, event -> game.gotoScreen(Screens.menuScreen));
     }
 
+    /**
+     * A button that loads a save slot.
+     * @param key keyboard key that also triggers the button
+     * @param btn a TextButton
+     * @param saveFileName the name of the save file to be loaded.
+     */
     public void loadGameBtn(int key, TextButton btn, String saveFileName){
-        Consumer<InputEvent> actions = event -> game.gotoScreen(Screens.loadedGameScreen, saveFileName);
+        Consumer<InputEvent> actions = event -> game.loadSaveGame(saveFileName);
         clickListener(btn, actions);
         keyActions.put(key, actions);
     }
 
+    /**
+     * Button that starts a new game; opens Difficulty menu.
+     * @param key keyboard key that also triggers the button
+     * @param btn a TextButton
+     */
     public void newGameBtn(int key, TextButton btn) {
         Consumer<InputEvent> actions = event -> game.gotoScreen(Screens.gameDifScreen);
         clickListener(btn, actions);
         keyActions.put(key, actions);
     }
 
+    /**
+     * Button that returns to the menu.
+     * @param key keyboard key that also triggers the button
+     * @param btn a TextButton
+     */
     public void newBackButton(int key, TextButton btn){
         Consumer<InputEvent> actions = event -> setupInitialButtons();
         clickListener(btn, actions);
         keyActions.put(key, actions);
     }
-
+    /**
+     * Button that shows the save slot buttons.
+     * @param key keyboard key that also triggers the button
+     * @param btn a TextButton
+     */
     public void loadGameMenuBtn(int key, TextButton btn) {
         Consumer<InputEvent> actions = event -> setUpSaveSlotButtons();
         clickListener(btn, actions);
@@ -193,15 +226,23 @@ public class SaveLoadScreen implements Screen {
         });
     }
 
+    /**
+     * Called when the screen is created.
+     */
     @Override
     public void show() {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
-
         setupInitialButtons();
+        if(showLoadScreenImmediately){
+            setUpSaveSlotButtons();
+        }
         setupLabel();
     }
 
+    /**
+     * Set up and show a label.
+     */
     public void setupLabel() {
         LabelStyle style = new LabelStyle();
         style.font = ResourceManager.font;
@@ -212,6 +253,10 @@ public class SaveLoadScreen implements Screen {
         stage.addActor(l);
     }
 
+    /**
+     * Render all buttons and other text.
+     * @param delta time since last frame.
+     */
     @Override
     public void render(float delta) {
         // test for any pressed keys
@@ -224,6 +269,11 @@ public class SaveLoadScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * resize the window
+     * @param width new width
+     * @param height new height
+     */
     @Override
     public void resize(int width, int height) {
     }

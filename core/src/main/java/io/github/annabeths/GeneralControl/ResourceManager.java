@@ -12,7 +12,6 @@ import io.github.annabeths.Collectables.PowerupType;
 
 /**
  * Handles resource management of textures, audio, and fonts
- * 
  * @since Assessment 2
  * @author James Burnell
  */
@@ -31,7 +30,6 @@ public class ResourceManager {
 
 	/**
 	 * Initialize resource manager with a specific {@link AssetManager}
-	 * 
 	 * @param assetMan the asset manager to use
 	 */
 	public static void init(AssetManager assetMan) {
@@ -89,21 +87,32 @@ public class ResourceManager {
 		Gdx.app.log("ResourceManager", String.format("Loaded textures in %dms", time));
 	}
 
+	/**
+	 * Load a texture from the /ui/ folder
+	 * @param location the filePath
+	 */
 	public static void loadUITexture(String location) {
 		loadTexture("ui/" + location);
 	}
 
+	/**
+	 * Load a texture from the /world/ folder
+	 * @param location the filePath
+	 */
 	public static void loadWorldTexture(String location) {
 		loadTexture("img/world/" + location);
 	}
 
+	/**
+	 * Load a texture from the /entity/ folder
+	 * @param location the location of the texture
+	 */
 	public static void loadEntityTexture(String location) {
 		loadTexture("img/entity/" + location);
 	}
 
 	/**
 	 * Queues a texture from a file location to be loaded
-	 * 
 	 * @param location the location of the texture
 	 */
 	public static void loadTexture(String location) {
@@ -116,7 +125,6 @@ public class ResourceManager {
 
 	/**
 	 * Get a preloaded texture from a location
-	 * 
 	 * @param location the location of the texture
 	 * @return The Texture object, or {@link #nullTex} if the location is null or
 	 *         file is missing
@@ -130,7 +138,6 @@ public class ResourceManager {
 
 	/**
 	 * Generates a 2x2 texture to be used when a texture is not loaded.
-	 * 
 	 * @return the null texture
 	 */
 	public static Texture genNullTex() {

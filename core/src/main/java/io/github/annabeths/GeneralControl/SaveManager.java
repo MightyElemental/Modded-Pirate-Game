@@ -19,16 +19,15 @@ import io.github.annabeths.Projectiles.ProjectileData;
 import java.util.*;
 
 /**
+ * Manages the saving and loading of save files. Save files persist between sessions.
  * @author Hector Woods
  * @since Assessment 2
  */
 public abstract class SaveManager {
-
-
     /**
      * Save player powerups.
      * @param pref A libgdx preferences object
-     * @param pUps A Map of PowerUpType -> Integer describing how much of each powerup the player has collected.
+     * @param pUps A Map of PowerUpType to Integer describing how much of each powerup the player has collected.
      */
     public static void savePowerups(Preferences pref, Map<PowerupType, Integer> pUps){
         for(Map.Entry<PowerupType, Integer> pUpInfo : pUps.entrySet()){
@@ -51,9 +50,6 @@ public abstract class SaveManager {
             }
         }
     }
-
-
-
     /**
      * Save the locations of mines to a file.
      * @param pref A libgdx preferences object
@@ -74,7 +70,7 @@ public abstract class SaveManager {
 
     /**
      * Load mines from save file. Recreate mines by loading positions and instantiating new mines at this position.
-     * @param mines A map of strings of from String -> String, where the value String is of form "(x,y)", where
+     * @param mines A map of strings of from String to String, where the value String is of form "(x,y)", where
      *              x is the x-position of the mine and y is the y-position of the mine.
      * @param gc Reference to the GameController instance of this game
      */
@@ -112,6 +108,12 @@ public abstract class SaveManager {
         pref.put(m);
     }
 
+    /**
+     * Load colleges from a save file
+     * @param cols A map of strings of from String to String, where the value contains the
+     *             information needed to recreate the college from scratch.
+     * @param gc an instance of GameController.
+     */
     public static void loadColleges(HashMap<String, String> cols, GameController gc){
         for(String s : cols.values()){
             String[] collegeData = s.split(":");
@@ -140,6 +142,11 @@ public abstract class SaveManager {
         }
     }
 
+    /**
+     * Save the state of the player to a file.
+     * @param pref a libgdx Preferences object
+     * @param playerBoat a PlayerBoat
+     */
     public static void savePlayerBoat(Preferences pref, PlayerBoat playerBoat){
         String boatInfo = playerBoat.position.toString() + ":" + playerBoat.getHealth() + ":" +
                 playerBoat.getMaxHealth() + ":" + playerBoat.getDefense() + ":" + playerBoat.getSpeed() + ":" +
@@ -147,6 +154,11 @@ public abstract class SaveManager {
         pref.putString("playerBoat",boatInfo);
     }
 
+    /**
+     * Load state of a PlayerBoat from a file and set the game's PlayerBoat's stats equal to that state.
+     * @param s the state of the PlayerBoat
+     * @param gc an instance of GameController
+     */
     public static void loadPlayerBoat(String s, GameController gc){
         String[] boatInfo = s.split(":");
         Vector2 pos = new Vector2().fromString(boatInfo[0]);
@@ -160,6 +172,11 @@ public abstract class SaveManager {
         gc.playerBoat.setCenter(pos);
     }
 
+    /**
+     * Save entities to a file
+     * @param pref A libgdx Preferences object
+     * @param physicsObjects GameController.physicsObjects
+     */
     public static void saveEntities(Preferences pref, List<PhysicsObject> physicsObjects){
         pref.clear(); // clear out any old references to entities that no longer exist
         Map<String, String> m = new HashMap<>();
@@ -194,6 +211,11 @@ public abstract class SaveManager {
         pref.put(m);
     }
 
+    /**
+     * Load entities from a file
+     * @param entities Hashmap containing a list of entities and their state from the save file
+     * @param gc an instance of GameController
+     */
     private static void loadEntities(HashMap<String, String> entities, GameController gc) {
         for(String s : entities.values()){
             String[] entityData = s.split(":");
@@ -271,10 +293,10 @@ public abstract class SaveManager {
 
 
     /**
-     * Preferences.get() returns Hashmap<String, ?> so we need to cast it safely to Hashmap<String,String>, this
+     * Preferences.get() returns Hashmap String, ? so we need to cast it safely to Hashmap String,String, this
      * method does so.
      * @param pref a libgdx Preferences object
-     * @return Hashmap<String,String> contained in the Preferences object.
+     * @return Hashmap String,String contained in the Preferences object.
      */
     public static HashMap<String, String> loadPref(Preferences pref){
         Map<String, ?> m1 = pref.get();
@@ -292,6 +314,7 @@ public abstract class SaveManager {
      * of the game, but all files are prefixed by saveFileName. Saving, loading and storage of files is handled by
      * libgdx's preference system. See https://libgdx.com/wiki/preferences for more details.
      * @param saveFileName string referring to the fileName
+     * @param gc GameController
      */
     public static void load(String saveFileName, GameController gc){
         Preferences pref = Gdx.app.getPreferences("shardsoftware_" + saveFileName);
@@ -302,9 +325,6 @@ public abstract class SaveManager {
 
         gc.setXp(pref.getFloat("xp"));
         gc.setPlunder(pref.getInteger("plunder"));
-
-
-
         switch (pref.getString("difficulty")){
             case "easy":
                 gc.setDifficulty(Difficulty.EASY);

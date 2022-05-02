@@ -44,6 +44,7 @@ import io.github.annabeths.Projectiles.ProjectileRay;
 import io.github.annabeths.UI.HUD;
 
 /**
+ * The main game screen. This is the game itself.
  * @author James Burnell
  * @author Hector Woods
  * @tt.updated Assessment 2
@@ -80,6 +81,11 @@ public class GameController implements Screen {
 	float xpTick = 1f;
 	float xpTickMultiplier = 1f;
 
+	/**
+	 * Constructor for GameController. Called when 'New Game' is selected
+	 * @param game reference to eng1game
+	 * @param diff the game's difficulty
+	 */
 	public GameController(eng1game game, Difficulty diff) {
 		this();
 		this.game = game;
@@ -88,24 +94,29 @@ public class GameController implements Screen {
 
 		generateGameObjects();
 	}
-
+	/**
+	 * Constructor for GameController. Called when 'Load game' is selected
+	 * @param game reference to eng1game
+	 * @param saveFileName save file to load from
+	 */
 	public GameController(eng1game game, String saveFileName){
 		this();
 		this.game = game;
-		generateGameObjectsForLoadedGame();
 		SaveManager.load(saveFileName, this);
 	}
 
 	/**
 	 * Creates a GameController with a default difficulty of
 	 * {@link Difficulty#MEDIUM}
-	 *
 	 * @param game the game object
 	 */
 	public GameController(eng1game game) {
 		this(game, Difficulty.MEDIUM);
 	}
 
+	/**
+	 * Constructor for GameController
+	 */
 	private GameController() {
 		gameObjects = new ArrayList<>();
 		physicsObjects = new ArrayList<>();
@@ -122,6 +133,9 @@ public class GameController implements Screen {
 	}
 
 
+	/**
+	 * Called when GameController is created.
+	 */
 	@Override
 	public void show() {
 		hud = new HUD(this);
@@ -134,6 +148,9 @@ public class GameController implements Screen {
 	float timeBetweenWeatherGeneration = 5;
 	float timeSinceLastWeather = 0;
 
+	/**
+	 * Generate weather in the world. Called every timeBetweenWeatherGeneration seconds.
+	 */
 	public void generateWeather() {
 
 		float width = GameMap.getMapWidth();
@@ -161,10 +178,10 @@ public class GameController implements Screen {
 		}
 	}
 
-	private void generateGameObjectsForLoadedGame(){
 
-	}
-
+	/**
+	 * Generate game objects. Called when 'New game' is selected.
+	 */
 	private void generateGameObjects() {
 		// Generate a list of random college textures
 		// TODO: Make textures unique
@@ -252,13 +269,13 @@ public class GameController implements Screen {
 		return physicsObjects.stream().anyMatch(p -> p.CheckCollisionWith(obj));
 	}
 
+	/**
+	 * Called once per frame. Updates PhysicsObjects and Obstacles, increments xp.
+	 * @param delta time since the last frame
+	 */
 	public void logic(float delta) {
 		timer -= delta;
 		if (timer <= 0) gameOver();
-
-		if (input.isKeyJustPressed(Input.Keys.T)){
-			SaveManager.save("save0", this);
-		}
 
 		// give the player XP and Plunder each frame, normalized using delta
 		xpTick -= delta * xpTickMultiplier;
@@ -286,6 +303,10 @@ public class GameController implements Screen {
 		}
 	}
 
+	/**
+	 * Draw sprites of all PhysicsObjects. Called once per frame
+	 * @param delta time since the last frame
+	 */
 	@Override
 	public void render(float delta) {
 		// do update here
@@ -343,7 +364,6 @@ public class GameController implements Screen {
 
 	/**
 	 * Updates all physics objects in the {@link #physicsObjects} list
-	 * 
 	 * @param delta time since last frame
 	 */
 	public void UpdateObjects(float delta) {
@@ -372,7 +392,6 @@ public class GameController implements Screen {
 	/**
 	 * Tests if player is in danger. The player is in danger if it is in range of an
 	 * {@link EnemyCollege}, {@link EnemyBoat}, or {@link Kraken}.
-	 * 
 	 * @return {@code true} if within range of a danger, {@code false} otherwise or
 	 *         player is invincible.
 	 * @author James Burnell
@@ -384,7 +403,6 @@ public class GameController implements Screen {
 
 	/**
 	 * Tests if player is in range of an {@link EnemyBoat}.
-	 * 
 	 * @return {@code true} if within range of an enemy boat, {@code false}
 	 *         otherwise.
 	 * @author James Burnell
@@ -457,6 +475,11 @@ public class GameController implements Screen {
 		rays.removeIf(ProjectileRay::removeOnNextTick);
 	}
 
+	/**
+	 * resize the window
+	 * @param width new width
+	 * @param height new height
+	 */
 	@Override
 	public void resize(int width, int height) {
 		camera.setToOrtho(false, 1280, 720);
@@ -481,7 +504,6 @@ public class GameController implements Screen {
 
 	/**
 	 * Test if the player is within any friendly college
-	 * 
 	 * @return {@code true} if player is in range, {@code false} otherwise
 	 */
 	public boolean isPlayerInRangeOfFriendlyCollege() {
@@ -489,6 +511,9 @@ public class GameController implements Screen {
 				.anyMatch(c -> c.isInRange(playerBoat));
 	}
 
+	/**
+	 * dispose of the game screen and go to the game over screen.
+	 */
 	public void gameOver() {
 		game.timeUp = timer <= 0;
 		game.gameScore = (int) getGameScore();
@@ -660,6 +685,10 @@ public class GameController implements Screen {
 		return gc;
 	}
 
+	/**
+	 * setter method for the game's difficulty
+	 * @param difficulty the new game difficulty
+	 */
 	public void setDifficulty(Difficulty difficulty) {
 		this.gameDifficulty = difficulty;
 	}

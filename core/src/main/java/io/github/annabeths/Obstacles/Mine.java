@@ -9,11 +9,17 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 
 /**
+ * An obstacle that explodes when it collides with a Boat; dealing damage
  * @since Assessment 2
  * @author Hector Woods
  */
 public class Mine extends ObstacleEntity {
 
+	/**
+	 * Constructor for Mine
+	 * @param controller GameController
+	 * @param position position of the mine
+	 */
 	public Mine(GameController controller, Vector2 position) {
 		super(controller, position, "img/entity/mine.png", new Vector2(50, 50));
 		Polygon poly = new Polygon(new float[] { 0, 25, 25, 50, 50, 25, 25, 0 });
@@ -24,6 +30,10 @@ public class Mine extends ObstacleEntity {
 		this.collisionPolygon = poly;
 	}
 
+	/**
+	 * Called when the Mine collides with another object.
+	 * @param other the object collided with
+	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		boolean shouldDamage = true;

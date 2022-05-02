@@ -12,6 +12,7 @@ import io.github.annabeths.Projectiles.Projectile;
 public class NeutralBoat extends AIBoat {
 
 	/**
+	 * A boat that moves around but does not attack. Grants plunder and xp when killed.
 	 * @author James Burnell
 	 * @author Hector Woods
 	 * @tt.updated Assessment 2
@@ -42,8 +43,11 @@ public class NeutralBoat extends AIBoat {
 		}
 	}
 
+	/**
+	 * Ignore, neutral boats do not shoot, but this must be defined since we are extending AIBoat
+	 */
 	public void Shoot() {
-		// Ignore, neutral boats do not shoot, but this must be defined
+
 	}
 
 	/**

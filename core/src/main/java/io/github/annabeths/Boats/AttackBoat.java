@@ -26,6 +26,12 @@ public abstract class AttackBoat extends AIBoat {
 	 */
 	public Boat target;
 
+	/**
+	 * Constructor for AttackBoat.
+	 * @param controller an instance of GameController that this boat belongs to
+	 * @param initialPosition the initial position for the boat
+	 * @param texLoc file location of the boat's texture
+	 */
 	public AttackBoat(GameController controller, Vector2 initialPosition, String texLoc) {
 		super(controller, initialPosition, texLoc);
 
@@ -33,6 +39,9 @@ public abstract class AttackBoat extends AIBoat {
 		this.turnSpeed = 150;
 	}
 
+	/**
+	 * Creates projectiles on either side of the boat, with opposite trajectories.
+	 */
 	@Override
 	public void Shoot() {
 
@@ -50,11 +59,17 @@ public abstract class AttackBoat extends AIBoat {
 		controller.NewPhysicsObject(projRight);
 	}
 
+	/**
+	 * Set the AttackBoat to be destroyed on the start of the next frame.
+	 */
 	@Override
 	void Destroy() {
 		killOnNextTick = true;
 	}
 
+	/**
+	 * Update the AttackBoat's AI-state based on its distance from its target.
+	 */
 	public void updateAIState() {
 		target = getNearestTarget();
 		if (target == null) {
@@ -73,6 +88,10 @@ public abstract class AttackBoat extends AIBoat {
 		}
 	}
 
+	/**
+	 * Called once per-frame, updates state of the boat.
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void Update(float delta) {
 		if (isDead()) Destroy();
@@ -88,7 +107,7 @@ public abstract class AttackBoat extends AIBoat {
 			attack(delta);
 			break;
 		case IDLE:
-			idle(delta);
+			idle();
 			break;
 		default:
 			break;
@@ -97,14 +116,22 @@ public abstract class AttackBoat extends AIBoat {
 		if (destination != null) MoveToDestination(delta);
 	}
 
+	/**
+	 * Approach the Boat's target. Called when the Boat's AIState is {@link AIState#APPROACH approach}
+	 * @param delta the time since last update
+	 */
 	public void approach(float delta) {
 		if (isDestValid(target.getCenter())) {
 			destination = target.getCenter();
 		} else {
-			idle(delta);
+			idle();
 		}
 	}
 
+	/**
+	 * Attack the Boat's target. Called when the Boat's AIState is {@link AIState#ATTACK attack}
+	 * @param delta the time since last update
+	 */
 	public void attack(float delta) {
 		float angToTarget = getCenter().sub(target.getCenter()).angleDeg();
 
@@ -133,7 +160,6 @@ public abstract class AttackBoat extends AIBoat {
 
 	/**
 	 * Locates the nearest target the boat should follow/attack
-	 * 
 	 * @return The boat to target
 	 */
 	public abstract Boat getNearestTarget();

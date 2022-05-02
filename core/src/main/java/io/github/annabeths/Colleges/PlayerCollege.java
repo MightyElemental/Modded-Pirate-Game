@@ -12,6 +12,8 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 
 /**
+ * A friendly College that heals the player and allows them to buy upgrades with plunder.
+ * When an EnemyCollege is destroyed it is "captured" and becomes a PlayerCollege.
  * @author James Burnell
  * @author Hector Woods
  * @tt.updated Assessment 2
@@ -20,7 +22,6 @@ public class PlayerCollege extends College {
 
 	/**
 	 * The amount to heal the player's boat
-	 * 
 	 * @see PlayerBoat#Heal(int, float)
 	 */
 	public int healAmount;
@@ -35,13 +36,20 @@ public class PlayerCollege extends College {
 	/**
 	 * Creates a PlayerCollege based on an EnemyCollege. Used for when an enemy
 	 * college is captured and converted into a player college.
-	 * 
 	 * @param oldCol the enemy college to use as a base
 	 */
 	public PlayerCollege(EnemyCollege oldCol) {
 		this(oldCol.position, oldCol.aliveTextureFile, oldCol.islandTextureFile, oldCol.gc, true);
 	}
 
+	/**
+	 * Constructor for PlayerCollege.
+	 * @param position position for the new college
+	 * @param aliveTexture texture of the college
+	 * @param islandTexture texture of the island beneath the college
+	 * @param gc instance of GameController
+	 * @param showSplashText boolean that determines whether to display the text "College Captured!"
+	 */
 	public PlayerCollege(Vector2 position, String aliveTexture, String islandTexture,
 			GameController gc, boolean showSplashText) {
 		super(position, aliveTexture, islandTexture, gc);
@@ -52,6 +60,10 @@ public class PlayerCollege extends College {
 		}
 	}
 
+	/**
+	 * Update the text beneath the college
+	 * @param text the new text
+	 */
 	public void updateSplashText(String text) {
 		if (splashText == null) return;
 		splashText.setText(font, text);
@@ -60,15 +72,18 @@ public class PlayerCollege extends College {
 	/**
 	 * PlayerCollege doesn't need to handle any collisions itself. The case of the
 	 * PlayerBoat crashing into it is handled in the PlayerBoat class.
-	 * 
-	 * @param other n/a
+	 * @param ignored n/a
 	 * @see PlayerBoat#OnCollision(PhysicsObject)
 	 */
 	@Override
-	public void OnCollision(PhysicsObject other) {
+	public void OnCollision(PhysicsObject ignored) {
 
 	}
 
+	/**
+	 * Called once per frame
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void Update(float delta) {
 		PlayerBoat boat = gc.playerBoat;
@@ -100,6 +115,10 @@ public class PlayerCollege extends College {
 		}
 	}
 
+	/**
+	 * Draw the College's sprite.
+	 * @param batch the SpriteBatch to draw the college's sprite
+	 */
 	@Override
 	public void Draw(SpriteBatch batch) {
 		islandSprite.draw(batch);

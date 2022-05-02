@@ -40,9 +40,9 @@ public class AttackBoatTest {
 	public void setup() {
 		gc = mock(GameController.class);
 		gc.map = mock(GameMap.class);
-		gc.colleges = new ArrayList<College>();
-		gc.physicsObjects = new ArrayList<PhysicsObject>();
-		gc.rays = new ArrayList<ProjectileRay>();
+		gc.colleges = new ArrayList<>();
+		gc.physicsObjects = new ArrayList<>();
+		gc.rays = new ArrayList<>();
 		doCallRealMethod().when(gc).NewPhysicsObject(any(PhysicsObject.class));
 		gc.playerBoat = new PlayerBoat(gc, new Vector2(0, 0));
 
@@ -89,13 +89,13 @@ public class AttackBoatTest {
 	@Test
 	public void testUpdateSwitchAIStates() {
 		doNothing().when(b).updateAIState();
-		doNothing().when(b).idle(anyFloat());
+		doNothing().when(b).idle();
 		doNothing().when(b).attack(anyFloat());
 		doNothing().when(b).approach(anyFloat());
 
 		b.state = AIBoat.AIState.IDLE;
 		b.Update(1);
-		verify(b, atLeast(1)).idle(anyFloat());
+		verify(b, atLeast(1)).idle();
 
 		b.state = AIBoat.AIState.ATTACK;
 		b.Update(1);
@@ -138,7 +138,7 @@ public class AttackBoatTest {
 		b.destination = null;
 		when(b.isDestValid(b.target.getCenter())).thenReturn(false);
 		b.approach(1);
-		verify(b, atLeast(1)).idle(anyFloat());
+		verify(b, atLeast(1)).idle();
 	}
 
 	@Test

@@ -35,6 +35,10 @@ public class GameMap extends GameObject {
 		bg = new WaterBackground(MAP_WIDTH, MAP_HEIGHT);
 	}
 
+	/**
+	 * Called once per frame. update the map.
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void Update(float delta) {
 		// center the camera on the player
@@ -80,6 +84,10 @@ public class GameMap extends GameObject {
 				MathUtils.random((int) getMapWidth()));
 	}
 
+	/**
+	 * Draw the map.
+	 * @param batch Spritebatch to draw the GameObject
+	 */
 	@Override
 	public void Draw(SpriteBatch batch) {
 		bg.Draw(batch);

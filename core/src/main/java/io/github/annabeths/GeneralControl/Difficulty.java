@@ -31,6 +31,16 @@ public enum Difficulty {
 	final boolean krakenSpawns;
 	final float timeBetweenWeather;
 
+	/**
+	 * Constructor for difficulty.
+	 * @param enemyDmgMul Multiplier for the damage dealt by enemies.
+	 * @param enemyHpMul Multiplier for the enemies' max hp.
+	 * @param playerDmgMul Multiplier for the damage dealt by the player.
+	 * @param playerXpMul Multiplier for xp earned by the player
+	 * @param numMines Number of mines in the world.
+	 * @param krakenSpawns Whether the Kraken spawns or not
+	 * @param timeBetweenWeather time between weather spawns.
+	 */
 	Difficulty(float enemyDmgMul, float enemyHpMul, float playerDmgMul, float playerXpMul,
 			   float numMines, boolean krakenSpawns, float timeBetweenWeather) {
 		this.enemyDmgMul = enemyDmgMul;

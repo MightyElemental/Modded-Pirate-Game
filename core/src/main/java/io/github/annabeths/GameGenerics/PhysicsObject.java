@@ -4,6 +4,9 @@ import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.utils.FloatArray;
 
+/**
+ * Abstract class that represents GameObjects with physics; i.e objects that can move around the world
+ */
 public abstract class PhysicsObject extends GameObject {
 	/*
 	 * In addition to the GameObject, PhysicsObjects must also implement the
@@ -14,7 +17,6 @@ public abstract class PhysicsObject extends GameObject {
 
 	/**
 	 * Test for collision with other {@link PhysicsObject}
-	 * 
 	 * @param other the physics object to check collision with
 	 * @return {@code true} if the physics objects collide, {@code false} otherwise
 	 */
@@ -26,7 +28,6 @@ public abstract class PhysicsObject extends GameObject {
 
 	/**
 	 * Called when object collides with another {@link PhysicsObject}
-	 * 
 	 * @param other the object collided with
 	 */
 	public abstract void OnCollision(PhysicsObject other);
