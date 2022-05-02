@@ -109,13 +109,11 @@ public abstract class SaveManager {
             m.put(Integer.toString(i),data);
             i = i + 1;
         }
-        System.out.println(m);
         pref.put(m);
     }
 
     public static void loadColleges(HashMap<String, String> cols, GameController gc){
         for(String s : cols.values()){
-            System.out.println(s);
             String[] collegeData = s.split(":");
             Vector2 cPos = new Vector2().fromString(collegeData[0]);
             String texture = collegeData[1];
@@ -198,7 +196,6 @@ public abstract class SaveManager {
 
     private static void loadEntities(HashMap<String, String> entities, GameController gc) {
         for(String s : entities.values()){
-            System.out.println(s);
             String[] entityData = s.split(":");
             Vector2 ePos = new Vector2().fromString(entityData[0]);
             switch (entityData[1]){
@@ -274,6 +271,23 @@ public abstract class SaveManager {
 
 
     /**
+     * Preferences.get() returns Hashmap<String, ?> so we need to cast it safely to Hashmap<String,String>, this
+     * method does so.
+     * @param pref a libgdx Preferences object
+     * @return Hashmap<String,String> contained in the Preferences object.
+     */
+    public static HashMap<String, String> loadPref(Preferences pref){
+        Map<String, ?> m1 = pref.get();
+        HashMap<String, String> m2 = new HashMap<>();
+        for(Map.Entry<String, ?> entry : m1.entrySet()){
+            String key = entry.getKey();
+            String value = (String) entry.getValue();
+            m2.put(key, value);
+        }
+        return m2;
+    }
+
+    /**
      * Load the game state for the given file name. In reality multiple files are created to store different aspects
      * of the game, but all files are prefixed by saveFileName. Saving, loading and storage of files is handled by
      * libgdx's preference system. See https://libgdx.com/wiki/preferences for more details.
@@ -302,13 +316,11 @@ public abstract class SaveManager {
                 gc.setDifficulty(Difficulty.HARD);
         }
 
-
-
         gc.playerBoat.loadPowerups(pref);
         loadPlayerBoat(pref.getString("playerBoat"), gc);
-        loadMines((HashMap<String, String>) minePref.get(), gc);
-        loadColleges((HashMap<String, String>) collegePref.get(), gc);
-        loadEntities((HashMap<String, String>) entityPref.get(), gc);
+        loadMines(loadPref(minePref), gc);
+        loadColleges(loadPref(collegePref), gc);
+        loadEntities(loadPref(entityPref), gc);
     }
 
 

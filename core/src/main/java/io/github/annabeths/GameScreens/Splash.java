@@ -27,9 +27,9 @@ public class Splash implements Screen {
 
 	private SpriteBatch batch;
 	private Sprite splash;
-	private Sound shardSound = Gdx.audio.newSound(Gdx.files.internal("audio/splash/bruh.mp3"));
-	private Sound marioSound1 = Gdx.audio.newSound(Gdx.files.internal("audio/splash/ding.mp3"));
-	private Sound marioSound2 = Gdx.audio.newSound(Gdx.files.internal("audio/splash/burp.wav"));
+	private final Sound shardSound = Gdx.audio.newSound(Gdx.files.internal("audio/splash/bruh.mp3"));
+	private final Sound marioSound1 = Gdx.audio.newSound(Gdx.files.internal("audio/splash/ding.mp3"));
+	private final Sound marioSound2 = Gdx.audio.newSound(Gdx.files.internal("audio/splash/burp.wav"));
 	public eng1game game;
 	public boolean fading = false;
 	public boolean showShard = true;
@@ -66,27 +66,23 @@ public class Splash implements Screen {
 			e.printStackTrace();
 		}
 
-		vPlayer.setOnCompletionListener(v -> {
+		vPlayer.setOnCompletionListener(v -> scheduleTask(() -> {
+			showShard = false;
 
 			scheduleTask(() -> {
-				showShard = false;
-
-				scheduleTask(() -> {
-					splash = new Sprite(mario1);
-					splash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-					marioSound1.play();
-				}, 1f);
-
-				scheduleTask(() -> {
-					splash = new Sprite(mario2);
-					splash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-					marioSound2.play();
-				}, 2.5f);
-
-				scheduleTask(() -> fading = true, 5f);
+				splash = new Sprite(mario1);
+				splash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+				marioSound1.play();
 			}, 1f);
 
-		});
+			scheduleTask(() -> {
+				splash = new Sprite(mario2);
+				splash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+				marioSound2.play();
+			}, 2.5f);
+
+			scheduleTask(() -> fading = true, 5f);
+		}, 1f));
 	}
 
 	/**

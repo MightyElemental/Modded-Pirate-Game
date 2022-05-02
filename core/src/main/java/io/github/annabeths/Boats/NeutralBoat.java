@@ -52,7 +52,7 @@ public class NeutralBoat extends AIBoat {
 	 */
 	public void OnCollision(PhysicsObject object) {
 		float dmgToInflict = 0;
-		// whether or not the object belongs to the player
+		// whether the object belongs to the player
 		boolean objWasPlayer = false;
 
 		if (object instanceof PlayerBoat) {

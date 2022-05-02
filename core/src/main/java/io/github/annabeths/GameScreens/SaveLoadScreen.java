@@ -38,20 +38,20 @@ public class SaveLoadScreen implements Screen {
     private Stage stage;
 
     /** The game object used to change screens */
-    private eng1game game;
+    private final eng1game game;
 
     /** Array of the menu buttons */
-    private TextButton[] buttons;
+    private final TextButton[] buttons;
 
     /** Array of the save slot buttons */
-    private TextButton[] saveSlotButtons;
+    private final TextButton[] saveSlotButtons;
 
     /** A collection of actions to perform when the associated key is pressed */
-    private Map<Integer, Consumer<InputEvent>> keyActions;
+    private final Map<Integer, Consumer<InputEvent>> keyActions;
 
     public SaveLoadScreen(eng1game g) {
         game = g;
-        keyActions = new HashMap<Integer, Consumer<InputEvent>>();
+        keyActions = new HashMap<>();
         buttons = new TextButton[3];
         saveSlotButtons = new TextButton[4];
     }
@@ -68,7 +68,7 @@ public class SaveLoadScreen implements Screen {
         // Total width of buttons
         float menuWidth = (btnSize.x + btnXMarg) * 4 - btnXMarg;
         // left-most x position of menu
-        float menuXPos = (Gdx.graphics.getWidth() - menuWidth) / 2 + (btnXMarg*5);
+        float menuXPos = (Gdx.graphics.getWidth() - menuWidth) / 2 + (btnXMarg);
 
         // Define style for the buttons
         TextButtonStyle style = new TextButtonStyle();
@@ -80,7 +80,7 @@ public class SaveLoadScreen implements Screen {
         for(int i = 0; i < saveSlotButtons.length; i++){
             // Define the button
             if(i < 3) {
-                String buttonText = "Slot " + i;
+                String buttonText = "Slot " + (i+1);
                 boolean saveFileExists = SaveManager.doesSaveFileExist("save" + i);
                 if(!saveFileExists){
                     buttonText = buttonText + " [Empty]";
@@ -147,39 +147,31 @@ public class SaveLoadScreen implements Screen {
         newGameBtn(buttonKeys[0], buttons[0]);
         // Now for load game button
         loadGameMenuBtn(buttonKeys[1], buttons[1]);
-        // Finally for return to menu button
+        // Finally, for return to menu button
         clickListener(buttons[2], event -> game.gotoScreen(Screens.menuScreen));
         keyActions.put(Keys.ESCAPE, event -> game.gotoScreen(Screens.menuScreen));
     }
 
     public void loadGameBtn(int key, TextButton btn, String saveFileName){
-        Consumer<InputEvent> actions = event -> {
-            game.gotoScreen(Screens.loadedGameScreen, saveFileName);
-        };
+        Consumer<InputEvent> actions = event -> game.gotoScreen(Screens.loadedGameScreen, saveFileName);
         clickListener(btn, actions);
         keyActions.put(key, actions);
     }
 
     public void newGameBtn(int key, TextButton btn) {
-        Consumer<InputEvent> actions = event -> {
-            game.gotoScreen(Screens.gameDifScreen);
-        };
+        Consumer<InputEvent> actions = event -> game.gotoScreen(Screens.gameDifScreen);
         clickListener(btn, actions);
         keyActions.put(key, actions);
     }
 
     public void newBackButton(int key, TextButton btn){
-        Consumer<InputEvent> actions = event -> {
-            setupInitialButtons();
-        };
+        Consumer<InputEvent> actions = event -> setupInitialButtons();
         clickListener(btn, actions);
         keyActions.put(key, actions);
     }
 
     public void loadGameMenuBtn(int key, TextButton btn) {
-        Consumer<InputEvent> actions = event -> {
-            setUpSaveSlotButtons();
-        };
+        Consumer<InputEvent> actions = event -> setUpSaveSlotButtons();
         clickListener(btn, actions);
         keyActions.put(key, actions);
     }
@@ -251,13 +243,6 @@ public class SaveLoadScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-    }
-
-    /**
-     * @return the buttons
-     */
-    public TextButton[] getButtons() {
-        return buttons;
     }
 
 }

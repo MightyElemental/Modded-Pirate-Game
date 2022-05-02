@@ -80,7 +80,7 @@ public class EnemyCollege extends College {
 		// if the enemy college is hit by a projectile
 		if (other instanceof Projectile && !isDead()) {
 			Projectile p = (Projectile) other;
-			if (p.isPlayerProjectile()) { // if its a player projectile
+			if (p.isPlayerProjectile()) { // if it's a player projectile
 				p.kill();
 				if (!isInvulnerable()) {
 					damage(p.getDamage());
@@ -138,7 +138,7 @@ public class EnemyCollege extends College {
 		float dmgMul = gc.getGameDifficulty().getEnemyDmgMul();
 
 		/*
-		 * instantiate a new bullet and pass a reference to the gamecontroller so it can
+		 * instantiate a new bullet and pass a reference to the gamecontroller, so it can
 		 * be updated and drawn
 		 */
 		gc.NewPhysicsObject(

@@ -42,7 +42,7 @@ public class ResourceManager {
 				font = new BitmapFont(Gdx.files.internal("fonts/bobcat.fnt"), false);
 				debugFont = new BitmapFont(Gdx.files.internal("fonts/cozette.fnt"), false);
 				debugFont.getData().setScale(0.5f);
-			} catch (GdxRuntimeException e) {
+			} catch (GdxRuntimeException ignored) {
 			}
 		});
 
@@ -115,7 +115,7 @@ public class ResourceManager {
 	}
 
 	/**
-	 * Get a pre-loaded texture from a location
+	 * Get a preloaded texture from a location
 	 * 
 	 * @param location the location of the texture
 	 * @return The Texture object, or {@link #nullTex} if the location is null or

@@ -25,9 +25,9 @@ public class Menu implements Screen {
 	eng1game game;
 
 	Texture instructions;
-	/** whether or not the instructions should be rendered */
+	/** whether the instructions should be rendered */
 	boolean showInstructions;
-	/** whether or not the instructions have been shown at least once */
+	/** whether the instructions have been shown at least once */
 	boolean instructionsBeenShown;
 	private HUD hud;
 
@@ -72,9 +72,9 @@ public class Menu implements Screen {
 
 		batch.begin(); // start batch
 		font.getData().setScale(1);
-		// the below line centers the text on the center of the screen
-		font.draw(batch, menuTextLayout, Gdx.graphics.getWidth() / 2 - menuTextLayout.width / 2,
-				Gdx.graphics.getHeight() / 2 + menuTextLayout.height / 2);
+		// the below line centers the text in the center of the screen
+		font.draw(batch, menuTextLayout, Gdx.graphics.getWidth() / 2f - menuTextLayout.width / 2f,
+				Gdx.graphics.getHeight() / 2f + menuTextLayout.height / 2f);
 		if (showInstructions)
 			batch.draw(instructions, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -105,6 +105,7 @@ public class Menu implements Screen {
 
 	@Override
 	public void dispose() {
+
 	}
 
 }

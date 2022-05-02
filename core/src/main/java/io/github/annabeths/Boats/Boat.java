@@ -59,7 +59,7 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 */
 	void Move(float delta, int multiplier) {
 		// Convention: 0 degrees means the object is pointing right, positive angles are
-		// counter clockwise
+		// counterclockwise
 		Vector2 oldPos = position.cpy();
 		position.x += Math.cos(Math.toRadians(rotation)) * speed * delta * multiplier;
 		position.y += Math.sin(Math.toRadians(rotation)) * speed * delta * multiplier;
@@ -103,12 +103,6 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 * @author Hector Woods
 	 */
 	public void moveTowardsDesiredAngle(float desiredAngle, float delta) {
-
-		// Manipulate angle to compensate for [0-360] limitations
-//		if (rotation <= 90 && desiredAngle >= 270) desiredAngle -= 360;
-//		if (rotation >= 270 && desiredAngle <= 90) desiredAngle += 360;
-//		if (rotation > 180 && desiredAngle < 90) desiredAngle += 360;
-
 		float angDiff = MathHelper.getAbsDiff2Angles(rotation, desiredAngle);
 		boolean turnLeft = Math.abs((rotation + angDiff) % 360 - desiredAngle) < 0.05f;
 

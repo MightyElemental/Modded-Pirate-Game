@@ -54,9 +54,9 @@ public class GameWinScreen implements Screen {
 
 		batch.begin();
 		font.getData().setScale(1);
-		// the below line centers the text on the center of the screen
-		font.draw(batch, gameOverText, Gdx.graphics.getWidth() / 2 - gameOverText.width / 2,
-				Gdx.graphics.getHeight() / 2 + gameOverText.height / 2);
+		// the below line centers the text in the center of the screen
+		font.draw(batch, gameOverText, Gdx.graphics.getWidth() / 2f - gameOverText.width / 2,
+				Gdx.graphics.getHeight() / 2f + gameOverText.height / 2);
 		font.draw(batch, scoreText, (Gdx.graphics.getWidth() - scoreText.width) / 2,
 				(Gdx.graphics.getHeight() - scoreText.height) / 2 - 100);
 		font.getData().setScale(2);

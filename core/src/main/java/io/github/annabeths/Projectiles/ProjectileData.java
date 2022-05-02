@@ -21,12 +21,12 @@ public enum ProjectileData {
 	KRAKEN(250, 30, new Vector2(20, 20), "img/entity/kraken_cannonball.png");
 
 	/** The scalar speed of the object, not the velocity */
-	public float speed;
-	public float damage;
-	public Vector2 size;
-	public String texture;
+	public final float speed;
+	public final float damage;
+	public final Vector2 size;
+	public final String texture;
 
-	private ProjectileData(float speed, float damage, Vector2 size, String texture) {
+	ProjectileData(float speed, float damage, Vector2 size, String texture) {
 		this.speed = speed;
 		this.damage = damage;
 		this.size = size;

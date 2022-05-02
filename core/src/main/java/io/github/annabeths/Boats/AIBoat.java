@@ -22,11 +22,6 @@ public abstract class AIBoat extends Boat {
 
 	/** How close should the boat be to its destination before setting a new one */
 	float destinationThreshold = 50f;
-	/**
-	 * If the boat's rotation is greater than the target angle by this much, start
-	 * rotating
-	 */
-	float angleThreshold = 0.25f;
 
 	public AIBoat(GameController controller, Vector2 initialPosition, String texLoc) {
 		super(controller, initialPosition, texLoc);
@@ -134,9 +129,6 @@ public abstract class AIBoat extends Boat {
 		for (College college : controller.colleges) {
 			if (Intersector.intersectSegmentPolygon(getCenter(), target,
 					college.collisionPolygon)) {
-				// the line has hit a college, return false and set a new destination
-//				System.out.println(
-//						"hit: " + college.getCenter() + " | " + getCenter() + " <->" + target);
 				return false;
 			}
 		}

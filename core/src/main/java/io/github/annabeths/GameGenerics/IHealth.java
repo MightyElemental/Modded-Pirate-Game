@@ -6,13 +6,13 @@ package io.github.annabeths.GameGenerics;
  */
 public interface IHealth {
 
-	public float getHealth();
+	float getHealth();
 
-	public float getMaxHealth();
+	float getMaxHealth();
 
-	public void damage(float dmg);
+	void damage(float dmg);
 
-	public default boolean isDead() {
+	default boolean isDead() {
 		return getHealth() <= 0;
 	}
 

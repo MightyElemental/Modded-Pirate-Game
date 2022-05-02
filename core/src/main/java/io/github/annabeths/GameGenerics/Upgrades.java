@@ -6,7 +6,7 @@ public enum Upgrades {
 
 	public final String label;
 
-	private Upgrades(String label) {
+	Upgrades(String label) {
 		this.label = label;
 	}
 }

@@ -20,17 +20,17 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
  */
 public class ProjectileRay extends Projectile {
 
-	private Vector2 endPoint;
+	private final Vector2 endPoint;
 
-	private ProjectileData pd;
-	private float dmgMul;
+	private final ProjectileData pd;
+	private final float dmgMul;
 
 	/** How long the ray should be drawn on screen in seconds */
-	private float showTime = 1f;
+	private final float showTime = 1f;
 	/** How much time is remaining to show the ray in seconds */
 	private float remainShowTime = showTime;
 
-	private Vector2 farthestHitPoint;
+	private final Vector2 farthestHitPoint;
 
 	/**
 	 * Create a projectile ray with a default distance of 500 units.
@@ -119,7 +119,7 @@ public class ProjectileRay extends Projectile {
 	public void fireRay(List<PhysicsObject> physObjs, int passThroughLimit) {
 		List<PhysicsObject> intersection = getNClosestIntersectingObjects(physObjs,
 				passThroughLimit);
-		intersection.forEach(e -> OnCollision(e));
+		intersection.forEach(this::OnCollision);
 
 		// set the point of the ray that is closest to the farthest hit object
 		if (!intersection.isEmpty()) {

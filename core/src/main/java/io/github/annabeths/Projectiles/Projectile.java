@@ -18,10 +18,10 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
  */
 public class Projectile extends PhysicsObject {
 
-	private Vector2 velocity;
-	private boolean isPlayerProjectile;
+	private final Vector2 velocity;
+	private final boolean isPlayerProjectile;
 	private boolean isFriendlyProjectile;
-	private float damage;
+	private final float damage;
 
 	/** How far the projectile can travel before dying */
 	public float lifeDist;
@@ -30,8 +30,8 @@ public class Projectile extends PhysicsObject {
 	 * 
 	 * @see #lifeDist
 	 */
-	private float lifeDist2;
-	private Vector2 startingPos;
+	private final float lifeDist2;
+	private final Vector2 startingPos;
 
 	/**
 	 * @param origin where it should start
@@ -64,7 +64,7 @@ public class Projectile extends PhysicsObject {
 	 * @param data the projectile data type to use
 	 * @param isPlayerProjectile true if the projectile is shot by the player
 	 * @param damageMultiplier how much to multiply the damage by
-	 * @param speedMultiplier how much to multiple the speed by
+	 * @param speedMultiplier how much to multiply the speed by
 	 */
 	public Projectile(Vector2 origin, float originRot, ProjectileData data,
 			boolean isPlayerProjectile, float damageMultiplier, float speedMultiplier) {

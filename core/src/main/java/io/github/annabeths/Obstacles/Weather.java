@@ -86,7 +86,7 @@ public class Weather extends ObstacleEntity {
 
 		if (other instanceof PlayerBoat) {
 			// The player gets xp for sailing through bad weather
-			controller.addXp(5 * Gdx.graphics.getDeltaTime());
+			controller.addXp(1 * Gdx.graphics.getDeltaTime());
 			// should not damage if player is invincible
 			shouldDamage &= !((PlayerBoat) other).isInvincible();
 		}
@@ -94,7 +94,7 @@ public class Weather extends ObstacleEntity {
 		if (!shouldDamage) return;
 
 		if (other instanceof Boat) {
-			((Boat) other).damage(1f * controller.getGameDifficulty().getEnemyDmgMul());
+			((Boat) other).damage(2f * controller.getGameDifficulty().getEnemyDmgMul());
 		}
 	}
 

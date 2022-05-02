@@ -44,7 +44,7 @@ public abstract class AttackBoat extends AIBoat {
 		Projectile projLeft = createProjectile(projectileType, -90, damageMul, 1);
 		Projectile projRight = createProjectile(projectileType, 90, damageMul, 1);
 
-		// Add the projectile to the GameController's physics objects list so it
+		// Add the projectile to the GameController's physics objects list, so it
 		// receives updates
 		controller.NewPhysicsObject(projLeft);
 		controller.NewPhysicsObject(projRight);
@@ -108,7 +108,7 @@ public abstract class AttackBoat extends AIBoat {
 	public void attack(float delta) {
 		float angToTarget = getCenter().sub(target.getCenter()).angleDeg();
 
-		// Move at a 90 degree angle to the play to align the boat to shoot
+		// Move at a 90-degree angle to the play to align the boat to shoot
 		destination = null;
 		float adjustedAng = angToTarget - rotation;
 		adjustedAng = MathHelper.normalizeAngle(adjustedAng);

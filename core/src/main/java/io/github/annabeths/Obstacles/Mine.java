@@ -28,7 +28,7 @@ public class Mine extends ObstacleEntity {
 	public void OnCollision(PhysicsObject other) {
 		boolean shouldDamage = true;
 		if (other instanceof PlayerBoat) {
-			shouldDamage &= !((PlayerBoat) other).isInvincible();
+			shouldDamage = !((PlayerBoat) other).isInvincible();
 		}
 		if (other instanceof Boat) {
 			if (shouldDamage) ((Boat) other).damage(50);

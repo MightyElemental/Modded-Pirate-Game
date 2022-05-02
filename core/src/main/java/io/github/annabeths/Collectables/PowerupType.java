@@ -14,17 +14,17 @@ public enum PowerupType {
 	STARBURSTFIRE("Burst Fire", 10, "starBurst.png", "burst-fire.mp3"),
 	DAMAGE("Damage Buff", 10, "dmgBuff.png", "damage-buff.mp3");
 
-	private PowerupType(String name, float activeTime, String texture, String activationAudio) {
+	PowerupType(String name, float activeTime, String texture, String activationAudio) {
 		this.name = name;
 		this.defaultActiveTime = activeTime;
 		this.texture = "img/powerup/" + texture;
 		this.activationAudio = "audio/powerups/" + activationAudio;
 	}
 
-	private String name;
-	private float defaultActiveTime;
-	private String texture;
-	private String activationAudio;
+	private final String name;
+	private final float defaultActiveTime;
+	private final String texture;
+	private final String activationAudio;
 
 	/**
 	 * Get the displayed name of the powerup

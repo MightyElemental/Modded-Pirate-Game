@@ -127,7 +127,7 @@ public class HUDTest {
 	public void testSetupProgressBars() {
 		try {
 			hud.setupStyles();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		hud.setupProgressBars();
 		assertNotNull(hud.healthBar);
@@ -138,7 +138,7 @@ public class HUDTest {
 	public void testSetupShopMenu() {
 		try {
 			hud.setupStyles();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		assertDoesNotThrow(() -> hud.setupShopMenu());
 		assertNotNull(hud.upgradeMenuBackground);
@@ -151,7 +151,7 @@ public class HUDTest {
 	public void testSetupShopButton() {
 		try {
 			hud.setupStyles();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		assertDoesNotThrow(() -> hud.setupShopButton());
 		assertNotNull(hud.shopButton);
@@ -162,7 +162,7 @@ public class HUDTest {
 		try {
 			hud.setupStyles();
 			hud.setupShopMenu();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		hud.upgradeButton1 = mock(TextButton.class);
 		hud.upgradeButton2 = mock(TextButton.class);
@@ -176,7 +176,7 @@ public class HUDTest {
 		try {
 			hud.setupStyles();
 			hud.setupShopMenu();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		hud.upgradeButton1 = mock(TextButton.class);
 		hud.upgradeButton2 = mock(TextButton.class);
@@ -190,14 +190,14 @@ public class HUDTest {
 	public void testSetupPowerups() {
 		try {
 			hud.setupStyles();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		assertDoesNotThrow(() -> hud.setupPowerups());
 		assertNotNull(hud.powerupIcons);
-		assertNotNull(hud.powerupQuanityLabels);
+		assertNotNull(hud.powerupQuantityLabels);
 		assertNotNull(hud.powerupTimeLabels);
 		assertEquals(PowerupType.values().length, hud.powerupIcons.size());
-		assertEquals(PowerupType.values().length, hud.powerupQuanityLabels.size());
+		assertEquals(PowerupType.values().length, hud.powerupQuantityLabels.size());
 		assertEquals(PowerupType.values().length, hud.powerupTimeLabels.size());
 	}
 
@@ -211,7 +211,7 @@ public class HUDTest {
 	public void testSetupLabels() {
 		try {
 			hud.setupStyles();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		assertDoesNotThrow(() -> hud.setupLabels());
 		assertNotNull(hud.hpText);
@@ -228,7 +228,7 @@ public class HUDTest {
 			hud.setupProgressBars();
 			hud.setupPowerups();
 			hud.setupShopButton();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		assertDoesNotThrow(() -> hud.Update(1f));
 	}
@@ -241,7 +241,7 @@ public class HUDTest {
 			hud.setupProgressBars();
 			hud.setupPowerups();
 			hud.setupShopButton();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		gc.playerBoat.activePowerups.put(PowerupType.DAMAGE, 1f);
 		assertDoesNotThrow(() -> hud.Update(1f));
@@ -252,7 +252,7 @@ public class HUDTest {
 		try {
 			hud.setupStyles();
 			hud.setupShopMenu();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		// run the test enough times to overcome chance
 		for (int i = 0; i < 1000; i++) {
@@ -285,7 +285,7 @@ public class HUDTest {
 	public void testToggleMenuNoShop() {
 		try {
 			hud.setupStyles();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		assertDoesNotThrow(() -> hud.ToggleMenu());
 	}
@@ -295,7 +295,7 @@ public class HUDTest {
 		try {
 			hud.setupStyles();
 			hud.setupShopMenu();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		assertDoesNotThrow(() -> hud.ToggleMenu());
 	}
@@ -305,7 +305,7 @@ public class HUDTest {
 		try {
 			hud.setupStyles();
 			hud.setupShopMenu();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		hud.upgradeMenuOpen = true;
 		assertDoesNotThrow(() -> hud.ToggleMenu());
@@ -317,7 +317,7 @@ public class HUDTest {
 			hud.setupStyles();
 			hud.setupShopMenu();
 			gc.setXp(100000);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		ClickListener cl1 = (ClickListener) hud.upgradeButton1.getListeners().get(1);
 		assertDoesNotThrow(() -> cl1.touchDown(null, 0, 0, 0, 0));
@@ -331,7 +331,7 @@ public class HUDTest {
 			hud.setupStyles();
 			hud.setupShopMenu();
 			gc.setPlunder(100000);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		hud.usePlunderShop = true;
 		ClickListener cl1 = (ClickListener) hud.upgradeButton1.getListeners().get(1);
@@ -346,7 +346,7 @@ public class HUDTest {
 			hud.setupStyles();
 			hud.setupShopMenu();
 			gc.setPlunder(0);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		hud.usePlunderShop = true;
 		ClickListener cl1 = (ClickListener) hud.upgradeButton1.getListeners().get(1);
@@ -361,7 +361,7 @@ public class HUDTest {
 			hud.setupStyles();
 			hud.setupShopMenu();
 			gc.setXp(100000);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		ClickListener cl2 = (ClickListener) hud.upgradeButton2.getListeners().get(1);
 		assertDoesNotThrow(() -> cl2.touchDown(null, 0, 0, 0, 0));
@@ -375,7 +375,7 @@ public class HUDTest {
 			hud.setupStyles();
 			hud.setupShopMenu();
 			gc.setPlunder(100000);
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		hud.usePlunderShop = true;
 		ClickListener cl2 = (ClickListener) hud.upgradeButton2.getListeners().get(1);
@@ -389,7 +389,7 @@ public class HUDTest {
 		try {
 			hud.setupStyles();
 			hud.setupShopMenu();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		ClickListener cl1 = (ClickListener) hud.upgradeButton1.getListeners().get(1);
 		cl1.enter(null, 0, 0, -1, null);
@@ -403,7 +403,7 @@ public class HUDTest {
 		try {
 			hud.setupStyles();
 			hud.setupShopMenu();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		ClickListener cl2 = (ClickListener) hud.upgradeButton2.getListeners().get(1);
 		cl2.enter(null, 0, 0, -1, null);
@@ -417,7 +417,7 @@ public class HUDTest {
 		try {
 			hud.setupStyles();
 			hud.setupShopMenu();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		ClickListener cl2 = (ClickListener) hud.upgradeMenuBackground.getListeners().get(0);
 		cl2.enter(null, 0, 0, -1, null);
@@ -431,7 +431,7 @@ public class HUDTest {
 		try {
 			hud.setupStyles();
 			hud.setupShopButton();
-		} catch (Exception e) {
+		} catch (Exception ignored) {
 		}
 		ClickListener cl = (ClickListener) hud.shopButton.getListeners().get(2);
 
@@ -442,9 +442,9 @@ public class HUDTest {
 
 		boolean flag = hud.upgradeMenuOpen;
 		cl.clicked(null, 0, 0);
-		assertFalse(hud.upgradeMenuOpen == flag);
+		assertNotEquals(hud.upgradeMenuOpen, flag);
 		cl.clicked(null, 0, 0);
-		assertTrue(hud.upgradeMenuOpen == flag);
+		assertEquals(hud.upgradeMenuOpen, flag);
 	}
 
 //	@Test

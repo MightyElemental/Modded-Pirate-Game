@@ -74,7 +74,7 @@ public class DebugUtils {
 				AIBoat aib = (AIBoat) o;
 
 				debugFont.draw(batch,
-						String.format("d%.1f\'\nr%.1f\'", aib.getAngleToDest(), aib.rotation),
+						String.format("d%.1f'\nr%.1f'", aib.getAngleToDest(), aib.rotation),
 						aib.getCenterX() + 50, aib.getCenterY() + 50);
 			}
 		}
@@ -117,7 +117,7 @@ public class DebugUtils {
 	 * Time how long a piece of code takes to run.
 	 * 
 	 * @param r the code to time
-	 * @return the duration in nano seconds
+	 * @return the duration in nanoseconds
 	 */
 	public static long timeCodeNano(Runnable r) {
 		long t = System.nanoTime();

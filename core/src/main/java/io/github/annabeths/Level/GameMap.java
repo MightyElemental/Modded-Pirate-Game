@@ -20,14 +20,14 @@ public class GameMap extends GameObject {
 	 */
 	public static final float BORDER_BRIM = 300;
 
-	private GameController gc;
+	private final GameController gc;
 
 	public WaterBackground bg;
 
 	public static int MAP_WIDTH = 3000, MAP_HEIGHT = 3000;
 
 	/** Defines the bounds of the map */
-	private static Rectangle mapBounds = new Rectangle(0, 0, MAP_WIDTH, MAP_HEIGHT);
+	private static final Rectangle mapBounds = new Rectangle(0, 0, MAP_WIDTH, MAP_HEIGHT);
 
 	public GameMap(GameController gc) {
 		this.gc = gc;

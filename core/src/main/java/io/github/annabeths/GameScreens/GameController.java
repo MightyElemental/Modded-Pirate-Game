@@ -62,7 +62,7 @@ public class GameController implements Screen {
 
 	private Difficulty gameDifficulty = Difficulty.MEDIUM;
 
-	public static final float PLAY_TIME = 10 * 60 + 0;
+	public static final float PLAY_TIME = 10 * 60;
 	public float timer = PLAY_TIME;
 
 	// UI Related Variables
@@ -107,10 +107,10 @@ public class GameController implements Screen {
 	}
 
 	private GameController() {
-		gameObjects = new ArrayList<GameObject>();
-		physicsObjects = new ArrayList<PhysicsObject>();
-		colleges = new ArrayList<College>();
-		rays = new ArrayList<ProjectileRay>();
+		gameObjects = new ArrayList<>();
+		physicsObjects = new ArrayList<>();
+		colleges = new ArrayList<>();
+		rays = new ArrayList<>();
 
 		camera = new OrthographicCamera();
 		camera.viewportHeight = Gdx.graphics.getHeight();
@@ -140,19 +140,19 @@ public class GameController implements Screen {
 		float height = GameMap.getMapHeight();
 
 		double a = MathUtils.random();
-		Vector2 position = null;
+		Vector2 position;
 		int direction = 0;
 		if (a > 0.75) {
 			direction = 3;
-			position = new Vector2(width, (float) (MathUtils.random(height)));
+			position = new Vector2(width, MathUtils.random(height));
 		} else if (a > 0.5) {
 			direction = 2;
-			position = new Vector2(0, (float) (MathUtils.random(height)));
+			position = new Vector2(0, MathUtils.random(height));
 		} else if (a > 0.25) {
 			direction = 1;
-			position = new Vector2((float) (MathUtils.random(width)), 0);
+			position = new Vector2(MathUtils.random(width), 0);
 		} else {
-			position = new Vector2((float) (MathUtils.random(width)), height);
+			position = new Vector2(MathUtils.random(width), height);
 		}
 
 		for (int i = 0; i < weatherPerGeneration; i++) {
@@ -190,7 +190,7 @@ public class GameController implements Screen {
 
 		// create the boss college
 		bossCollege = new EnemyCollege(collegeBoss, collegeTextures.get(1), islandTexture, this,
-				ProjectileData.BOSS, 1600);
+				ProjectileData.BOSS, 3200);
 
 		bossCollege.setInvulnerable(true);
 		physicsObjects.add(bossCollege);
@@ -199,7 +199,7 @@ public class GameController implements Screen {
 		// create some enemy colleges
 		for (int i = 0; i < 3; i++) {
 			EnemyCollege e = new EnemyCollege(collegePos.get(i), collegeTextures.get(i + 2),
-					islandTexture, this, ProjectileData.STOCK, 400);
+					islandTexture, this, ProjectileData.STOCK, 800);
 			physicsObjects.add(e);
 			colleges.add(e);
 		}
@@ -271,7 +271,7 @@ public class GameController implements Screen {
 		hud.Update(delta);
 		map.Update(delta);
 
-		UpdateObjects(delta); // update all physicsobjects
+		UpdateObjects(delta); // update all physics objects
 		ClearKilledObjects(); // clear any 'killed' objects
 
 		// if the boss college is dead, the game is won
@@ -288,10 +288,10 @@ public class GameController implements Screen {
 
 	@Override
 	public void render(float delta) {
-		// do updates here
+		// do update here
 		logic(delta);
 
-		// do draws here
+		// do draw here
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -452,9 +452,9 @@ public class GameController implements Screen {
 	 */
 	public void ClearKilledObjects() {
 		// Clean up objects
-		physicsObjects.removeIf(p -> p.removeOnNextTick());
+		physicsObjects.removeIf(GameObject::removeOnNextTick);
 		// Clean up rays
-		rays.removeIf(r -> r.removeOnNextTick());
+		rays.removeIf(ProjectileRay::removeOnNextTick);
 	}
 
 	@Override
@@ -517,7 +517,7 @@ public class GameController implements Screen {
 	 * @param obj the object to add
 	 */
 	public void NewPhysicsObject(PhysicsObject obj) {
-		// A new PhysicsObject has been created, add it to the list so it
+		// A new PhysicsObject has been created, add it to the list, so it
 		// receives
 		// updates
 		physicsObjects.add(obj);
@@ -558,8 +558,7 @@ public class GameController implements Screen {
 	 * @return the level
 	 */
 	public int getXpLevel() {
-		int level = (int) (Math.sqrt(xp + 9) - 3);
-		return level;
+		return (int) (Math.sqrt(xp + 9) - 3);
 	}
 
 	/**
@@ -587,7 +586,7 @@ public class GameController implements Screen {
 	}
 
 	/**
-	 * The the XP required to go from {@code level-1} to {@code level}.
+	 * The XP required to go from {@code level-1} to {@code level}.
 	 * 
 	 * @param level the target level
 	 * @return the XP difference between previous level and this one
@@ -656,8 +655,6 @@ public class GameController implements Screen {
 	 */
 	public static GameController getMockForHUD() {
 		GameController gc = new GameController();
-		// gc.playerBoat.activePowerups.put(PowerupType.DAMAGE, 7f);
-		// gc.playerBoat.activePowerups.put(PowerupType.RAPIDFIRE, 2f);
 		gc.playerBoat.damage(13);
 		gc.addXp(50);
 		return gc;

@@ -42,7 +42,7 @@ public class WaterBackground extends GameObject {
 		// make a drawable texture region
 		waterTextureRegionDrawable = new TextureRegionDrawable(waterTextureRegion[0]);
 
-		// setup the counter
+		// set up the counter
 		lastWaterTextureChange = 0;
 
 		mapSize = new Vector2(mapWidth, mapHeight);
@@ -50,7 +50,7 @@ public class WaterBackground extends GameObject {
 		Texture grassTexture = ResourceManager.getTexture("img/world/grass.png");
 		grassTexture.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 		grassTextureRegion = new TextureRegion(grassTexture);
-		// draw the grass texture off screen
+		// draw the grass texture off-screen
 		grassTextureRegion.setRegionWidth(mapWidth * 4);
 		grassTextureRegion.setRegionHeight(mapWidth * 4);
 		grassTextureRegionDrawable = new TextureRegionDrawable(grassTextureRegion);

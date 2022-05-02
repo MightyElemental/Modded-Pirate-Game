@@ -15,7 +15,7 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
 public class Powerup extends PhysicsObject {
 
 	// id of powerup given
-	private PowerupType powerup;
+	private final PowerupType powerup;
 
 	public Powerup(PowerupType powerup, Vector2 initialPosition) {
 

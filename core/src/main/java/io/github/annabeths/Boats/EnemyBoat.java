@@ -63,7 +63,7 @@ public class EnemyBoat extends AttackBoat {
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		float dmgToInflict = 0;
-		// whether or not the object belongs to the player
+		// whether the object belongs to the player
 		boolean objWasPlayer = false;
 
 		if (other instanceof Projectile) {

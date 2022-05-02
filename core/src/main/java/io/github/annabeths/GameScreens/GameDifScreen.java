@@ -42,17 +42,17 @@ public class GameDifScreen implements Screen {
 	private Stage stage;
 
 	/** The game object used to change screens */
-	private eng1game game;
+	private final eng1game game;
 
 	/** Array of the menu buttons */
-	private TextButton[] buttons;
+	private final TextButton[] buttons;
 
 	/** A collection of actions to perform when the associated key is pressed */
-	private Map<Integer, Consumer<InputEvent>> keyActions;
+	private final Map<Integer, Consumer<InputEvent>> keyActions;
 
 	public GameDifScreen(eng1game g) {
 		game = g;
-		keyActions = new HashMap<Integer, Consumer<InputEvent>>();
+		keyActions = new HashMap<>();
 		buttons = new TextButton[4];
 	}
 

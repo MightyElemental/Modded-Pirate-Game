@@ -14,7 +14,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 
 import io.github.annabeths.Collectables.PowerupType;
-import io.github.annabeths.Colleges.College;
 import io.github.annabeths.Colleges.EnemyCollege;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameGenerics.Upgrades;
@@ -283,7 +282,7 @@ public class PlayerBoat extends Boat {
 		} else {
 			Projectile projLeft = createProjectile(activeProjectileType, -90, dmgMul, projSpdMul);
 			Projectile projRight = createProjectile(activeProjectileType, 90, dmgMul, projSpdMul);
-			// Add the projectile to the GameController's physics objects list so it
+			// Add the projectile to the GameController's physics objects list, so it
 			// receives updates
 			controller.NewPhysicsObject(projLeft);
 			controller.NewPhysicsObject(projRight);
