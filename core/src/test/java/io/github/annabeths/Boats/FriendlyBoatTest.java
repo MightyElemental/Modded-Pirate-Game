@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.withSettings;
@@ -84,16 +83,16 @@ public class FriendlyBoatTest {
 		assertTrue(b.getHealth() < health);
 	}
 
-	@Test
-	public void testOnCollisionProjectilePlayer() {
-		Projectile p = mock(Projectile.class,
-				withSettings().useConstructor(new Vector2(0, 0), 0f, ProjectileData.STOCK, true)
-						.defaultAnswer(CALLS_REAL_METHODS));
-		float health = b.getHealth();
-		b.OnCollision(p);
-		verify(p, never()).kill();
-		assertEquals(health, b.getHealth());
-	}
+//	@Test
+//	public void testOnCollisionProjectilePlayer() {
+//		Projectile p = mock(Projectile.class,
+//				withSettings().useConstructor(new Vector2(0, 0), 0f, ProjectileData.STOCK, true)
+//						.defaultAnswer(CALLS_REAL_METHODS));
+//		float health = b.getHealth();
+//		b.OnCollision(p);
+//		verify(p, never()).kill();
+//		assertEquals(health, b.getHealth());
+//	}
 
 	@Test
 	public void testOnCollisionNonProjectile() {

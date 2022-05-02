@@ -56,7 +56,7 @@ public class EnemyCollegeTest {
 
 		col = mock(EnemyCollege.class,
 				withSettings()
-						.useConstructor(new Vector2(0, 0), "", "", gc, ProjectileData.ENEMY, 100)
+						.useConstructor(new Vector2(0, 0), "", "", gc, ProjectileData.ENEMY, 100f)
 						.defaultAnswer(CALLS_REAL_METHODS));
 		gc.physicsObjects.add(col);
 	}

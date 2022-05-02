@@ -269,7 +269,7 @@ public class GameControllerTest {
 	public void testCollegeDestroyed() {
 		gc.bossCollege = mock(EnemyCollege.class);
 		EnemyCollege col = mock(EnemyCollege.class, withSettings().useConstructor(new Vector2(0, 0),
-				"", "", gc, ProjectileData.BOSS, 100));
+				"", "", gc, ProjectileData.BOSS, 100f));
 		gc.CollegeDestroyed(col);
 		verify(gc.bossCollege, never()).becomeVulnerable();
 

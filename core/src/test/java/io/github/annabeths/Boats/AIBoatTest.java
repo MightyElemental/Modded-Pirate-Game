@@ -53,7 +53,7 @@ public class AIBoatTest {
 	private void initColleges() {
 		Vector2 pos = new Vector2(500, 500);
 		EnemyCollege c = mock(EnemyCollege.class,
-				withSettings().useConstructor(pos, "", "", gc, ProjectileData.ENEMY, 100)
+				withSettings().useConstructor(pos, "", "", gc, ProjectileData.ENEMY, 100f)
 						.defaultAnswer(CALLS_REAL_METHODS));
 		gc.colleges.add(c);
 	}
