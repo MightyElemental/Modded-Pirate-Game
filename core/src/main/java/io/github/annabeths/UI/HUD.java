@@ -109,6 +109,7 @@ public class HUD extends GameObject {
 
 	/**
 	 * Constructor for HUD
+	 * 
 	 * @param gameController Instance of GameController
 	 */
 	public HUD(GameController gameController) {
@@ -212,8 +213,8 @@ public class HUD extends GameObject {
 		for (int y = 0; y < 2; y++) {
 			PowerupType pt = powerups.get(i++);
 			powerupIcons.get(pt).setPosition(startX + 125, startY - gap * (y + 1), Align.center);
-			powerupQuantityLabels.get(pt).setPosition(startX + 30 + 125, startY - gap * (y + 1) - 10,
-					Align.bottomLeft);
+			powerupQuantityLabels.get(pt).setPosition(startX + 30 + 125,
+					startY - gap * (y + 1) - 10, Align.bottomLeft);
 			powerupTimeLabels.get(pt).setBounds(startX - 25 + 125, startY - 25 - gap * (y + 1), 50,
 					50);
 		}
@@ -278,6 +279,7 @@ public class HUD extends GameObject {
 
 	/**
 	 * Update the hud. Called once per frame
+	 * 
 	 * @param delta time since last frame
 	 */
 	@Override
@@ -294,7 +296,8 @@ public class HUD extends GameObject {
 			boolean f = gc.playerBoat.activePowerups.containsKey(p);
 			i.setColor(f ? Color.DARK_GRAY : Color.WHITE);
 		});
-		powerupQuantityLabels.forEach((p, l) -> l.setText("x" + gc.playerBoat.collectedPowerups.getOrDefault(p, 0)));
+		powerupQuantityLabels.forEach(
+				(p, l) -> l.setText("x" + gc.playerBoat.collectedPowerups.getOrDefault(p, 0)));
 		powerupTimeLabels.forEach((p, l) -> {
 			float t = gc.playerBoat.activePowerups.getOrDefault(p, 0f);
 			if (t > 0) {// add label if powerup is active
@@ -333,6 +336,7 @@ public class HUD extends GameObject {
 
 	/**
 	 * Draw the hud. called once per frame
+	 * 
 	 * @param batch Spritebatch to draw the HUD
 	 */
 	@Override
@@ -351,19 +355,19 @@ public class HUD extends GameObject {
 	/**
 	 * Updates the state of the save menu.
 	 */
-	public void updateSaveMenu(){
+	public void updateSaveMenu() {
 
 		String slot1Text = "Slot 1";
 		String slot2Text = "Slot 2";
 		String slot3Text = "Slot 3";
 
-		if(!SaveManager.doesSaveFileExist("save0")){
+		if (!SaveManager.doesSaveFileExist("save0")) {
 			slot1Text += " [Empty]";
 		}
-		if(!SaveManager.doesSaveFileExist("save1")){
+		if (!SaveManager.doesSaveFileExist("save1")) {
 			slot2Text += " [Empty]";
 		}
-		if(!SaveManager.doesSaveFileExist("save2")){
+		if (!SaveManager.doesSaveFileExist("save2")) {
 			slot3Text += " [Empty]";
 		}
 		saveSlot1.setText(slot1Text);
@@ -374,11 +378,9 @@ public class HUD extends GameObject {
 	/**
 	 * Sets up the SaveMenu.
 	 */
-	public void setUpSaveMenu(){
+	public void setUpSaveMenu() {
 
 		saveMenuBackground = new Image(getTexture("ui/background.png"));
-
-
 
 		saveMenuBackground.addListener(new ClickListener() {
 			@Override
@@ -428,13 +430,13 @@ public class HUD extends GameObject {
 		String slot2Text = "Slot 2";
 		String slot3Text = "Slot 3";
 
-		if(!SaveManager.doesSaveFileExist("save0")){
+		if (!SaveManager.doesSaveFileExist("save0")) {
 			slot1Text += " [Empty]";
 		}
-		if(!SaveManager.doesSaveFileExist("save1")){
+		if (!SaveManager.doesSaveFileExist("save1")) {
 			slot2Text += " [Empty]";
 		}
-		if(!SaveManager.doesSaveFileExist("save2")){
+		if (!SaveManager.doesSaveFileExist("save2")) {
 			slot3Text += " [Empty]";
 		}
 		saveSlot1 = new TextButton(slot1Text, upgradeButtonStyle);
@@ -444,13 +446,17 @@ public class HUD extends GameObject {
 		saveMenuInitialized = true;
 
 		// shopButton.setPosition(1655, 16);
-		saveButton.setBounds(250, Gdx.graphics.getHeight()*2 - 437, 286, 75);
-		saveMenuBackground.setBounds(168, Gdx.graphics.getHeight()-260, 189, 200);
+		saveButton.setBounds(250, 1080 - 75, 286, 75);
+		saveMenuBackground.setBounds(252, 1080 - 280, 282, 200);
 
-
-		saveSlot1.setBounds(saveMenuBackground.getX(), saveMenuBackground.getY() + 2*(saveMenuBackground.getHeight()/3) + 4, saveMenuBackground.getWidth(), saveMenuBackground.getHeight()/3);
-		saveSlot2.setBounds(saveMenuBackground.getX(), saveMenuBackground.getY() + (saveMenuBackground.getHeight()/3) + 2, saveMenuBackground.getWidth(), saveMenuBackground.getHeight()/3);
-		saveSlot3.setBounds(saveMenuBackground.getX(), saveMenuBackground.getY(), saveMenuBackground.getWidth(), saveMenuBackground.getHeight()/3);
+		saveSlot1.setBounds(saveMenuBackground.getX(),
+				saveMenuBackground.getY() + 2 * (saveMenuBackground.getHeight() / 3) + 4,
+				saveMenuBackground.getWidth(), saveMenuBackground.getHeight() / 3);
+		saveSlot2.setBounds(saveMenuBackground.getX(),
+				saveMenuBackground.getY() + (saveMenuBackground.getHeight() / 3) + 2,
+				saveMenuBackground.getWidth(), saveMenuBackground.getHeight() / 3);
+		saveSlot3.setBounds(saveMenuBackground.getX(), saveMenuBackground.getY(),
+				saveMenuBackground.getWidth(), saveMenuBackground.getHeight() / 3);
 
 		setUpSaveSlotButton(saveSlot1, "save0");
 		setUpSaveSlotButton(saveSlot2, "save1");
@@ -462,10 +468,11 @@ public class HUD extends GameObject {
 
 	/**
 	 * defines behaviour for a save slot button
+	 * 
 	 * @param button the button
 	 * @param saveSlot the save slot to write to
 	 */
-	public void setUpSaveSlotButton(TextButton button, String saveSlot){
+	public void setUpSaveSlotButton(TextButton button, String saveSlot) {
 		button.addListener(new ClickListener() {
 			@Override
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
@@ -490,11 +497,9 @@ public class HUD extends GameObject {
 		});
 	}
 
-
 	/** Set up the shop button on the HUD */
 	public void setupShopButton() {
 		shopButton = new TextButton("Shop", shopButtonStyle);
-
 
 		TextTooltip tip = new TextTooltip(" Buy upgrades with plunder and experience! ",
 				toolTipStyle);
@@ -536,15 +541,18 @@ public class HUD extends GameObject {
 	 */
 	public void toggleSaveMenu() {
 		saveMenuOpen = !saveMenuOpen;
-		if (!saveMenuInitialized) {setUpSaveMenu();}else{ updateSaveMenu();}
-
+		if (!saveMenuInitialized) {
+			setUpSaveMenu();
+		} else {
+			updateSaveMenu();
+		}
 
 		if (saveMenuOpen) {
-			//updateSaveMenu();
-			stage.addActor(saveMenuBackground);
-			stage.addActor(saveSlot1);
-			stage.addActor(saveSlot2);
-			stage.addActor(saveSlot3);
+			// updateSaveMenu();
+			hudGroup.addActor(saveMenuBackground);
+			hudGroup.addActor(saveSlot1);
+			hudGroup.addActor(saveSlot2);
+			hudGroup.addActor(saveSlot3);
 		} else {
 			saveMenuBackground.remove();
 			saveSlot1.remove();
@@ -552,9 +560,7 @@ public class HUD extends GameObject {
 			saveSlot3.remove();
 		}
 
-
 	}
-
 
 	/**
 	 * toggles the upgrade menu on or off
@@ -591,7 +597,6 @@ public class HUD extends GameObject {
 		upgradeMenuBackground.setPosition(
 				Gdx.graphics.getWidth() / 2f - upgradeMenuBackground.getWidth() / 2f,
 				Gdx.graphics.getHeight() / 2f - upgradeMenuBackground.getHeight() / 2f);
-
 
 		upgradeMenuBackground.setPosition(
 				Gdx.graphics.getWidth() / 2f - upgradeMenuBackground.getWidth() / 2f,
@@ -739,6 +744,7 @@ public class HUD extends GameObject {
 
 	/**
 	 * Purchases an upgrade
+	 * 
 	 * @param upgrade the upgrade to be purchased
 	 */
 	void BuyUpgrade(int upgrade) {
@@ -827,6 +833,7 @@ public class HUD extends GameObject {
 
 	/**
 	 * Resize the HUD
+	 * 
 	 * @param width new width
 	 * @param height new height
 	 */
