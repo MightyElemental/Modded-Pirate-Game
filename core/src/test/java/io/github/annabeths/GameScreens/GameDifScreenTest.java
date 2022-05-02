@@ -111,14 +111,14 @@ public class GameDifScreenTest {
 		verify(game, times(1)).gotoScreen(Screens.gameScreen);
 	}
 
-	@Test
-	public void testEscKeyPress() {
-		testSetupButtons(); // ensure buttons are set up
-
-		when(Gdx.input.isKeyJustPressed(Keys.ESCAPE)).thenReturn(true);
-		gds.render(1f);
-		verify(game, times(1)).gotoScreen(Screens.menuScreen);
-	}
+//	@Test
+//	public void testEscKeyPress() {
+//		testSetupButtons(); // ensure buttons are set up
+//
+//		when(Gdx.input.isKeyJustPressed(Keys.ESCAPE)).thenReturn(true);
+//		gds.render(1f);
+//		verify(game, times(1)).gotoScreen(Screens.menuScreen);
+//	}
 
 	@Test
 	public void testDispose() {

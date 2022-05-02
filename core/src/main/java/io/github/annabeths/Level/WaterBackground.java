@@ -27,6 +27,11 @@ public class WaterBackground extends GameObject {
 	TextureRegionDrawable grassTextureRegionDrawable;
 	Vector2 mapSize;
 
+	/**
+	 * Constructor for WaterBackground
+	 * @param mapWidth the width of the map
+	 * @param mapHeight the height of the map
+	 */
 	public WaterBackground(int mapWidth, int mapHeight) {
 		waterTextureRegion = new TextureRegion[3];
 		for (int i = 0; i < 3; i++) {
@@ -42,7 +47,7 @@ public class WaterBackground extends GameObject {
 		// make a drawable texture region
 		waterTextureRegionDrawable = new TextureRegionDrawable(waterTextureRegion[0]);
 
-		// setup the counter
+		// set up the counter
 		lastWaterTextureChange = 0;
 
 		mapSize = new Vector2(mapWidth, mapHeight);
@@ -50,12 +55,16 @@ public class WaterBackground extends GameObject {
 		Texture grassTexture = ResourceManager.getTexture("img/world/grass.png");
 		grassTexture.setWrap(TextureWrap.Repeat, TextureWrap.Repeat);
 		grassTextureRegion = new TextureRegion(grassTexture);
-		// draw the grass texture off screen
+		// draw the grass texture off-screen
 		grassTextureRegion.setRegionWidth(mapWidth * 4);
 		grassTextureRegion.setRegionHeight(mapWidth * 4);
 		grassTextureRegionDrawable = new TextureRegionDrawable(grassTextureRegion);
 	}
 
+	/**
+	 * Update the background. called once per frame
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void Update(float delta) {
 		lastWaterTextureChange += delta;
@@ -66,6 +75,10 @@ public class WaterBackground extends GameObject {
 		}
 	}
 
+	/**
+	 * Draw the background
+	 * @param batch Spritebatch to draw the GameObject
+	 */
 	@Override
 	public void Draw(SpriteBatch batch) {
 		grassTextureRegionDrawable.draw(batch, -Gdx.graphics.getWidth(), -Gdx.graphics.getHeight(),

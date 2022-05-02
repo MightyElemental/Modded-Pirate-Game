@@ -4,8 +4,6 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.github.annabeths.GameScreens.CreditScreen;
 import io.github.annabeths.GameScreens.GameController;
@@ -13,14 +11,12 @@ import io.github.annabeths.GameScreens.GameDifScreen;
 import io.github.annabeths.GameScreens.GameOverScreen;
 import io.github.annabeths.GameScreens.GameWinScreen;
 import io.github.annabeths.GameScreens.Menu;
+import io.github.annabeths.GameScreens.SaveLoadScreen;
 import io.github.annabeths.GameScreens.Screens;
 import io.github.annabeths.GameScreens.Splash;
 
 /** @tt.updated Assessment 2 */
 public class eng1game extends Game {
-
-	SpriteBatch batch;
-	Texture img;
 	Menu menuScreen;
 	GameController gameScreen;
 
@@ -40,6 +36,11 @@ public class eng1game extends Game {
 	 */
 	private boolean debug = false;
 
+	/**
+	 * Constructor for eng1game
+	 * 
+	 * @param debug whether Debug mode should be enabled or not
+	 */
 	public eng1game(boolean debug) {
 		this.debug = debug;
 	}
@@ -47,6 +48,9 @@ public class eng1game extends Game {
 	public eng1game() {
 	}
 
+	/**
+	 * Called when the game is created.
+	 */
 	@Override
 	public void create() {
 		ResourceManager.init(new AssetManager());
@@ -71,9 +75,10 @@ public class eng1game extends Game {
 
 	/**
 	 * Uses the {@link Screens} enumeration to change between any screen.
-	 * 
+	 *
 	 * @param s the screen to switch to
 	 */
+	@SuppressWarnings("incomplete-switch")
 	public void gotoScreen(Screens s) {
 		switch (s) {
 		case splashScreen: // creates a new splash screen
@@ -89,9 +94,9 @@ public class eng1game extends Game {
 			break;
 		case gameOverScreen:
 			removeGameScreen();
-			GameOverScreen gameOverScreen = new GameOverScreen(this,
-					timeUp ? "Time Up! ENTER to go to menu, R to restart"
-							: "You Died! ENTER to go to menu, R to restart");
+			GameOverScreen gameOverScreen = new GameOverScreen(this, timeUp
+					? "Time Up! ENTER to go to menu, R to restart, or L to load from a save."
+					: "You Died! ENTER to go to menu, R to restart, or L to load from a save.");
 			setScreen(gameOverScreen);
 			break;
 		case gameWinScreen:
@@ -103,18 +108,48 @@ public class eng1game extends Game {
 			GameDifScreen gameDifScreen = new GameDifScreen(this);
 			setScreen(gameDifScreen);
 			break;
+		case saveLoadScreen:
+			SaveLoadScreen saveLoadScreen = new SaveLoadScreen(this, false);
+			setScreen(saveLoadScreen);
+			break;
 		case credits:
 			setScreen(new CreditScreen(this));
 			break;
 		}
 	}
 
+	/**
+	 * load a saved game
+	 * 
+	 * @param saveFileName a saveFile referring to the saved game.
+	 */
+	public void loadSaveGame(String saveFileName) {
+		gameScreen = new GameController(this, saveFileName);
+		setScreen(gameScreen);
+	}
+
+	/**
+	 * Go to the load screen
+	 */
+	public void goToLoadScreen() {
+		SaveLoadScreen saveLoadScreen = new SaveLoadScreen(this, true);
+		setScreen(saveLoadScreen);
+	}
+
+	/**
+	 * Set the game to fullscreen
+	 */
 	public void setFullscreen() {
 		Graphics.DisplayMode currentMode = Gdx.graphics.getDisplayMode();
 		Gdx.graphics.setFullscreenMode(currentMode);
 		Gdx.app.log("eng1game", "Switched to Fullscreen");
 	}
 
+	/**
+	 * Set the game's difficulty
+	 * 
+	 * @param difficulty new difficulty
+	 */
 	public void setDifficulty(Difficulty difficulty) {
 		Gdx.app.log("eng1game", String.format("Set game difficulty to %s", difficulty.toString()));
 		if (gameScreen != null) gameScreen.setDifficulty(difficulty);

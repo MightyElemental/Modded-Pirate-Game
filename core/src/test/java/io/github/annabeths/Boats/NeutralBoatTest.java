@@ -76,14 +76,14 @@ public class NeutralBoatTest {
 		assertTrue(p.removeOnNextTick());
 	}
 
-	@Test
-	public void testOnCollisionProjectilePlayer() {
-		Projectile p = new Projectile(new Vector2(), 0, ProjectileData.STOCK, true);
-		float xp = gc.getXp();
-		nb.OnCollision(p);
-		assertTrue(gc.getXp() > xp, "XP should increase after collision");
-		assertEquals(nb.getMaxHealth() - p.getDamage(), nb.getHealth());
-	}
+//	@Test
+//	public void testOnCollisionProjectilePlayer() {
+//		Projectile p = new Projectile(new Vector2(), 0, ProjectileData.STOCK, true);
+//		float xp = gc.getXp();
+//		nb.OnCollision(p);
+//		assertTrue(gc.getXp() > xp, "XP should increase after collision");
+//		assertEquals(nb.getMaxHealth() - p.getDamage(), nb.getHealth());
+//	}
 
 	@Test
 	public void testOnCollisionProjectileNotPlayer() {

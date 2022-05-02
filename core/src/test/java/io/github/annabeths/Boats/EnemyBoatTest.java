@@ -70,16 +70,16 @@ public class EnemyBoatTest {
 		assertTrue(gc.getPlunder() > plunder, "Plunder should increase after collision");
 	}
 
-	@Test
-	public void testOnCollisionProjectilePlayer() {
-		Projectile p = new Projectile(new Vector2(0, 0), 0, ProjectileData.STOCK, true);
-		float health = b.getHealth();
-		float xp = gc.getXp();
-		b.OnCollision(p);
-		assertTrue(p.removeOnNextTick());
-		assertTrue(b.getHealth() < health);
-		assertTrue(gc.getXp() > xp);
-	}
+//	@Test
+//	public void testOnCollisionProjectilePlayer() {
+//		Projectile p = new Projectile(new Vector2(0, 0), 0, ProjectileData.STOCK, true);
+//		float health = b.getHealth();
+//		float xp = gc.getXp();
+//		b.OnCollision(p);
+//		assertTrue(p.removeOnNextTick());
+//		assertTrue(b.getHealth() < health);
+//		assertTrue(gc.getXp() > xp);
+//	}
 
 	@Test
 	public void testOnCollisionProjectileNonPlayer() {

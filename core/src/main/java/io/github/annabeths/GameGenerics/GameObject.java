@@ -8,6 +8,7 @@ import com.badlogic.gdx.math.Vector2;
 import io.github.annabeths.GeneralControl.ResourceManager;
 
 /**
+ * An abstract, generic GameObject. Describes something in the world.
  * @author James Burnell
  * @tt.updated Assessment 2
  */
@@ -28,9 +29,16 @@ public abstract class GameObject {
 	public void Update(float delta) {
 	}
 
+	/**
+	 * Draw Method, define on inheritance
+	 * @param batch Spritebatch to draw the GameObject
+	 */
 	public void Draw(SpriteBatch batch) {
 	}
 
+	/**
+	 * Set the GameObject to be destroyed on the start of the next frame.
+	 */
 	public void kill() {
 		killOnNextTick = true;
 	}

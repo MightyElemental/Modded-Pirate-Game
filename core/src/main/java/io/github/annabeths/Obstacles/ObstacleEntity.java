@@ -9,6 +9,7 @@ import io.github.annabeths.Projectiles.Projectile;
 import io.github.annabeths.Projectiles.ProjectileData;
 
 /**
+ * An abstract class that represents obstacles, e.g the Kraken, mines or weather.
  * @since Assessment 2
  * @author Hector Woods
  */
@@ -17,6 +18,13 @@ public abstract class ObstacleEntity extends PhysicsObject {
 	GameController controller;
 	String texturePath;
 
+	/**
+	 * Constructor for ObstacleEntity
+	 * @param controller GameController
+	 * @param position position of the ObstacleEntity
+	 * @param texLoc location of the ObstacleEntity's texture
+	 * @param size size of the ObstacleEntity
+	 */
 	public ObstacleEntity(GameController controller, Vector2 position, String texLoc,
 			Vector2 size) {
 		this.controller = controller;
@@ -25,8 +33,16 @@ public abstract class ObstacleEntity extends PhysicsObject {
 		setSprite(texLoc, position, size);
 	}
 
+	/**
+	 * Called once per frame. update the state of the ObstacleEntity
+	 * @param delta time since last frame
+	 */
 	public abstract void Update(float delta);
 
+	/**
+	 * Draw the entity's sprite.
+	 * @param batch Spritebatch to draw the GameObject
+	 */
 	public void Draw(SpriteBatch batch) {
 		sprite.draw(batch);
 	}

@@ -14,7 +14,6 @@ import io.github.annabeths.Projectiles.ProjectileData;
 
 /**
  * Kraken Obstacle. Attacks the player and other ships if they get close enough
- * 
  * @since Assessment 2
  * @author Hector Woods
  */
@@ -23,12 +22,10 @@ public class Kraken extends ObstacleEntity implements IHealth {
 	final float timeBetweenDirectionChanges = 0.25f;
 	final float speed = 75;
 	/** How close an object needs to be before the kraken starts attacking */
-	private float attackRange = 750;
+	private final float attackRange = 750;
 	protected float maxHealth;
 	protected float health;
-	private ProjectileData projectileType = ProjectileData.KRAKEN;
-	private float plunderValue = 500;
-	private float xpValue = 250;
+	private final ProjectileData projectileType = ProjectileData.KRAKEN;
 	final float timeBetweenShots = 2;
 	private float timeSinceLastShot = 0;
 
@@ -40,6 +37,11 @@ public class Kraken extends ObstacleEntity implements IHealth {
 	Vector2 direction = new Vector2(1, 0);
 	float timeOnCurrentDirection = 0;
 
+	/**
+	 * Constructor for Kraken
+	 * @param controller an instance of GameController
+	 * @param position initial position of the Kraken
+	 */
 	public Kraken(GameController controller, Vector2 position) {
 		super(controller, position, "img/entity/kraken1.png", new Vector2(200, 200));
 		Polygon poly = new Polygon(new float[] { 0, 75, 75, 150, 150, 75, 75, 0 });
@@ -47,32 +49,50 @@ public class Kraken extends ObstacleEntity implements IHealth {
 		poly.setOrigin(0, 0);
 		poly.setRotation(rotation - 90);
 		setCenter(position);
-		this.maxHealth = 500 * controller.getGameDifficulty().getEnemyHpMul();
+		this.maxHealth = 1000 * controller.getGameDifficulty().getEnemyHpMul();
 		this.health = maxHealth;
 
 		this.collisionPolygon = poly;
 	}
 
+	/**
+	 * getter method for the Kraken's health
+	 * @return the Kraken's health
+	 */
 	@Override
 	public float getHealth() {
 		return health;
 	}
 
+	/**
+	 * getter method for the Kraken's maximum health
+	 * @return the Kraken's maximum health
+	 */
 	@Override
 	public float getMaxHealth() {
 		return maxHealth;
 	}
 
+	/**
+	 * Deal damage to the Kraken
+	 * @param dmg the amount of damage to be dealt.
+	 */
 	@Override
 	public void damage(float dmg) {
 		health = MathUtils.clamp(health - dmg, 0, getMaxHealth());
 		if (isDead()) {
 			kill();
+			float plunderValue = 500;
 			controller.addPlunder(plunderValue);
+			float xpValue = 250;
 			controller.addXp(xpValue);
 		}
 	}
 
+	/**
+	 * Called when the Kraken collides with another PhysicsObject
+	 * @param other the object collided with
+	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		if (other instanceof Boat) {
@@ -83,6 +103,10 @@ public class Kraken extends ObstacleEntity implements IHealth {
 		}
 	}
 
+	/**
+	 * Move the Kraken around. Called once per frame
+	 * @param delta time since the last frame
+	 */
 	public void Move(float delta) {
 		timeOnCurrentDirection += delta;
 		if (timeOnCurrentDirection >= timeBetweenDirectionChanges) {
@@ -112,6 +136,10 @@ public class Kraken extends ObstacleEntity implements IHealth {
 		collisionPolygon.setRotation(rotation - 90);
 	}
 
+	/**
+	 * Called once per frame. Update the state of the Kraken
+	 * @param delta time since the last frame
+	 */
 	@Override
 	public void Update(float delta) {
 		Move(delta);
@@ -122,6 +150,9 @@ public class Kraken extends ObstacleEntity implements IHealth {
 		}
 	}
 
+	/**
+	 * Shoot cannonballs in a shotgun pattern around the Kraken.
+	 */
 	public void ShotgunShot() {
 		Vector2 origin = new Vector2(position.x - 25, position.y - 25);
 
@@ -133,8 +164,7 @@ public class Kraken extends ObstacleEntity implements IHealth {
 					controller.getGameDifficulty().getEnemyDmgMul(), 1,
 					new Vector2(origin.x + i, origin.y + i));
 
-			// Add the projectile to the GameController's physics objects list
-			// so it receives updates
+			// Add the projectile to the GameController's physics objects list, so it receives updates
 			controller.NewPhysicsObject(proj);
 		}
 	}
@@ -148,6 +178,14 @@ public class Kraken extends ObstacleEntity implements IHealth {
 	 */
 	public boolean isInRange(PhysicsObject obj) {
 		return getCenter().dst2(obj.getCenter()) < attackRange * attackRange;
+	}
+
+	public void setHealth(float health){
+		this.health = health;
+	}
+
+	public void setMaxHealth(float health){
+		this.maxHealth = health;
 	}
 
 	public void Shoot() {

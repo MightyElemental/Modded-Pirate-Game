@@ -35,14 +35,6 @@ public class GenericCollegeTests {
 	@Test
 	public void testCollegeInstantiation() {
 		assertDoesNotThrow(() -> {
-			new College() {
-
-				@Override
-				public void OnCollision(PhysicsObject other) {
-				}
-			};
-		});
-		assertDoesNotThrow(() -> {
 			new College(new Vector2(0, 0), "img/world/castle/castle_dead.png",
 					"img/world/castle/castle_dead.png", gc) {
 

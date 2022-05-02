@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.github.annabeths.GeneralControl.eng1game;
 
 /**
+ * Screen that is shown when the player gets a game over (i.e runs out of health.)
  * @author James Burnell
  * @author Annabeth
  * @tt.updated Assessment 2
@@ -26,6 +27,11 @@ public class GameOverScreen implements Screen {
 	eng1game game;
 	String text;
 
+	/**
+	 * Constructor for GameOverScreen
+	 * @param g reference to eng1game
+	 * @param text string; forms part of the text displayed on screen
+	 */
 	public GameOverScreen(eng1game g, String text) {
 		game = g;
 		this.text = text;
@@ -40,11 +46,18 @@ public class GameOverScreen implements Screen {
 		font.setColor(Color.WHITE);
 	}
 
+	/**
+	 * called when the screen is created.
+	 */
 	@Override
 	public void show() {
 		batch = new SpriteBatch();
 	}
 
+	/**
+	 * Draw the text to the screen. Called once per frame
+	 * @param delta time since the last frame
+	 */
 	@Override
 	public void render(float delta) {
 		if (Gdx.input.isKeyJustPressed(Keys.R)) {
@@ -53,6 +66,9 @@ public class GameOverScreen implements Screen {
 		if (Gdx.input.isKeyJustPressed(Keys.ENTER)) {
 			game.gotoScreen(Screens.menuScreen);
 		}
+		if(Gdx.input.isKeyJustPressed(Keys.L)){
+			game.goToLoadScreen();
+		}
 
 		// do draws
 		Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -60,9 +76,9 @@ public class GameOverScreen implements Screen {
 
 		batch.begin();
 		font.getData().setScale(1);
-		// the below line centers the text on the center of the screen
-		font.draw(batch, gameOverText, Gdx.graphics.getWidth() / 2 - gameOverText.width / 2,
-				Gdx.graphics.getHeight() / 2 + gameOverText.height / 2);
+		// the below line centers the text in the center of the screen
+		font.draw(batch, gameOverText, Gdx.graphics.getWidth() / 2f - gameOverText.width / 2,
+				Gdx.graphics.getHeight() / 2f + gameOverText.height / 2);
 		font.draw(batch, scoreText, (Gdx.graphics.getWidth() - scoreText.width) / 2,
 				(Gdx.graphics.getHeight() - scoreText.height) / 2 - 100);
 		font.getData().setScale(2);
@@ -73,6 +89,11 @@ public class GameOverScreen implements Screen {
 		batch.end();
 	}
 
+	/**
+	 * resize the window
+	 * @param width new width
+	 * @param height new height
+	 */
 	@Override
 	public void resize(int width, int height) {
 

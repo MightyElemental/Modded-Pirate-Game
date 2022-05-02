@@ -12,7 +12,9 @@ import io.github.annabeths.Projectiles.Projectile;
 public class NeutralBoat extends AIBoat {
 
 	/**
+	 * A boat that moves around but does not attack. Grants plunder and xp when killed.
 	 * @author James Burnell
+	 * @author Hector Woods
 	 * @tt.updated Assessment 2
 	 * @param controller the game controller
 	 * @param initialPosition the position of the boat
@@ -41,8 +43,11 @@ public class NeutralBoat extends AIBoat {
 		}
 	}
 
+	/**
+	 * Ignore, neutral boats do not shoot, but this must be defined since we are extending AIBoat
+	 */
 	public void Shoot() {
-		// Ignore, neutral boats do not shoot, but this must be defined
+
 	}
 
 	/**
@@ -51,16 +56,15 @@ public class NeutralBoat extends AIBoat {
 	 */
 	public void OnCollision(PhysicsObject object) {
 		float dmgToInflict = 0;
-		// whether or not the object belongs to the player
+		// whether the object belongs to the player
 		boolean objWasPlayer = false;
 
 		if (object instanceof PlayerBoat) {
-			// Hit by player, destroy and add XP
-			controller.addXp(xpValue);
-			controller.addPlunder(plunderValue);
-			// damage player
+			// Hit by player, destroy
 			((PlayerBoat) object).damage(50);
 			Destroy();
+			controller.addXp((getHealth() / getMaxHealth()) * xpValue);
+			controller.addPlunder(plunderValue);
 		} else if (object instanceof Projectile) {
 			object.kill();
 			Projectile p = (Projectile) object;
@@ -68,7 +72,10 @@ public class NeutralBoat extends AIBoat {
 			dmgToInflict = p.getDamage();
 		}
 
-		if (objWasPlayer) controller.addXp((dmgToInflict / maxHP) * xpValue);
+		if (objWasPlayer && getHealth() - dmgToInflict <= 0){
+			controller.addXp(xpValue);
+			controller.addPlunder(plunderValue);
+		}
 		damage(dmgToInflict);
 	}
 }

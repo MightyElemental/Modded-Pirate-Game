@@ -43,7 +43,7 @@ public class Weather extends ObstacleEntity {
 	 * <li>3 means west-east</li>
 	 * </ul>
 	 */
-	int directionTrend;
+	public int directionTrend;
 
 	boolean damageActive = false;
 	float maxTimeBetweenLightningStrikes = 10;
@@ -52,6 +52,12 @@ public class Weather extends ObstacleEntity {
 	float timeStrikeActive = 0.75f;
 	float timeSinceStrikeStarted = 0;
 
+	/**
+	 * Constructor for Weather
+	 * @param controller GameController
+	 * @param position initial position of the Weather
+	 * @param dir direction the Weather travels in.
+	 */
 	public Weather(GameController controller, Vector2 position, int dir) {
 		super(controller, position, "img/entity/weather1.png", new Vector2(100, 100));
 		Polygon poly = new Polygon(new float[] { 0, 50, 50, 100, 100, 50, 50, 0 });
@@ -68,6 +74,9 @@ public class Weather extends ObstacleEntity {
 		sprite.setColor(1, 1, 1, 0f); // set transparent when spawned
 	}
 
+	/**
+	 * Toggle lightning on or off. When lightning is active the ship takes damage.
+	 */
 	public void toggleLightning() {
 		if (damageActive) {
 			setSprite(frame1, position, new Vector2(100, 100));
@@ -80,13 +89,17 @@ public class Weather extends ObstacleEntity {
 		damageActive = !damageActive;
 	}
 
+	/**
+	 * Called when the Weather collides with another object
+	 * @param other the object collided with
+	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		boolean shouldDamage = damageActive;
 
 		if (other instanceof PlayerBoat) {
 			// The player gets xp for sailing through bad weather
-			controller.addXp(5 * Gdx.graphics.getDeltaTime());
+			controller.addXp(1 * Gdx.graphics.getDeltaTime());
 			// should not damage if player is invincible
 			shouldDamage &= !((PlayerBoat) other).isInvincible();
 		}
@@ -94,10 +107,13 @@ public class Weather extends ObstacleEntity {
 		if (!shouldDamage) return;
 
 		if (other instanceof Boat) {
-			((Boat) other).damage(1f * controller.getGameDifficulty().getEnemyDmgMul());
+			((Boat) other).damage(1.5f * controller.getGameDifficulty().getEnemyDmgMul());
 		}
 	}
 
+	/**
+	 * Change the direction of the weather
+	 */
 	public void ChangeDirection() {
 		switch (directionTrend) {
 		case 0: // North -> South
@@ -114,6 +130,10 @@ public class Weather extends ObstacleEntity {
 		}
 	}
 
+	/**
+	 * Called once per frame. Move the weather.
+	 * @param delta time since the last frame
+	 */
 	public void Move(float delta) {
 		timeOnCurrentDirection += delta;
 		if (timeOnCurrentDirection >= timeBetweenDirectionChanges) {
@@ -132,6 +152,10 @@ public class Weather extends ObstacleEntity {
 		}
 	}
 
+	/**
+	 * Called once per frame. Update the state of the weather.
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void Update(float delta) {
 		// fade weather in gradually

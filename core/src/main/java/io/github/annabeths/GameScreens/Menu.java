@@ -16,6 +16,7 @@ import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.UI.HUD;
 
 /**
+ * The main menu.
  * @author James Burnell
  * @tt.updated Assessment 2
  */
@@ -25,16 +26,23 @@ public class Menu implements Screen {
 	eng1game game;
 
 	Texture instructions;
-	/** whether or not the instructions should be rendered */
+	/** whether the instructions should be rendered */
 	boolean showInstructions;
-	/** whether or not the instructions have been shown at least once */
+	/** whether the instructions have been shown at least once */
 	boolean instructionsBeenShown;
 	private HUD hud;
 
+	/**
+	 * Constructor for Menu
+	 * @param g reference to eng1game
+	 */
 	public Menu(eng1game g) {
 		game = g;
 	}
 
+	/**
+	 * Called when the screen is created.
+	 */
 	@Override
 	public void show() {
 		// layouts can be used to manage text to allow it to be centered
@@ -49,6 +57,10 @@ public class Menu implements Screen {
 		reset();
 	}
 
+	/**
+	 * Draw text to the screen and handle logic. Called once per frame
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void render(float delta) {
 		// do updates
@@ -60,7 +72,7 @@ public class Menu implements Screen {
 			if (instructionsBeenShown) {
 				// if the ENTER key is pressed, switch to the difficulty screen
 				showInstructions = false;
-				game.gotoScreen(Screens.gameDifScreen);
+				game.gotoScreen(Screens.saveLoadScreen);
 			} else {
 				toggleInstructions();
 			}
@@ -83,9 +95,9 @@ public class Menu implements Screen {
 
 		batch.begin(); // start batch
 		font.getData().setScale(1);
-		// the below line centers the text on the center of the screen
-		font.draw(batch, menuTextLayout, Gdx.graphics.getWidth() / 2 - menuTextLayout.width / 2,
-				Gdx.graphics.getHeight() / 2 + menuTextLayout.height / 2);
+		// the below line centers the text in the center of the screen
+		font.draw(batch, menuTextLayout, Gdx.graphics.getWidth() / 2f - menuTextLayout.width / 2f,
+				Gdx.graphics.getHeight() / 2f + menuTextLayout.height / 2f);
 		if (showInstructions)
 			batch.draw(instructions, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 
@@ -93,6 +105,9 @@ public class Menu implements Screen {
 		if (showInstructions) hud.Draw(batch);
 	}
 
+	/**
+	 * toggle whether the instructions should be shown or not.
+	 */
 	public void toggleInstructions() {
 		showInstructions = !showInstructions;
 		instructionsBeenShown = true;
@@ -106,6 +121,11 @@ public class Menu implements Screen {
 		hud.Update(1f);
 	}
 
+	/**
+	 * resize the window
+	 * @param width new width
+	 * @param height new height
+	 */
 	@Override
 	public void resize(int width, int height) {
 		reset();

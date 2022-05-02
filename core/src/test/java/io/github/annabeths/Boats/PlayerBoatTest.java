@@ -353,14 +353,14 @@ public class PlayerBoatTest {
 		verify(b, times(1)).shootRay(any(Float.class));
 	}
 
-	@Test
-	public void testOnCollisionPlayerProjectile() {
-		Projectile p = new Projectile(new Vector2(0, 0), 0, ProjectileData.STOCK, true);
-		b.HP = 100;
-		b.OnCollision(p);
-		assertFalse(p.removeOnNextTick());
-		assertEquals(100, b.getHealth());
-	}
+//	@Test
+//	public void testOnCollisionPlayerProjectile() {
+//		Projectile p = new Projectile(new Vector2(0, 0), 0, ProjectileData.STOCK, true);
+//		b.HP = 100;
+//		b.OnCollision(p);
+//		assertFalse(p.removeOnNextTick());
+//		assertEquals(100, b.getHealth());
+//	}
 
 	@Test
 	public void testOnCollisionProjectile() {

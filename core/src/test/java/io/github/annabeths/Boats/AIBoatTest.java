@@ -53,7 +53,7 @@ public class AIBoatTest {
 	private void initColleges() {
 		Vector2 pos = new Vector2(500, 500);
 		EnemyCollege c = mock(EnemyCollege.class,
-				withSettings().useConstructor(pos, "", "", gc, ProjectileData.ENEMY, 100)
+				withSettings().useConstructor(pos, "", "", gc, ProjectileData.ENEMY, 100f)
 						.defaultAnswer(CALLS_REAL_METHODS));
 		gc.colleges.add(c);
 	}
@@ -170,12 +170,12 @@ public class AIBoatTest {
 	public void testIdle() {
 		b.destination = null;
 		doNothing().when(b).SetDestination(any(Vector2.class));
-		b.idle(1);
+		b.idle();
 		verify(b, times(1)).SetDestination(any(Vector2.class));
 
 		b.destination = mock(Vector2.class);
 		doNothing().when(b).updateDestination();
-		b.idle(1);
+		b.idle();
 		verify(b, times(1)).updateDestination();
 	}
 

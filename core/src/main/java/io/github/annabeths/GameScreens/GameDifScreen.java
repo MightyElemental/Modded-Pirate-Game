@@ -35,33 +35,41 @@ import io.github.annabeths.GeneralControl.eng1game;
  * 
  * @tt.updated Assessment 2
  * @author James Burnell
+ * @author Hector Woods
  */
 public class GameDifScreen implements Screen {
 
 	private Stage stage;
 
 	/** The game object used to change screens */
-	private eng1game game;
+	private final eng1game game;
 
 	/** Array of the menu buttons */
-	private TextButton[] buttons;
+	private final TextButton[] buttons;
 
 	/** A collection of actions to perform when the associated key is pressed */
-	private Map<Integer, Consumer<InputEvent>> keyActions;
+	private final Map<Integer, Consumer<InputEvent>> keyActions;
 
+	/**
+	 * Constructor for GameDifScreen
+	 * @param g reference to an eng1game instance
+	 */
 	public GameDifScreen(eng1game g) {
 		game = g;
-		keyActions = new HashMap<Integer, Consumer<InputEvent>>();
+		keyActions = new HashMap<>();
 		buttons = new TextButton[4];
 	}
 
+	/**
+	 * Method that sets up the difficulty option buttons.
+	 */
 	public void setupButtons() {
 		// Size of each button
-		Vector2 btnSize = new Vector2(150, 350);
+		Vector2 btnSize = new Vector2(250, 250);
 		// Array of colors the text should be
 		Color[] textColors = { Color.GREEN, Color.ORANGE, Color.RED, Color.BLACK };
 		// Array of text to display on the buttons
-		String[] buttonText = { "EASY", "MEDIUM", "HARD", "RETURN\nTO MENU" };
+		String[] buttonText = { "EASY", "MEDIUM", "HARD", "Back" };
 		Difficulty[] buttonDiff = { EASY, MEDIUM, HARD };
 		int[] buttonKeys = { Keys.E, Keys.M, Keys.H };
 
@@ -98,8 +106,8 @@ public class GameDifScreen implements Screen {
 		}
 
 		// Return to menu
-		clickListener(buttons[3], event -> game.gotoScreen(Screens.menuScreen));
-		keyActions.put(Keys.ESCAPE, event -> game.gotoScreen(Screens.menuScreen));
+		clickListener(buttons[3], event -> game.gotoScreen(Screens.saveLoadScreen));
+		keyActions.put(Keys.ESCAPE, event -> game.gotoScreen(Screens.saveLoadScreen));
 	}
 
 	/**
@@ -137,6 +145,9 @@ public class GameDifScreen implements Screen {
 		});
 	}
 
+	/**
+	 * Called when the screen is created
+	 */
 	@Override
 	public void show() {
 		stage = new Stage();
@@ -146,6 +157,9 @@ public class GameDifScreen implements Screen {
 		setupLabel();
 	}
 
+	/**
+	 * Initialize a new label
+	 */
 	public void setupLabel() {
 		LabelStyle style = new LabelStyle();
 		style.font = ResourceManager.font;
@@ -156,6 +170,10 @@ public class GameDifScreen implements Screen {
 		stage.addActor(l);
 	}
 
+	/**
+	 * Called once per frame. Draw all buttons and other sprites.
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void render(float delta) {
 		// test for any pressed keys
@@ -168,6 +186,11 @@ public class GameDifScreen implements Screen {
 		stage.draw();
 	}
 
+	/**
+	 * resize the window
+	 * @param width new width
+	 * @param height new height
+	 */
 	@Override
 	public void resize(int width, int height) {
 	}

@@ -10,6 +10,12 @@ import io.github.annabeths.GameGenerics.IHealth;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GameScreens.GameController;
 
+/**
+ * Abstract class that represents all colleges.
+ * @tt.updated Assessment 2
+ * @author Hector Woods
+ * @author James Burnell
+ */
 public abstract class College extends PhysicsObject implements IHealth {
 
 	protected float maxHP;
@@ -56,8 +62,6 @@ public abstract class College extends PhysicsObject implements IHealth {
 		collisionPolygon.setPosition(position.x, position.y);
 	}
 
-	public College() {
-	}
 
 	/**
 	 * Work out euclidean distance to the other physics object, and then returns
@@ -74,25 +78,52 @@ public abstract class College extends PhysicsObject implements IHealth {
 		return getCenter().dst(other.getCenter()) <= range;
 	}
 
+	/**
+	 * getter method for the college's HP.
+	 * @return the college's hp
+	 */
 	@Override
 	public float getHealth() {
 		return HP;
 	}
 
+	/**
+	 * setter method for the college's HP
+	 * @param newHP newHP for the college
+	 */
+	public void setHealth(float newHP){
+		this.HP = newHP;
+	}
+
+	/**
+	 * getter method for the college's max HP
+	 * @return the college's max hp
+	 */
 	@Override
 	public float getMaxHealth() {
 		return maxHP;
 	}
 
+	/**
+	 * deal damage to the college.
+	 * @param dmg damage to be dealt
+	 */
 	@Override
 	public void damage(float dmg) {
 		HP = MathUtils.clamp(HP - dmg, 0, maxHP);
 	}
 
+	/**
+	 * @return is the college invulnerable?
+	 */
 	public boolean isInvulnerable() {
 		return invulnerable;
 	}
 
+	/**
+	 * setter method for invulnerable
+	 * @param invulnerable is the college invulnerable?
+	 */
 	public void setInvulnerable(boolean invulnerable) {
 		this.invulnerable = invulnerable;
 	}
@@ -139,6 +170,9 @@ public abstract class College extends PhysicsObject implements IHealth {
 		this.fireRate = fireRate;
 	}
 
+	/**
+	 * @return is the college dead?
+	 */
 	@Override
 	public boolean isDead() {
 		return removeOnNextTick() || IHealth.super.isDead();

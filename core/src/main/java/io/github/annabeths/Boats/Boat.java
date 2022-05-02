@@ -21,7 +21,6 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	protected float maxHP;
 	protected float speed;
 	protected float turnSpeed;
-
 	protected float shotDelay = 0.5f;
 	protected float timeSinceLastShot = 0f;
 
@@ -51,15 +50,13 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	/**
 	 * Generic move method for boats to move forward by their set speed, and a
 	 * multiplier
-	 * 
 	 * @param delta time since last frame
 	 * @param multiplier multiplier to set forward or reverse motion (1 or -1)
-	 * 
 	 * @since Assessment 1
 	 */
 	void Move(float delta, int multiplier) {
 		// Convention: 0 degrees means the object is pointing right, positive angles are
-		// counter clockwise
+		// counterclockwise
 		Vector2 oldPos = position.cpy();
 		position.x += Math.cos(Math.toRadians(rotation)) * speed * delta * multiplier;
 		position.y += Math.sin(Math.toRadians(rotation)) * speed * delta * multiplier;
@@ -103,12 +100,6 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 * @author Hector Woods
 	 */
 	public void moveTowardsDesiredAngle(float desiredAngle, float delta) {
-
-		// Manipulate angle to compensate for [0-360] limitations
-//		if (rotation <= 90 && desiredAngle >= 270) desiredAngle -= 360;
-//		if (rotation >= 270 && desiredAngle <= 90) desiredAngle += 360;
-//		if (rotation > 180 && desiredAngle < 90) desiredAngle += 360;
-
 		float angDiff = MathHelper.getAbsDiff2Angles(rotation, desiredAngle);
 		boolean turnLeft = Math.abs((rotation + angDiff) % 360 - desiredAngle) < 0.05f;
 
@@ -119,8 +110,14 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 		Move(delta, 1);
 	}
 
+	/**
+	 * abstract method for when the Boat shoots a projectile.
+	 */
 	abstract void Shoot();
 
+	/**
+	 * abstract method for when the Boat is destroyed.
+	 */
 	abstract void Destroy();
 
 	/**
@@ -128,7 +125,7 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 * 
 	 * @param x the x position
 	 * @param y the y position
-	 * 
+	 *
 	 * @since Assessment 1
 	 */
 	void SetPosition(float x, float y) {
@@ -158,26 +155,58 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 */
 	protected Projectile createProjectile(ProjectileData type, float rotationOffset, float dmgMul,
 			float spdMul) {
-		boolean isPlayer = this instanceof PlayerBoat || this instanceof FriendlyBoat;
-		return new Projectile(getCenter(), rotation + rotationOffset, type, isPlayer, dmgMul,
+		boolean isPlayer = this instanceof PlayerBoat;
+		boolean isFriendly = this instanceof FriendlyBoat || this instanceof PlayerBoat;
+		return new Projectile(getCenter(), rotation + rotationOffset, type, isPlayer, isFriendly, dmgMul,
 				spdMul);
 	}
 
+	/**
+	 * getter method for the Boat's HP
+	 * @return the Boat's HP
+	 */
 	@Override
 	public float getHealth() {
 		return HP;
 	}
 
+	/**
+	 * setter method for the Boat's HP
+	 * @param health the new HP for the boat
+	 */
+	public void setHealth(float health){
+		this.HP = health;
+	}
+	/**
+	 * setter method for the Boat's maximum HP
+	 * @param maxHealth the new max HP for the boat
+	 */
+	public void setMaxHealth(float maxHealth){
+		this.maxHP = maxHealth;
+	}
+
+	/**
+	 * getter method for the Boat's maximum HP
+	 * @return the Boat's MaxHP
+	 */
 	@Override
 	public float getMaxHealth() {
 		return maxHP;
 	}
 
+	/**
+	 * Deal damage to the boat.
+	 * @param dmg The amount of damage to be dealt.
+	 */
 	@Override
 	public void damage(float dmg) {
 		HP = MathUtils.clamp(HP - dmg, 0, maxHP);
 	}
 
+	/**
+	 * Whether the boat is dead or not.
+	 * @return Boolean - true if dead
+	 */
 	@Override
 	public boolean isDead() {
 		return killOnNextTick || IHealth.super.isDead();

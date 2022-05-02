@@ -9,13 +9,14 @@ import io.github.annabeths.Boats.PlayerBoat;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 
 /**
+ * Powerups that can be used to provide various buffs to the player.
  * @since Assessment 2
  * @author Ben Faulkner
  */
 public class Powerup extends PhysicsObject {
 
 	// id of powerup given
-	private PowerupType powerup;
+	private final PowerupType powerup;
 
 	public Powerup(PowerupType powerup, Vector2 initialPosition) {
 
@@ -29,6 +30,11 @@ public class Powerup extends PhysicsObject {
 		collisionPolygon.setPosition(position.x, position.y);
 	}
 
+	/**
+	 * Called when the powerup collides with a physics object.
+	 * If it collides with a player, then they are awarded the powerup.
+	 * @param other the object collided with
+	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		if (other instanceof PlayerBoat) {
@@ -42,6 +48,10 @@ public class Powerup extends PhysicsObject {
 		}
 	}
 
+	/**
+	 * Called once per frame; draws the powerup
+	 * @param batch a SpriteBatch that will draw the powerup.
+	 */
 	@Override
 	public void Draw(SpriteBatch batch) {
 		sprite.draw(batch);

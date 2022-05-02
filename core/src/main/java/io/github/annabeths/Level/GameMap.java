@@ -20,14 +20,14 @@ public class GameMap extends GameObject {
 	 */
 	public static final float BORDER_BRIM = 300;
 
-	private GameController gc;
+	private final GameController gc;
 
 	public WaterBackground bg;
 
 	public static int MAP_WIDTH = 3000, MAP_HEIGHT = 3000;
 
 	/** Defines the bounds of the map */
-	private static Rectangle mapBounds = new Rectangle(0, 0, MAP_WIDTH, MAP_HEIGHT);
+	private static final Rectangle mapBounds = new Rectangle(0, 0, MAP_WIDTH, MAP_HEIGHT);
 
 	public GameMap(GameController gc) {
 		this.gc = gc;
@@ -35,6 +35,10 @@ public class GameMap extends GameObject {
 		bg = new WaterBackground(MAP_WIDTH, MAP_HEIGHT);
 	}
 
+	/**
+	 * Called once per frame. update the map.
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void Update(float delta) {
 		// center the camera on the player
@@ -80,6 +84,10 @@ public class GameMap extends GameObject {
 				MathUtils.random((int) getMapWidth()));
 	}
 
+	/**
+	 * Draw the map.
+	 * @param batch Spritebatch to draw the GameObject
+	 */
 	@Override
 	public void Draw(SpriteBatch batch) {
 		bg.Draw(batch);

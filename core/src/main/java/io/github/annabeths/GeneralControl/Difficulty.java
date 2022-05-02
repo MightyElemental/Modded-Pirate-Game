@@ -23,16 +23,26 @@ public enum Difficulty {
 	 */
 	HARD(2f, 2f, 0.8f, 0.75f, 75, true, 5);
 
-	float enemyDmgMul;
-	float enemyHpMul;
-	float playerDmgMul;
-	float playerXpMul;
-	float numMines;
-	boolean krakenSpawns;
-	float timeBetweenWeather;
+	final float enemyDmgMul;
+	final float enemyHpMul;
+	final float playerDmgMul;
+	final float playerXpMul;
+	final float numMines;
+	final boolean krakenSpawns;
+	final float timeBetweenWeather;
 
-	private Difficulty(float enemyDmgMul, float enemyHpMul, float playerDmgMul, float playerXpMul,
-			float numMines, boolean krakenSpawns, float timeBetweenWeather) {
+	/**
+	 * Constructor for difficulty.
+	 * @param enemyDmgMul Multiplier for the damage dealt by enemies.
+	 * @param enemyHpMul Multiplier for the enemies' max hp.
+	 * @param playerDmgMul Multiplier for the damage dealt by the player.
+	 * @param playerXpMul Multiplier for xp earned by the player
+	 * @param numMines Number of mines in the world.
+	 * @param krakenSpawns Whether the Kraken spawns or not
+	 * @param timeBetweenWeather time between weather spawns.
+	 */
+	Difficulty(float enemyDmgMul, float enemyHpMul, float playerDmgMul, float playerXpMul,
+			   float numMines, boolean krakenSpawns, float timeBetweenWeather) {
 		this.enemyDmgMul = enemyDmgMul;
 		this.enemyHpMul = enemyHpMul;
 		this.playerDmgMul = playerDmgMul;
@@ -82,13 +92,6 @@ public enum Difficulty {
 	 */
 	public float getNumMines() {
 		return numMines;
-	}
-
-	/**
-	 * @return the time between weather spawns
-	 */
-	public float getTimeBetweenWeather() {
-		return timeBetweenWeather;
 	}
 
 }

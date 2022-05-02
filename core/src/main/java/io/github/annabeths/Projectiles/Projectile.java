@@ -18,9 +18,10 @@ import io.github.annabeths.GameGenerics.PhysicsObject;
  */
 public class Projectile extends PhysicsObject {
 
-	private Vector2 velocity;
-	private boolean isPlayerProjectile;
-	private float damage;
+	private final Vector2 velocity;
+	private final boolean isPlayerProjectile;
+	private boolean isFriendlyProjectile;
+	private final float damage;
 
 	/** How far the projectile can travel before dying */
 	public float lifeDist;
@@ -29,8 +30,8 @@ public class Projectile extends PhysicsObject {
 	 * 
 	 * @see #lifeDist
 	 */
-	private float lifeDist2;
-	private Vector2 startingPos;
+	private final float lifeDist2;
+	private final Vector2 startingPos;
 
 	/**
 	 * @param origin where it should start
@@ -44,13 +45,26 @@ public class Projectile extends PhysicsObject {
 		this(origin, originRot, data, isPlayerProjectile, 1, 1);
 	}
 
+	public Projectile(Vector2 origin, float originRot, ProjectileData data, boolean isPlayerProjectile, boolean
+			isFriendlyProjectile){
+		this(origin, originRot, data, isPlayerProjectile, 1, 1);
+		this.isFriendlyProjectile = isFriendlyProjectile;
+	}
+
+	public Projectile(Vector2 origin, float originRot, ProjectileData data, boolean isPlayerProjectile,
+					  boolean isFriendlyProjectile, float damageMultiplier, float speedMultiplier){
+		this(origin,originRot,data,isPlayerProjectile,damageMultiplier,speedMultiplier);
+		this.isFriendlyProjectile = isFriendlyProjectile;
+
+	}
+
 	/**
 	 * @param origin where it should start
 	 * @param originRot the angle the projectile is facing
 	 * @param data the projectile data type to use
 	 * @param isPlayerProjectile true if the projectile is shot by the player
 	 * @param damageMultiplier how much to multiply the damage by
-	 * @param speedMultiplier how much to multiple the speed by
+	 * @param speedMultiplier how much to multiply the speed by
 	 */
 	public Projectile(Vector2 origin, float originRot, ProjectileData data,
 			boolean isPlayerProjectile, float damageMultiplier, float speedMultiplier) {
@@ -78,6 +92,10 @@ public class Projectile extends PhysicsObject {
 		lifeDist2 = lifeDist * lifeDist;
 	}
 
+	/**
+	 * Update the state of the projectile.
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void Update(float delta) {
 		position.mulAdd(velocity, delta);
@@ -95,12 +113,20 @@ public class Projectile extends PhysicsObject {
 		killOnNextTick = true;
 	}
 
+	/**
+	 * Draw the projectile's sprite.
+	 * @param batch Spritebatch to draw the GameObject
+	 */
 	@Override
 	public void Draw(SpriteBatch batch) {
 		sprite.setCenter(position.x, position.y);
 		sprite.draw(batch);
 	}
 
+	/**
+	 * called when the Projectile collides with another object
+	 * @param other the object collided with
+	 */
 	@Override
 	public void OnCollision(PhysicsObject other) {
 		if (other instanceof Projectile) {
@@ -114,17 +140,29 @@ public class Projectile extends PhysicsObject {
 
 	/**
 	 * Get the speed of the projectile
-	 * 
 	 * @return the speed
 	 */
 	public float getSpeed() {
 		return velocity.len();
 	}
 
+	/**
+	 * returns true if the projectile was shot by the player
+	 * @return if the projectile was shot by the player
+	 */
 	public boolean isPlayerProjectile() {
 		return isPlayerProjectile;
 	}
+	/**
+	 * returns true if the projectile was shot by the player or a friendly boat/college
+	 * @return if the projectile was shot by the player or a friendly boat/college
+	 */
+	public boolean isFriendlyProjectile(){return isFriendlyProjectile;}
 
+	/**
+	 * get the amount of damage the projectile deals.
+	 * @return the damage dealt by the projectile
+	 */
 	public float getDamage() {
 		return damage;
 	}

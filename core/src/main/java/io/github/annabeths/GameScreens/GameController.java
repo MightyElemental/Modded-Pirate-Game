@@ -1,5 +1,6 @@
 package io.github.annabeths.GameScreens;
 
+import static com.badlogic.gdx.Gdx.input;
 import static io.github.annabeths.Level.GameMap.BORDER_BRIM;
 
 import java.util.ArrayList;
@@ -9,6 +10,7 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
@@ -31,6 +33,7 @@ import io.github.annabeths.GameGenerics.GameObject;
 import io.github.annabeths.GameGenerics.PhysicsObject;
 import io.github.annabeths.GeneralControl.DebugUtils;
 import io.github.annabeths.GeneralControl.Difficulty;
+import io.github.annabeths.GeneralControl.SaveManager;
 import io.github.annabeths.GeneralControl.eng1game;
 import io.github.annabeths.Level.GameMap;
 import io.github.annabeths.Obstacles.Kraken;
@@ -41,6 +44,7 @@ import io.github.annabeths.Projectiles.ProjectileRay;
 import io.github.annabeths.UI.HUD;
 
 /**
+ * The main game screen. This is the game itself.
  * @author James Burnell
  * @author Hector Woods
  * @tt.updated Assessment 2
@@ -59,7 +63,7 @@ public class GameController implements Screen {
 
 	private Difficulty gameDifficulty = Difficulty.MEDIUM;
 
-	public static final float PLAY_TIME = 10 * 60 + 0;
+	public static final float PLAY_TIME = 10 * 60;
 	public float timer = PLAY_TIME;
 
 	// UI Related Variables
@@ -77,6 +81,11 @@ public class GameController implements Screen {
 	float xpTick = 1f;
 	float xpTickMultiplier = 1f;
 
+	/**
+	 * Constructor for GameController. Called when 'New Game' is selected
+	 * @param game reference to eng1game
+	 * @param diff the game's difficulty
+	 */
 	public GameController(eng1game game, Difficulty diff) {
 		this();
 		this.game = game;
@@ -85,22 +94,34 @@ public class GameController implements Screen {
 
 		generateGameObjects();
 	}
+	/**
+	 * Constructor for GameController. Called when 'Load game' is selected
+	 * @param game reference to eng1game
+	 * @param saveFileName save file to load from
+	 */
+	public GameController(eng1game game, String saveFileName){
+		this();
+		this.game = game;
+		SaveManager.load(saveFileName, this);
+	}
 
 	/**
 	 * Creates a GameController with a default difficulty of
 	 * {@link Difficulty#MEDIUM}
-	 * 
 	 * @param game the game object
 	 */
 	public GameController(eng1game game) {
 		this(game, Difficulty.MEDIUM);
 	}
 
+	/**
+	 * Constructor for GameController
+	 */
 	private GameController() {
-		gameObjects = new ArrayList<GameObject>();
-		physicsObjects = new ArrayList<PhysicsObject>();
-		colleges = new ArrayList<College>();
-		rays = new ArrayList<ProjectileRay>();
+		gameObjects = new ArrayList<>();
+		physicsObjects = new ArrayList<>();
+		colleges = new ArrayList<>();
+		rays = new ArrayList<>();
 
 		camera = new OrthographicCamera();
 		camera.viewportHeight = Gdx.graphics.getHeight();
@@ -111,6 +132,10 @@ public class GameController implements Screen {
 		physicsObjects.add(playerBoat);
 	}
 
+
+	/**
+	 * Called when GameController is created.
+	 */
 	@Override
 	public void show() {
 		hud = new HUD(this);
@@ -123,25 +148,28 @@ public class GameController implements Screen {
 	float timeBetweenWeatherGeneration = 5;
 	float timeSinceLastWeather = 0;
 
+	/**
+	 * Generate weather in the world. Called every timeBetweenWeatherGeneration seconds.
+	 */
 	public void generateWeather() {
 
 		float width = GameMap.getMapWidth();
 		float height = GameMap.getMapHeight();
 
 		double a = MathUtils.random();
-		Vector2 position = null;
+		Vector2 position;
 		int direction = 0;
 		if (a > 0.75) {
 			direction = 3;
-			position = new Vector2(width, (float) (MathUtils.random(height)));
+			position = new Vector2(width, MathUtils.random(height));
 		} else if (a > 0.5) {
 			direction = 2;
-			position = new Vector2(0, (float) (MathUtils.random(height)));
+			position = new Vector2(0, MathUtils.random(height));
 		} else if (a > 0.25) {
 			direction = 1;
-			position = new Vector2((float) (MathUtils.random(width)), 0);
+			position = new Vector2(MathUtils.random(width), 0);
 		} else {
-			position = new Vector2((float) (MathUtils.random(width)), height);
+			position = new Vector2(MathUtils.random(width), height);
 		}
 
 		for (int i = 0; i < weatherPerGeneration; i++) {
@@ -150,6 +178,10 @@ public class GameController implements Screen {
 		}
 	}
 
+
+	/**
+	 * Generate game objects. Called when 'New game' is selected.
+	 */
 	private void generateGameObjects() {
 		// Generate a list of random college textures
 		// TODO: Make textures unique
@@ -175,7 +207,7 @@ public class GameController implements Screen {
 
 		// create the boss college
 		bossCollege = new EnemyCollege(collegeBoss, collegeTextures.get(1), islandTexture, this,
-				ProjectileData.BOSS, 200);
+				ProjectileData.BOSS, 3200);
 
 		bossCollege.setInvulnerable(true);
 		physicsObjects.add(bossCollege);
@@ -184,7 +216,7 @@ public class GameController implements Screen {
 		// create some enemy colleges
 		for (int i = 0; i < 3; i++) {
 			EnemyCollege e = new EnemyCollege(collegePos.get(i), collegeTextures.get(i + 2),
-					islandTexture, this, ProjectileData.STOCK, 200);
+					islandTexture, this, ProjectileData.STOCK, 800);
 			physicsObjects.add(e);
 			colleges.add(e);
 		}
@@ -237,6 +269,10 @@ public class GameController implements Screen {
 		return physicsObjects.stream().anyMatch(p -> p.CheckCollisionWith(obj));
 	}
 
+	/**
+	 * Called once per frame. Updates PhysicsObjects and Obstacles, increments xp.
+	 * @param delta time since the last frame
+	 */
 	public void logic(float delta) {
 		timer -= delta;
 		if (timer <= 0) gameOver();
@@ -252,7 +288,7 @@ public class GameController implements Screen {
 		hud.Update(delta);
 		map.Update(delta);
 
-		UpdateObjects(delta); // update all physicsobjects
+		UpdateObjects(delta); // update all physics objects
 		ClearKilledObjects(); // clear any 'killed' objects
 
 		// if the boss college is dead, the game is won
@@ -267,12 +303,16 @@ public class GameController implements Screen {
 		}
 	}
 
+	/**
+	 * Draw sprites of all PhysicsObjects. Called once per frame
+	 * @param delta time since the last frame
+	 */
 	@Override
 	public void render(float delta) {
-		// do updates here
+		// do update here
 		logic(delta);
 
-		// do draws here
+		// do draw here
 		Gdx.gl.glClearColor(0, 0, 0, 0);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
@@ -324,7 +364,6 @@ public class GameController implements Screen {
 
 	/**
 	 * Updates all physics objects in the {@link #physicsObjects} list
-	 * 
 	 * @param delta time since last frame
 	 */
 	public void UpdateObjects(float delta) {
@@ -353,7 +392,6 @@ public class GameController implements Screen {
 	/**
 	 * Tests if player is in danger. The player is in danger if it is in range of an
 	 * {@link EnemyCollege}, {@link EnemyBoat}, or {@link Kraken}.
-	 * 
 	 * @return {@code true} if within range of a danger, {@code false} otherwise or
 	 *         player is invincible.
 	 * @author James Burnell
@@ -365,7 +403,6 @@ public class GameController implements Screen {
 
 	/**
 	 * Tests if player is in range of an {@link EnemyBoat}.
-	 * 
 	 * @return {@code true} if within range of an enemy boat, {@code false}
 	 *         otherwise.
 	 * @author James Burnell
@@ -406,7 +443,7 @@ public class GameController implements Screen {
 	 * @param oldCollege the college that was destroyed
 	 */
 	public void CollegeDestroyed(EnemyCollege oldCollege) {
-		addXp(150);
+		addXp(250);
 		addPlunder(250);
 
 		boolean foundCollege = colleges.stream().filter(c -> c instanceof EnemyCollege)
@@ -433,11 +470,16 @@ public class GameController implements Screen {
 	 */
 	public void ClearKilledObjects() {
 		// Clean up objects
-		physicsObjects.removeIf(p -> p.removeOnNextTick());
+		physicsObjects.removeIf(GameObject::removeOnNextTick);
 		// Clean up rays
-		rays.removeIf(r -> r.removeOnNextTick());
+		rays.removeIf(ProjectileRay::removeOnNextTick);
 	}
 
+	/**
+	 * resize the window
+	 * @param width new width
+	 * @param height new height
+	 */
 	@Override
 	public void resize(int width, int height) {
 		camera.setToOrtho(false, 1280, 720);
@@ -462,7 +504,6 @@ public class GameController implements Screen {
 
 	/**
 	 * Test if the player is within any friendly college
-	 * 
 	 * @return {@code true} if player is in range, {@code false} otherwise
 	 */
 	public boolean isPlayerInRangeOfFriendlyCollege() {
@@ -470,6 +511,9 @@ public class GameController implements Screen {
 				.anyMatch(c -> c.isInRange(playerBoat));
 	}
 
+	/**
+	 * dispose of the game screen and go to the game over screen.
+	 */
 	public void gameOver() {
 		game.timeUp = timer <= 0;
 		game.gameScore = (int) getGameScore();
@@ -498,7 +542,7 @@ public class GameController implements Screen {
 	 * @param obj the object to add
 	 */
 	public void NewPhysicsObject(PhysicsObject obj) {
-		// A new PhysicsObject has been created, add it to the list so it
+		// A new PhysicsObject has been created, add it to the list, so it
 		// receives
 		// updates
 		physicsObjects.add(obj);
@@ -539,8 +583,7 @@ public class GameController implements Screen {
 	 * @return the level
 	 */
 	public int getXpLevel() {
-		int level = (int) (Math.sqrt(xp + 9) - 3);
-		return level;
+		return (int) (Math.sqrt(xp + 9) - 3);
 	}
 
 	/**
@@ -568,7 +611,7 @@ public class GameController implements Screen {
 	}
 
 	/**
-	 * The the XP required to go from {@code level-1} to {@code level}.
+	 * The XP required to go from {@code level-1} to {@code level}.
 	 * 
 	 * @param level the target level
 	 * @return the XP difference between previous level and this one
@@ -637,13 +680,15 @@ public class GameController implements Screen {
 	 */
 	public static GameController getMockForHUD() {
 		GameController gc = new GameController();
-		// gc.playerBoat.activePowerups.put(PowerupType.DAMAGE, 7f);
-		// gc.playerBoat.activePowerups.put(PowerupType.RAPIDFIRE, 2f);
 		gc.playerBoat.damage(13);
 		gc.addXp(50);
 		return gc;
 	}
 
+	/**
+	 * setter method for the game's difficulty
+	 * @param difficulty the new game difficulty
+	 */
 	public void setDifficulty(Difficulty difficulty) {
 		this.gameDifficulty = difficulty;
 	}

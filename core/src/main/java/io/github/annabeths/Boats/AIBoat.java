@@ -9,6 +9,8 @@ import io.github.annabeths.Level.GameMap;
 
 /**
  * @since Assessment 2
+ * @author James Burnell
+ * Abstract class that represents Boats with AI-behaviour.
  */
 public abstract class AIBoat extends Boat {
 
@@ -22,12 +24,13 @@ public abstract class AIBoat extends Boat {
 
 	/** How close should the boat be to its destination before setting a new one */
 	float destinationThreshold = 50f;
-	/**
-	 * If the boat's rotation is greater than the target angle by this much, start
-	 * rotating
-	 */
-	float angleThreshold = 0.25f;
 
+	/**
+	 * Constructor for AIBoat
+	 * @param controller an instance of GameController that this boat belongs to
+	 * @param initialPosition the initial position for the boat
+	 * @param texLoc file location of the boat's texture
+	 */
 	public AIBoat(GameController controller, Vector2 initialPosition, String texLoc) {
 		super(controller, initialPosition, texLoc);
 
@@ -35,20 +38,17 @@ public abstract class AIBoat extends Boat {
 		this.state = AIState.IDLE;
 	}
 
+	/**
+	 * Enum describing state of the AI
+	 */
 	public enum AIState {
 		ATTACK, APPROACH, IDLE
 	}
 
-	/** Updates the AI state */
-	public void updateAIState() {
-	}
-
 	/**
 	 * The steps to take when in {@link AIState#IDLE idle} state
-	 * 
-	 * @param delta the time since last update
 	 */
-	public void idle(float delta) {
+	public void idle() {
 		if (destination == null) {
 			SetDestination(getNewRandomValidTarget());
 		} else {
@@ -66,7 +66,6 @@ public abstract class AIBoat extends Boat {
 
 	/**
 	 * The steps to take when in {@link AIState#ATTACK attack} state
-	 * 
 	 * @param delta the time since last update
 	 */
 	public void attack(float delta) {
@@ -74,7 +73,6 @@ public abstract class AIBoat extends Boat {
 
 	/**
 	 * Moves the boat towards its current destination
-	 * 
 	 * @param delta time since last frame
 	 */
 	public void MoveToDestination(float delta) {
@@ -83,13 +81,17 @@ public abstract class AIBoat extends Boat {
 
 	/**
 	 * Figure out the angle between the boat and the destination
-	 * 
 	 * @return The angle to the destination
 	 */
 	public float getAngleToDest() {
 		return destination == null ? -1 : destination.cpy().sub(getCenter()).angleDeg();
 	}
 
+
+	/**
+	 * Called once per-frame, updates state of the boat.
+	 * @param delta time since last frame
+	 */
 	@Override
 	public void Update(float delta) {
 		MoveToDestination(delta);
@@ -98,6 +100,9 @@ public abstract class AIBoat extends Boat {
 		updateDestination();
 	}
 
+	/**
+	 * If the AIBoat has reached its target, choose a new random destination.
+	 */
 	public void updateDestination() {
 		if (destination == null || getCenter().dst(destination) <= destinationThreshold) {
 			Vector2 target = getNewRandomValidTarget();
@@ -134,9 +139,6 @@ public abstract class AIBoat extends Boat {
 		for (College college : controller.colleges) {
 			if (Intersector.intersectSegmentPolygon(getCenter(), target,
 					college.collisionPolygon)) {
-				// the line has hit a college, return false and set a new destination
-//				System.out.println(
-//						"hit: " + college.getCenter() + " | " + getCenter() + " <->" + target);
 				return false;
 			}
 		}
@@ -153,6 +155,10 @@ public abstract class AIBoat extends Boat {
 		this.destination = target;
 	}
 
+	/**
+	 * Getter method for the AIBoat's destination
+	 * @return the AIBoat's destination - Vector2.
+	 */
 	public Vector2 GetDestination() {
 		return destination;
 	}
@@ -164,5 +170,8 @@ public abstract class AIBoat extends Boat {
 		return destinationThreshold;
 	}
 
+	/**
+	 * abstract method for when the AIBoat shoots a projectile.
+	 */
 	abstract void Shoot();
 }
