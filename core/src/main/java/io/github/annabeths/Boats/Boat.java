@@ -158,8 +158,9 @@ public abstract class Boat extends PhysicsObject implements IHealth {
 	 */
 	protected Projectile createProjectile(ProjectileData type, float rotationOffset, float dmgMul,
 			float spdMul) {
-		boolean isPlayer = this instanceof PlayerBoat || this instanceof FriendlyBoat;
-		return new Projectile(getCenter(), rotation + rotationOffset, type, isPlayer, dmgMul,
+		boolean isPlayer = this instanceof PlayerBoat;
+		boolean isFriendly = this instanceof FriendlyBoat || this instanceof PlayerBoat;
+		return new Projectile(getCenter(), rotation + rotationOffset, type, isPlayer, isFriendly, dmgMul,
 				spdMul);
 	}
 

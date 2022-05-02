@@ -54,7 +54,7 @@ public class EnemyBoat extends AttackBoat {
 	@Override
 	public void Destroy() {
 		killOnNextTick = true;
-		if (MathUtils.randomBoolean(0.8f)) {
+		if (MathUtils.randomBoolean(0.2f)) {
 			controller.NewPhysicsObject(new Powerup(PowerupType.randomPower(), getCenter()));
 		}
 
@@ -70,6 +70,8 @@ public class EnemyBoat extends AttackBoat {
 			Projectile p = (Projectile) other;
 			if (p.isPlayerProjectile()) {
 				objWasPlayer = true;
+			}
+			if(p.isFriendlyProjectile()){
 				other.kill();
 				dmgToInflict = p.getDamage();
 			}

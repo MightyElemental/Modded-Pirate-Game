@@ -48,7 +48,7 @@ public class FriendlyBoat extends AttackBoat {
 
 		if (other instanceof Projectile) {
 			Projectile p = (Projectile) other;
-			if (!p.isPlayerProjectile()) {
+			if (!p.isFriendlyProjectile()) {
 				other.kill();
 				dmgToInflict = p.getDamage();
 			}

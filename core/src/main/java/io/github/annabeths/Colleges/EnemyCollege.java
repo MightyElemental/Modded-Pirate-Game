@@ -52,7 +52,16 @@ public class EnemyCollege extends College {
 		hpText = new GlyphLayout();
 		// updateHpText();
 
-		// Randomize spawn times
+		// Randomize spawn times, based on difficulty
+		switch (controller.getGameDifficulty()){
+			case EASY:
+				boatSpawnTime = MathUtils.random(15, 20);
+			case MEDIUM:
+				boatSpawnTime = MathUtils.random(10,15);
+			case HARD:
+				boatSpawnTime = MathUtils.random(5,10);
+
+		}
 		boatSpawnTime = MathUtils.random(5, 15);
 		// Create a random spawning offset so boats don't spawn simultaneously
 		timeSinceLastSpawn = MathUtils.random(boatSpawnTime);

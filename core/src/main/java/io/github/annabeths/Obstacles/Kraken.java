@@ -45,7 +45,7 @@ public class Kraken extends ObstacleEntity implements IHealth {
 		poly.setOrigin(0, 0);
 		poly.setRotation(rotation - 90);
 		setCenter(position);
-		this.maxHealth = 500 * controller.getGameDifficulty().getEnemyHpMul();
+		this.maxHealth = 1000 * controller.getGameDifficulty().getEnemyHpMul();
 		this.health = maxHealth;
 
 		this.collisionPolygon = poly;

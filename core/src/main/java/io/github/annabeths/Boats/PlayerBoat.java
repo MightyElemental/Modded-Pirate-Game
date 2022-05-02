@@ -178,7 +178,7 @@ public class PlayerBoat extends Boat {
 
 		if (other instanceof Projectile) { // check the type of object passed
 			Projectile p = (Projectile) other;
-			if (!p.isPlayerProjectile()) {
+			if (!p.isFriendlyProjectile()) {
 				p.kill();
 				dmgToInflict = p.getDamage();
 			}

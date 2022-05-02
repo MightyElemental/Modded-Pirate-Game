@@ -20,6 +20,7 @@ public class Projectile extends PhysicsObject {
 
 	private Vector2 velocity;
 	private boolean isPlayerProjectile;
+	private boolean isFriendlyProjectile;
 	private float damage;
 
 	/** How far the projectile can travel before dying */
@@ -42,6 +43,19 @@ public class Projectile extends PhysicsObject {
 	public Projectile(Vector2 origin, float originRot, ProjectileData data,
 			boolean isPlayerProjectile) {
 		this(origin, originRot, data, isPlayerProjectile, 1, 1);
+	}
+
+	public Projectile(Vector2 origin, float originRot, ProjectileData data, boolean isPlayerProjectile, boolean
+			isFriendlyProjectile){
+		this(origin, originRot, data, isPlayerProjectile, 1, 1);
+		this.isFriendlyProjectile = isFriendlyProjectile;
+	}
+
+	public Projectile(Vector2 origin, float originRot, ProjectileData data, boolean isPlayerProjectile,
+					  boolean isFriendlyProjectile, float damageMultiplier, float speedMultiplier){
+		this(origin,originRot,data,isPlayerProjectile,damageMultiplier,speedMultiplier);
+		this.isFriendlyProjectile = isFriendlyProjectile;
+
 	}
 
 	/**
@@ -124,6 +138,8 @@ public class Projectile extends PhysicsObject {
 	public boolean isPlayerProjectile() {
 		return isPlayerProjectile;
 	}
+
+	public boolean isFriendlyProjectile(){return isFriendlyProjectile;}
 
 	public float getDamage() {
 		return damage;
