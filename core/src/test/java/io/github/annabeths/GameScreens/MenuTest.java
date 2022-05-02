@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyFloat;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.CALLS_REAL_METHODS;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -113,6 +114,41 @@ public class MenuTest {
 		when(Gdx.input.isKeyJustPressed(Keys.ESCAPE)).thenReturn(true);
 		m.render(1f);
 		verify(Gdx.app, times(1)).exit();
+	}
+
+	@Test
+	public void testEscPressedShowingInstructions() {
+		m.showInstructions = true;
+		when(Gdx.input.isKeyJustPressed(Keys.ESCAPE)).thenReturn(true);
+		m.render(1f);
+		assertFalse(m.showInstructions);
+	}
+
+	@Test
+	public void testCPressed() {
+		when(Gdx.input.isKeyJustPressed(Keys.C)).thenReturn(true);
+		m.render(1f);
+		verify(game, times(1)).gotoScreen(eq(Screens.credits));
+	}
+
+	@Test
+	public void testFPressed() {
+		when(Gdx.input.isKeyJustPressed(Keys.F)).thenReturn(true);
+		m.render(1f);
+		verify(game, times(1)).setFullscreen();
+	}
+
+	@Test
+	public void testShow() {
+		doNothing().when(m).reset();
+		assertDoesNotThrow(() -> m.show());
+	}
+
+	@Test
+	public void testResize() {
+		doNothing().when(m).reset();
+		assertDoesNotThrow(() -> m.resize(1, 1));
+		verify(m, times(1)).reset();
 	}
 
 }

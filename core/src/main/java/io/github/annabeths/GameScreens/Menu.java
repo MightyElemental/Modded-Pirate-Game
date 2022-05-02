@@ -45,15 +45,16 @@ public class Menu implements Screen {
 	 */
 	@Override
 	public void show() {
-		batch = new SpriteBatch();
 		// layouts can be used to manage text to allow it to be centered
 		menuTextLayout = new GlyphLayout();
 		menuTextLayout.setText(font,
-				"press ENTER to PLAY\npress I to toggle INSTRUCTIONS\npress ESCAPE to QUIT");
+				"press ENTER to PLAY\n"
+					+ "press I to toggle INSTRUCTIONS\n"
+					+ "press F for fullscreen\n"
+					+ "press C for credits\n"
+					+ "press ESCAPE to QUIT");
 		instructions = ResourceManager.getTexture("ui/instructions.png");
-		// create example HUD
-		hud = new HUD(GameController.getMockForHUD());
-		hud.Update(1f);
+		reset();
 	}
 
 	/**
@@ -75,8 +76,18 @@ public class Menu implements Screen {
 			} else {
 				toggleInstructions();
 			}
-		} else if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
-			Gdx.app.exit();
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.ESCAPE)) {
+			if (showInstructions)
+				showInstructions = false;
+			else
+				Gdx.app.exit();
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.C)) {
+			game.gotoScreen(Screens.credits);
+		}
+		if (Gdx.input.isKeyJustPressed(Keys.F)) {
+			game.setFullscreen();
 		}
 
 		// do draws
@@ -102,6 +113,14 @@ public class Menu implements Screen {
 		instructionsBeenShown = true;
 	}
 
+	/** Resets the menu graphics objects. Used for changing resolutions */
+	public void reset() {
+		batch = new SpriteBatch();
+		// create example HUD
+		hud = new HUD(GameController.getMockForHUD());
+		hud.Update(1f);
+	}
+
 	/**
 	 * resize the window
 	 * @param width new width
@@ -109,6 +128,7 @@ public class Menu implements Screen {
 	 */
 	@Override
 	public void resize(int width, int height) {
+		reset();
 	}
 
 	@Override
@@ -125,7 +145,6 @@ public class Menu implements Screen {
 
 	@Override
 	public void dispose() {
-
 	}
 
 }
