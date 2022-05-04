@@ -17,6 +17,14 @@ objective.
 
 ## Running The Game
 
+1. Ensure you have Java 11 installed
+2. Download either 1) the jar file or 2) one of the OS-specific versions
+    1. Run the jar file by double clicking or running it in the terminal with: ``java -jar <name-of-file>.jar``
+    2. Extract the contents of the archive and run the executable file within
+
+Note: The OS specific versions come pre-bundled with Java so you do not need to have Java installed.
+
+
 ## Credits
 
 ### Shard Software
@@ -39,7 +47,7 @@ Updated project.
 
 ## Links
 
-- Website: http://www.mario.shardsoftware.tk/
+- Website: https://www.mario.shardsoftware.tk/
 - Java Documentation:
 
 ## License
