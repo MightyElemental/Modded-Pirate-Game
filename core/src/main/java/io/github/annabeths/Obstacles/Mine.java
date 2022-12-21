@@ -1,5 +1,7 @@
 package io.github.annabeths.Obstacles;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Polygon;
 import com.badlogic.gdx.math.Vector2;
 
@@ -39,6 +41,10 @@ public class Mine extends ObstacleEntity {
 		boolean shouldDamage = true;
 		if (other instanceof PlayerBoat) {
 			shouldDamage = !((PlayerBoat) other).isInvincible();
+			if (shouldDamage) {
+				Gdx.audio.newSound(Gdx.files.internal("audio/misc/mine.mp3")).play(1f,
+						1f + MathUtils.random(-0.1f, 0.1f), 0f);
+			}
 		}
 		if (other instanceof Boat) {
 			if (shouldDamage) ((Boat) other).damage(50);
@@ -47,7 +53,7 @@ public class Mine extends ObstacleEntity {
 	}
 
 	@Override
-	public void Update(float delta) {
+	public void Update( float delta ) {
 
 	}
 

@@ -1,7 +1,6 @@
 package io.github.annabeths.GameScreens;
 
-import static com.badlogic.gdx.Gdx.input;
-import static io.github.annabeths.Level.GameMap.BORDER_BRIM;
+import static io.github.annabeths.Level.GameMap.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,7 +9,6 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
