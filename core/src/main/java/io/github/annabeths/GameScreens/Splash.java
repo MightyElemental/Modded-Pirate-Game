@@ -65,11 +65,11 @@ public class Splash implements Screen {
 		vPlayer = VideoPlayerCreator.createVideoPlayer();
 		try {
 			vPlayer.play(Gdx.files.internal("mario/shardlogo.webm"));
-			vPlayer.setVolume(0);
+			vPlayer.setVolume(1);
 			scheduleTask(() -> {
-				shardSound.play();
+				//shardSound.play();
 				canSkip = true;
-			}, 0.8f);
+			}, 1f);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -81,7 +81,7 @@ public class Splash implements Screen {
 				splash = new Sprite(mario1);
 				splash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 				marioSound1.play();
-			}, 1f);
+			}, 0.5f);
 
 			scheduleTask(() -> {
 				splash = new Sprite(mario2);
@@ -122,6 +122,7 @@ public class Splash implements Screen {
 			shardSound.stop();
 			marioSound1.stop();
 			marioSound2.stop();
+			vPlayer.setVolume(0);
 			game.gotoScreen(Screens.menuScreen);
 		}
 

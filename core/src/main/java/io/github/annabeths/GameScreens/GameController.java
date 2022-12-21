@@ -222,7 +222,7 @@ public class GameController implements Screen {
 		}
 
 		// create some powerups
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 50; i++) {
 			Powerup pup;
 			do {
 				pup = new Powerup(PowerupType.randomPower(), GameMap.getRandomPointInBounds());
