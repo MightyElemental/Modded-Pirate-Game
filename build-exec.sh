@@ -11,7 +11,7 @@ buildlocation="desktop/build/libs"
 # Change to your game's main class
 mainclass="io.github.annabeths.desktop.DesktopLauncher"
 # Change to what you want your game file to be called (excluding version)
-gamename="pirategame-mario_shard"
+gamename="pirategame-MODDED-mario_shard"
 
 # Set tag if missing
 # The tag can be the game version
