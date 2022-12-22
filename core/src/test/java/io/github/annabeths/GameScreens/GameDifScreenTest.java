@@ -103,12 +103,12 @@ public class GameDifScreenTest {
 		when(Gdx.input.isKeyJustPressed(Keys.E)).thenReturn(false);
 		gds.render(1f);
 		verify(game, never()).setDifficulty(Difficulty.EASY);
-		verify(game, never()).gotoScreen(Screens.gameScreen);
+		verify(game, never()).gotoScreen(any());
 
 		when(Gdx.input.isKeyJustPressed(Keys.E)).thenReturn(true);
 		gds.render(1f);
 		verify(game, times(1)).setDifficulty(Difficulty.EASY);
-		verify(game, times(1)).gotoScreen(Screens.gameScreen);
+		verify(game, times(1)).gotoScreen(any());
 	}
 
 //	@Test
