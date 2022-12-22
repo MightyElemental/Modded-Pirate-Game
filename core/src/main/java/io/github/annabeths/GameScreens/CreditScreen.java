@@ -28,7 +28,7 @@ public class CreditScreen implements Screen {
 	private eng1game game;
 	private String creditText;
 	/** How fast the credits scroll in px/sec */
-	private float scrollSpeed = 100;
+	private float scrollSpeed = 25;
 
 	public Stage stage;
 	public LabelStyle lblStyle;
@@ -60,7 +60,7 @@ public class CreditScreen implements Screen {
 		shardLogo = new Image(ResourceManager.getTexture("mario/shard-software-logo4.png"));
 		shardLogo.setScale(0.5f);
 
-		marioLogo = new Image(ResourceManager.getTexture("mario/full.png"));
+		marioLogo = new Image(ResourceManager.getTexture("mario/mario_3.png"));
 	}
 
 	@Override

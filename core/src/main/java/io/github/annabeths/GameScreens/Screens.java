@@ -10,5 +10,6 @@ public enum Screens {
 	gameDifScreen,
 	saveLoadScreen,
 	loadedGameScreen,
-	credits
+	credits,
+	cutscene
 }

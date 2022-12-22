@@ -7,6 +7,7 @@ import com.badlogic.gdx.assets.AssetManager;
 
 import io.github.annabeths.GameScreens.CreditScreen;
 import io.github.annabeths.GameScreens.GameController;
+import io.github.annabeths.GameScreens.GameCutscene;
 import io.github.annabeths.GameScreens.GameDifScreen;
 import io.github.annabeths.GameScreens.GameOverScreen;
 import io.github.annabeths.GameScreens.GameWinScreen;
@@ -114,6 +115,9 @@ public class eng1game extends Game {
 			break;
 		case credits:
 			setScreen(new CreditScreen(this));
+			break;
+		case cutscene:
+			setScreen(new GameCutscene(this, Gdx.files.internal("mario/pool_cutscene_short.webm")));
 			break;
 		}
 	}

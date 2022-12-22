@@ -122,7 +122,7 @@ public class GameDifScreen implements Screen {
 	public void assignDifficultyToBtn(int key, TextButton btn, Difficulty dif) {
 		Consumer<InputEvent> actions = event -> {
 			game.setDifficulty(dif);
-			game.gotoScreen(Screens.gameScreen);
+			game.gotoScreen(Screens.cutscene);
 		};
 		clickListener(btn, actions);
 		keyActions.put(key, actions);

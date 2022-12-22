@@ -72,7 +72,7 @@ public class PlayerBoat extends Boat {
 	public PlayerBoat(GameController controller, Vector2 initialPosition) {
 		super(controller, initialPosition, "img/entity/boat_friendly.png");
 
-		this.maxHP = 100;
+		this.maxHP = 500;
 		this.HP = this.maxHP;
 		this.speed = 200;
 		this.turnSpeed = 150;

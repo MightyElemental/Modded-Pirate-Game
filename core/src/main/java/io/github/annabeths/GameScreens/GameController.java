@@ -1,7 +1,6 @@
 package io.github.annabeths.GameScreens;
 
-import static com.badlogic.gdx.Gdx.input;
-import static io.github.annabeths.Level.GameMap.BORDER_BRIM;
+import static io.github.annabeths.Level.GameMap.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,8 +9,8 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -60,6 +59,8 @@ public class GameController implements Screen {
 	public PlayerBoat playerBoat;
 	public EnemyCollege bossCollege;
 	public Powerup powerUp;
+	
+	public Music musicLoop;
 
 	private Difficulty gameDifficulty = Difficulty.MEDIUM;
 
@@ -99,7 +100,7 @@ public class GameController implements Screen {
 	 * @param game reference to eng1game
 	 * @param saveFileName save file to load from
 	 */
-	public GameController(eng1game game, String saveFileName){
+	public GameController(eng1game game, String saveFileName) {
 		this();
 		this.game = game;
 		SaveManager.load(saveFileName, this);
@@ -130,6 +131,9 @@ public class GameController implements Screen {
 		// Create the player boat and place it in the center of the screen
 		playerBoat = new PlayerBoat(this, new Vector2(500, 500));
 		physicsObjects.add(playerBoat);
+		
+		musicLoop = Gdx.audio.newMusic(Gdx.files.internal("audio/music/game_loop.mp3"));
+		musicLoop.setVolume(0.5f);
 	}
 
 
@@ -142,6 +146,8 @@ public class GameController implements Screen {
 		batch = new SpriteBatch();
 		sr = new ShapeRenderer();
 		map = new GameMap(this);
+		musicLoop.play();
+		musicLoop.setLooping(true);
 	}
 
 	final int weatherPerGeneration = 5;
@@ -222,7 +228,7 @@ public class GameController implements Screen {
 		}
 
 		// create some powerups
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 50; i++) {
 			Powerup pup;
 			do {
 				pup = new Powerup(PowerupType.randomPower(), GameMap.getRandomPointInBounds());
@@ -500,6 +506,7 @@ public class GameController implements Screen {
 
 	@Override
 	public void dispose() {
+		musicLoop.dispose();
 	}
 
 	/**

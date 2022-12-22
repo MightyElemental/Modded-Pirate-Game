@@ -58,23 +58,3 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1.31
         with:
           files: 'artifacts/**/TEST-*.xml'
-
-  publish-coverage-report:
-      name: Publish Coverage Test Report
-      needs: test
-      runs-on: ubuntu-latest
-      if: success()
-      steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v2
-        with:
-          path: artifacts
-      - name: Upload Code Coverage
-        uses: codecov/codecov-action@v3
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          directory: ./artifacts/coverage-test-results/
-          files: report.xml
-          verbose: true
-      - name: Show File Structure
-        run: ls -R
