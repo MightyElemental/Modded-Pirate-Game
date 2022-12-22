@@ -117,7 +117,7 @@ public class eng1game extends Game {
 			setScreen(new CreditScreen(this));
 			break;
 		case cutscene:
-			setScreen(new GameCutscene(this, Gdx.files.internal("mario/pool_cutscene.webm")));
+			setScreen(new GameCutscene(this, Gdx.files.internal("mario/pool_cutscene_short.webm")));
 			break;
 		}
 	}
